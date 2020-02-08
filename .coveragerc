@@ -1,0 +1,15 @@
+[run]
+omit =
+    */tests/*
+    *__init__*
+    */migrations/*
+    ozpricechecker/utils/project_logger.py
+    ozpricechecker/manage.py
+
+[report]
+omit =
+    */tests/*
+    *__init__*
+    */migrations/*
+    ozpricechecker/utils/project_logger.py
+    ozpricechecker/manage.py
