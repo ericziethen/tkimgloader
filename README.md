@@ -28,6 +28,7 @@
         <td><img src='https://img.shields.io/pypi/pyversions/tkimgloader.svg'></td>
     </tr>
 </table>
-# ezdynamicimage
+
+# tkimgloader
 
 A library and editor to easily load/save configuration if Items places on a tkiter window.
