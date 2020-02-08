@@ -3,16 +3,17 @@ import tkinter as tk
 from tkinter import filedialog
 
 
-class ImgEditor():
+class ImgEditor():  # pylint: disable=too-few-public-methods
     def __init__(self, root):
         self.root_window = root
         self.working_dir = None
 
         # Ask for the Root Directory
-        self.working_dir = self._get_working_dir()
+        self.working_dir = ask_directory('Select the working directory')
 
-    def _get_working_dir(self):
-        return filedialog.askdirectory(title='Select the working directory', initialdir=os.curdir)
+
+def ask_directory(title):
+    return filedialog.askdirectory(title=title, initialdir=os.curdir)
 
 
 def main():
