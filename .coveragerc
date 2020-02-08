@@ -3,13 +3,13 @@ omit =
     */tests/*
     *__init__*
     */migrations/*
-    ozpricechecker/utils/project_logger.py
-    ozpricechecker/manage.py
+    tkimgloader/utils/project_logger.py
+    tkimgloader/manage.py
 
 [report]
 omit =
     */tests/*
     *__init__*
     */migrations/*
-    ozpricechecker/utils/project_logger.py
-    ozpricechecker/manage.py
+    tkimgloader/utils/project_logger.py
+    tkimgloader/manage.py

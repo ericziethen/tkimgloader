@@ -5,11 +5,10 @@ setlocal
 set BATCH_DIR=%~dp0
 set PROJ_MAIN_DIR=%BATCH_DIR%..\..
 set MODULE_PATH=%PROJ_MAIN_DIR%\tkimgloader
-echo ^!^!^! ERROR REPLACE 'tkimgloader' & goto exit_error
 
 pushd "%PROJ_MAIN_DIR%"
 rem Exclusion via config file currently not working in bandit 1.6.2
-bandit -r "%MODULE_PATH%" --exclude "ozpricechecker/tests/,ozpricechecker/pricefinderapp/tests/"
+bandit -r "%MODULE_PATH%" --exclude "tkimgloader/tests/,tkimgloader/pricefinderapp/tests/"
 set return_code=%errorlevel%
 if %return_code% equ 0 (
     echo *** No Issues Found

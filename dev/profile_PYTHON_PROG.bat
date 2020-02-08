@@ -19,10 +19,8 @@ set datetimef=%Yr%.%Mon%.%Day%_%Hr%-%Min%-%Sec%
 
 !!! CONFIGURE SOURCE ROOT HERE !!!
 set SOURCE_ROOT=tkimgloader
-echo ^!^!^! ERROR REPLACE 'tkimgloader' & goto exit_error
 set PYTHON_PROG=#PYTHON_PROG_NAME#
 set ARGS=
-echo ^!^!^! ERROR REPLACE '#PYTHON_PROG_NAME#' & goto exit_error
 set PROFILE_DIR=%PROJ_MAIN_DIR%\profiling
 if not exist "%PROFILE_DIR%" mkdir "%PROFILE_DIR%"
 set PROFILE_LOG=%PROFILE_DIR%\profile_%datetimef%.txt
