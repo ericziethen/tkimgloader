@@ -12,13 +12,12 @@ class ImgEditor():
         self.working_dir = self._get_working_dir()
 
     def _get_working_dir(self):
-        print('ERIC')
         return filedialog.askdirectory(title='Select the working directory', initialdir=os.curdir)
 
 
 def main():
     root = tk.Tk()
-    editor = ImgEditor(root)
+    ImgEditor(root)
     root.mainloop()
 
 
