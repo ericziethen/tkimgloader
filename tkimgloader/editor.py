@@ -4,12 +4,19 @@ from tkinter import filedialog
 
 
 class ImgEditor():  # pylint: disable=too-few-public-methods
-    def __init__(self, root):
+    def __init__(self, root, working_dir):
         self.root_window = root
-        self.working_dir = None
+        self.working_dir = working_dir
 
-        # Ask for the Root Directory
-        self.working_dir = ask_directory('Select the working directory')
+        # Draw the Menu Bar
+        self._draw_menu()
+
+    def _draw_menu(self):
+        menubar = tk.Menu(self.root_window)
+        file_menu = tk.Menu(menubar, tearoff=0)
+        file_menu.add_command(label='Exit', command=self.root_window.quit)
+        menubar.add_cascade(label='File', menu=file_menu)
+        self.root_window.config(menu=menubar)
 
 
 def ask_directory(title):
@@ -18,8 +25,16 @@ def ask_directory(title):
 
 def main():
     root = tk.Tk()
-    ImgEditor(root)
-    root.mainloop()
+    root.withdraw()
+
+    # Ask for the Root Directory
+    working_dir = ask_directory('Select the working directory')
+    if working_dir:
+        root.deiconify()
+        ImgEditor(root, working_dir)
+        root.mainloop()
+    else:
+        root.quit()
 
 
 if __name__ == '__main__':
