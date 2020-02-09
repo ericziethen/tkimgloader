@@ -1,4 +1,5 @@
 
+import json
 import logging
 import os
 
@@ -23,6 +24,7 @@ class ImgEditor():  # pylint: disable=too-few-public-methods
         self.images = {}
 
         self.img_config = {}
+        self.config_path = None
 
         # Init the Canvas
         self._init_canvas()
@@ -34,6 +36,7 @@ class ImgEditor():  # pylint: disable=too-few-public-methods
         self._draw_content()
 
     def _init_canvas(self):
+        self.root_window.title(F'Config: N/A')
         self.canvas = tk.Canvas(self.root_window)
         self.canvas.grid(row=0, columnspan=self.columnspan)
 
@@ -45,6 +48,12 @@ class ImgEditor():  # pylint: disable=too-few-public-methods
 
         # Load Background
         file_menu.add_command(label='Select Background', command=self._open_background_image)
+        file_menu.add_separator()
+
+        # Load and Save config
+        file_menu.add_command(label='Load Config', command=self._load_config)
+        file_menu.add_command(label='Save Config', command=self._save_config)
+        file_menu.add_separator()
 
         # Exit
         file_menu.add_command(label='Exit', command=self.root_window.quit)
@@ -80,6 +89,34 @@ class ImgEditor():  # pylint: disable=too-few-public-methods
 
     def _get_rel_path(self, path):
         return os.path.relpath(path, self.working_dir)
+
+    def _load_config(self):
+        config_path = filedialog.askopenfilename(
+            title='Select File to Save', initialdir=self.working_dir,
+            filetypes=(('Save Config', '.json'),))
+        if config_path:
+            with open(config_path) as file_ptr:
+                self.img_config = json.load(file_ptr)
+            self._set_config_path(config_path)
+            self._draw_content()
+
+    def _save_config(self):
+        config_path = self.config_path
+        if not config_path:
+            config_path = filedialog.asksaveasfilename(
+                title='Select File to Save', initialdir=self.working_dir,
+                filetypes=(('Save Config', '.json'),))
+
+        if config_path:
+            if not config_path.lower().endswith('.json'):
+                config_path += '.json'
+            with open(config_path, 'w') as file_ptr:
+                json.dump(self.img_config, file_ptr, indent=4)
+            self._set_config_path(config_path)
+
+    def _set_config_path(self, path):
+        self.config_path = self._get_rel_path(path)
+        self.root_window.title(F'Config: "{self.config_path}"')
 
 
 def ask_directory(title):
