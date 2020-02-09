@@ -1,12 +1,9 @@
 
-import json             # REMOVE
 import logging
 import os
 
 import tkinter as tk
 from tkinter import filedialog, messagebox
-
-from PIL import ImageTk         # REMOVE
 
 import project_logger
 from imgloader import ConfigDrawer
@@ -22,7 +19,6 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
         self.canvas = None
         self.columnspan = 20
 
-        #self.img_config = {}                # REMOVE
         self.saved_img_config = {}
         self.config_path = None
 
@@ -40,7 +36,7 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
 
     @property
     def unsaved_changes(self):
-        return self.img_loader.config != self.saved_img_config     # UPDATE
+        return self.img_loader.config != self.saved_img_config
 
     def _init_canvas(self):
         self.root_window.title(F'Config: N/A')
@@ -87,23 +83,10 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
                 title='Select File to Save', initialdir=self.working_dir,
                 filetypes=(('Save Config', '.json'),))
             if config_path:
-                self.img_loader.load_config(self._get_rel_path(config_path))
+                self.img_loader.load_config(config_path)
                 self.saved_img_config = self.img_loader.config.copy()
                 self._set_window_title(config_path)
 
-
-
-
-
-
-
-
-
-
-
-
-
-    ### Move to Library
     def _save_config(self):
         config_path = self.config_path
         if not config_path:
@@ -114,12 +97,12 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
         if config_path:
             if not config_path.lower().endswith('.json'):
                 config_path += '.json'
-            with open(config_path, 'w') as file_ptr:
-                json.dump(self.img_config, file_ptr, indent=4)
-                self.saved_img_config = self.img_config.copy()
+            self.img_loader.save_config(config_path)
+            self.saved_img_config = self.img_loader.config.copy()
             self._set_window_title(config_path)
 
     def _set_window_title(self, path):
+        self.config_path = path
         self.root_window.title(F'Config: "{self.config_path}"')
 
     def _get_rel_path(self, path):
