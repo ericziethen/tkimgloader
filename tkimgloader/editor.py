@@ -4,7 +4,7 @@ import logging
 import os
 
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import filedialog, messagebox
 
 from PIL import ImageTk
 
@@ -24,6 +24,7 @@ class ImgEditor():  # pylint: disable=too-few-public-methods
         self.images = {}
 
         self.img_config = {}
+        self.saved_img_config = {}
         self.config_path = None
 
         # Init the Canvas
@@ -56,7 +57,7 @@ class ImgEditor():  # pylint: disable=too-few-public-methods
         file_menu.add_separator()
 
         # Exit
-        file_menu.add_command(label='Exit', command=self.root_window.quit)
+        file_menu.add_command(label='Exit', command=self.exit)
 
         menubar.add_cascade(label='File', menu=file_menu)
         self.root_window.config(menu=menubar)
@@ -97,6 +98,7 @@ class ImgEditor():  # pylint: disable=too-few-public-methods
         if config_path:
             with open(config_path) as file_ptr:
                 self.img_config = json.load(file_ptr)
+                self.saved_img_config = self.img_config.copy()
             self._set_config_path(config_path)
             self._draw_content()
 
@@ -112,11 +114,23 @@ class ImgEditor():  # pylint: disable=too-few-public-methods
                 config_path += '.json'
             with open(config_path, 'w') as file_ptr:
                 json.dump(self.img_config, file_ptr, indent=4)
+                self.saved_img_config = self.img_config.copy()
             self._set_config_path(config_path)
 
     def _set_config_path(self, path):
         self.config_path = self._get_rel_path(path)
         self.root_window.title(F'Config: "{self.config_path}"')
+
+    def exit(self):
+        can_exit = True
+        if self.img_config != self.saved_img_config:
+            logger.debug('Config Differences found')
+            if not messagebox.askyesno('Unsaved Changes', 'Exit without Saving?'):
+                can_exit = False
+
+        if can_exit:
+            logger.debug('Exit Application')
+            self.root_window.quit()
 
 
 def ask_directory(title):
