@@ -5,13 +5,16 @@ from tkinter import filedialog
 import tkimgloader.editor as editor
 
 SAMPLE_DIR = R'C:\Projects\This Project'
-SAMPLE_FILE = R'File.json'
+REL_FILE_PATH = R'SubDir\File.json'
+SAMPLE_FILE = os.path.join(SAMPLE_DIR, REL_FILE_PATH)
 
 
 def editor_init_mock_returns(monkeypatch):
     def mockreturn(mockself):
         return None
+    monkeypatch.setattr(editor.ImgEditor, '_init_canvas', mockreturn)
     monkeypatch.setattr(editor.ImgEditor, '_draw_menu', mockreturn)
+    monkeypatch.setattr(editor.ImgEditor, '_draw_content', mockreturn)
 
 
 def test_ask_directory(monkeypatch):
@@ -47,4 +50,13 @@ def test_background_stored(monkeypatch):
     edit = editor.ImgEditor('fake_root', SAMPLE_DIR)
     edit._open_background_image()
     assert 'background' in edit.img_config
-    assert edit.img_config['background'] == os.path.join(SAMPLE_DIR, SAMPLE_FILE)
+    assert edit.img_config['background'] == REL_FILE_PATH
+
+def test_rel_path(monkeypatch):
+    editor_init_mock_returns(monkeypatch)
+    def mockreturn_openfile(**kwargs):
+        return SAMPLE_FILE
+    monkeypatch.setattr(filedialog, 'askopenfilename', mockreturn_openfile)
+
+    edit = editor.ImgEditor('fake_root', SAMPLE_DIR)
+    assert edit._get_rel_path(SAMPLE_FILE) == REL_FILE_PATH

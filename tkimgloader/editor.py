@@ -17,6 +17,7 @@ class ImgEditor():  # pylint: disable=too-few-public-methods
         logger.debug(F'Working Dir: {working_dir}')
         self.root_window = root
         self.working_dir = working_dir
+        self.canvas = None
         self.columnspan = 20
 
         self.images = {}
@@ -24,14 +25,17 @@ class ImgEditor():  # pylint: disable=too-few-public-methods
         self.img_config = {}
 
         # Init the Canvas
-        self.canvas = tk.Canvas(self.root_window)
-        self.canvas.grid(row=0, columnspan=self.columnspan)
+        self._init_canvas()
 
         # Draw the Menu Bar
         self._draw_menu()
 
         # Draw the Content Screen
         self._draw_content()
+
+    def _init_canvas(self):
+        self.canvas = tk.Canvas(self.root_window)
+        self.canvas.grid(row=0, columnspan=self.columnspan)
 
     def _draw_menu(self):
         logger.debug(F'Drawing Menu')
@@ -68,8 +72,14 @@ class ImgEditor():  # pylint: disable=too-few-public-methods
     def _open_background_image(self):
         file_path = ask_image_filepath('Select the Background Image', self.working_dir)
         if file_path:
-            self.img_config['background'] = os.path.join(self.working_dir, file_path)
+            logger.debug(F'Filepath Selected: "{file_path}""')
+            rel_path = self._get_rel_path(file_path)
+            logger.debug(F'Rel Filepath Selected: "{rel_path}"')
+            self.img_config['background'] = rel_path
             self._draw_content()
+
+    def _get_rel_path(self, path):
+        return os.path.relpath(path, self.working_dir)
 
 
 def ask_directory(title):
@@ -91,6 +101,7 @@ def main():
 
     # Ask for the Root Directory
     working_dir = ask_directory('Select the working directory')
+    logger.debug('Working Dir Selected: "{working_dir}"')
     if working_dir:
         root.deiconify()
         ImgEditor(root, working_dir)
