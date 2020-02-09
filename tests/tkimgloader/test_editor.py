@@ -14,7 +14,6 @@ def editor_init_mock_returns(monkeypatch):
         return None
     monkeypatch.setattr(editor.ImgEditor, '_init_canvas', mockreturn)
     monkeypatch.setattr(editor.ImgEditor, '_draw_menu', mockreturn)
-    monkeypatch.setattr(editor.ImgEditor, '_draw_content', mockreturn)
 
 
 def test_ask_directory(monkeypatch):
@@ -40,17 +39,6 @@ def test_ask_file(monkeypatch):
 
     assert editor.ask_image_filepath('Title', 'Initial Dir') == SAMPLE_FILE
 
-
-def test_background_stored(monkeypatch):
-    editor_init_mock_returns(monkeypatch)
-    def mockreturn_openfile(**kwargs):
-        return SAMPLE_FILE
-    monkeypatch.setattr(filedialog, 'askopenfilename', mockreturn_openfile)
-
-    edit = editor.ImgEditor('fake_root', SAMPLE_DIR)
-    edit._open_background_image()
-    assert 'background' in edit.img_config
-    assert edit.img_config['background'] == REL_FILE_PATH
 
 def test_rel_path(monkeypatch):
     editor_init_mock_returns(monkeypatch)

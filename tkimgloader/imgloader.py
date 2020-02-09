@@ -14,6 +14,7 @@ class ConfigDrawer():
         self.canvas = canvas
         self._config = {}
         self.images = {}
+        self.config_path = None
 
     @property
     def config(self):

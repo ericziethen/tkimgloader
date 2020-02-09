@@ -31,9 +31,6 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
         # Draw the Menu Bar
         self._draw_menu()
 
-        # Draw the Content Screen
-        self.img_loader.draw()
-
     @property
     def unsaved_changes(self):
         return self.img_loader.config != self.saved_img_config
@@ -131,6 +128,9 @@ def ask_image_filepath(title, initial_dir):
 
 def main():
     log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+
     project_logger.setup_logger(os.path.join(log_dir, 'debug.log'))
 
     root = tk.Tk()
