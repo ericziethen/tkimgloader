@@ -13,7 +13,7 @@ import project_logger
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
-class ImgEditor():  # pylint: disable=too-few-public-methods
+class ImgEditor():  # pylint: disable=too-many-instance-attributes
     def __init__(self, root, working_dir):
         logger.debug(F'Working Dir: {working_dir}')
         self.root_window = root
