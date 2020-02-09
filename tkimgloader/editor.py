@@ -36,6 +36,10 @@ class ImgEditor():  # pylint: disable=too-few-public-methods
         # Draw the Content Screen
         self._draw_content()
 
+    @property
+    def unsaved_changes(self):
+        return self.img_config != self.saved_img_config
+
     def _init_canvas(self):
         self.root_window.title(F'Config: N/A')
         self.canvas = tk.Canvas(self.root_window)
@@ -123,7 +127,7 @@ class ImgEditor():  # pylint: disable=too-few-public-methods
 
     def exit(self):
         can_exit = True
-        if self.img_config != self.saved_img_config:
+        if self.unsaved_changes:
             logger.debug('Config Differences found')
             if not messagebox.askyesno('Unsaved Changes', 'Exit without Saving?'):
                 can_exit = False
