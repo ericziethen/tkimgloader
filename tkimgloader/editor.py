@@ -96,15 +96,21 @@ class ImgEditor():  # pylint: disable=too-few-public-methods
         return os.path.relpath(path, self.working_dir)
 
     def _load_config(self):
-        config_path = filedialog.askopenfilename(
-            title='Select File to Save', initialdir=self.working_dir,
-            filetypes=(('Save Config', '.json'),))
-        if config_path:
-            with open(config_path) as file_ptr:
-                self.img_config = json.load(file_ptr)
-                self.saved_img_config = self.img_config.copy()
-            self._set_config_path(config_path)
-            self._draw_content()
+        can_load = True
+        if self.unsaved_changes:
+            if not messagebox.askyesno('Unsaved Changes', 'Load Config without saving?'):
+                can_load = False
+
+        if can_load:
+            config_path = filedialog.askopenfilename(
+                title='Select File to Save', initialdir=self.working_dir,
+                filetypes=(('Save Config', '.json'),))
+            if config_path:
+                with open(config_path) as file_ptr:
+                    self.img_config = json.load(file_ptr)
+                    self.saved_img_config = self.img_config.copy()
+                self._set_config_path(config_path)
+                self._draw_content()
 
     def _save_config(self):
         config_path = self.config_path
@@ -128,7 +134,6 @@ class ImgEditor():  # pylint: disable=too-few-public-methods
     def exit(self):
         can_exit = True
         if self.unsaved_changes:
-            logger.debug('Config Differences found')
             if not messagebox.askyesno('Unsaved Changes', 'Exit without Saving?'):
                 can_exit = False
 
