@@ -1,4 +1,6 @@
 
+
+import datetime
 import logging
 import os
 
@@ -124,20 +126,11 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
             self.root_window.quit()
 
     def add_text(self):
-        answer = simpledialog.askstring("Input", "What is your first name?",
+        answer = simpledialog.askstring("Input", "Enter the text to add",
                                         parent=self.root_window)
-        print(answer)
-
-        '''
-        # TODO - COMPLETE
-         - Write Tests for AddText in imgloader
-         - Add Add Text funcs
-         - Save Texts
-         - Load Texts
-         - Default coordinates
-        '''
-
-
+        if answer:
+            key = str(datetime.datetime.now())
+            self.img_loader.add_text(text_id=key, text=answer, pos_x=100, pos_y=100)
 
 
 def ask_directory(title):

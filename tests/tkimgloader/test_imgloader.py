@@ -19,7 +19,11 @@ def test_config_saved(monkeypatch):
     assert drawer.config == test_config
 
 
-def test_text_added_in_config():
+def test_text_added_in_config(monkeypatch):
+    def mockreturn(mock_self):
+        return None
+    monkeypatch.setattr(ConfigDrawer, 'draw', mockreturn)
+
     drawer = ConfigDrawer('fake_canvas')
 
     drawer.add_text(text_id='id', text='sample_text', pos_x=100, pos_y=200)
@@ -30,7 +34,11 @@ def test_text_added_in_config():
     assert drawer.config['text']['id']['y'] == 200
 
 
-def test_removed_from_config():
+def test_removed_from_config(monkeypatch):
+    def mockreturn(mock_self):
+        return None
+    monkeypatch.setattr(ConfigDrawer, 'draw', mockreturn)
+
     drawer = ConfigDrawer('fake_canvas')
 
     drawer.add_text(text_id='id', text='sample_text', pos_x=100, pos_y=200)
