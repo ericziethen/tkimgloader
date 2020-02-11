@@ -4,6 +4,8 @@ import datetime
 import logging
 import os
 
+from functools import partial
+
 import tkinter as tk
 from tkinter import filedialog, messagebox
 import tkinter.simpledialog as simpledialog
@@ -21,6 +23,7 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
         self.working_dir = working_dir
         self.canvas = None
         self.columnspan = 20
+        self.large_pxl_move = 10
 
         self.saved_img_config = {}
         self.config_path = None
@@ -37,6 +40,7 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
         # draw the text options
         self._draw_text_options()
 
+    # TODO - Does this still work?
     @property
     def unsaved_changes(self):
         return self.img_loader.config != self.saved_img_config
@@ -73,11 +77,38 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
         self.root_window.config(menu=menubar)
 
     def _draw_text_options(self):
-        for idx, (text_id, text_details) in enumerate(self.img_loader.config['text'].items()):
-            # Actual Text
-            label = tk.Label(self.root_window, text=text_details['text'])
-            label.grid(row=idx, column=0)
+        logger.debug(F'Drawing Text Options for', self.img_loader.config['text'])
 
+        directions = [
+            ('▲', 0, -1),
+            ('▼', 0, 1),
+            ('◀', -1, 0),
+            ('▶', 1, 0),]
+
+        for idx, (text_id, text_details) in enumerate(self.img_loader.config['text'].items()):
+            text = text_details['text']
+
+            row = col = 0
+
+            # Actual Text
+            label = tk.Label(self.root_window, text=F'{text} [{text_details["x"]},{text_details["y"]}]')
+            label.grid(row=1, column=col)
+            self.root_window.grid_columnconfigure(col, weight=1)
+            col += 1
+
+            # Large Nav Text
+            label = tk.Label(self.root_window, text=F'Move {self.large_pxl_move}')
+            label.grid(row=row, column=col)
+            self.root_window.grid_columnconfigure(col, weight=1)
+            col += 1
+
+            # Large Nav Buttons
+            for direction in directions:
+                button = tk.Button(
+                    self.root_window, borderwidth=1, text=direction[0],
+                    command=partial(self.adjust_text, text, direction[1]*self.large_pxl_move, direction[2]*self.large_pxl_move))
+                button.grid(row=row, column=col)
+                col += 1
 
     def _open_background_image(self):
         file_path = ask_image_filepath('Select the Background Image', self.working_dir)
@@ -102,7 +133,10 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
                 self.img_loader.load_config(config_path)
                 self.saved_img_config = self.img_loader.config.copy()
                 self._set_window_title(config_path)
+
+                # Draw Editor Parts
                 self._draw_menu()  # To enable Insert Box
+                self._draw_text_options()
 
     def _save_config(self):
         config_path = self.config_path
@@ -141,6 +175,17 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
         if answer:
             key = str(datetime.datetime.now())
             self.img_loader.add_text(text_id=key, text=answer, pos_x=100, pos_y=100)
+
+            # Draw Editor Parts
+            self._draw_text_options()
+
+    def move_text(self, idx, x, y):
+        #- need to modify text - call update text methiod
+        # TODO
+        pass
+
+
+
 
 
 def ask_directory(title):

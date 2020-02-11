@@ -61,5 +61,10 @@ class ConfigDrawer():
         self.config['text'][text_id] = {'text': text, 'x': pos_x, 'y': pos_y}
         self.draw()
 
+    def update_text(self, *, text_id, pos_x, pos_y):
+        self.config['text'][text_id]['x'] = pos_x
+        self.config['text'][text_id]['y'] = pos_y
+        self.draw()
+
     def remove_text(self, *, text_id):
         del self.config['text'][text_id]
