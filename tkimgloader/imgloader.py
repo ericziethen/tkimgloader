@@ -53,3 +53,9 @@ class ConfigDrawer():
     def save_config(self, config_path):
         with open(config_path, 'w') as file_ptr:
             json.dump(self.config, file_ptr, indent=4)
+
+    def add_text(self, *, text_id, text, x, y):
+        if 'text' not in self.config:
+            self.config['text'] = {}
+        self.config['text'][text_id] = {'text': text, 'x': x, 'y': y}
+        self.draw()

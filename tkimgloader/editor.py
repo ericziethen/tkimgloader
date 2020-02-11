@@ -128,14 +128,14 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
                                         parent=self.root_window)
         print(answer)
 
-
+        '''
         # TODO - COMPLETE
          - Write Tests for AddText in imgloader
          - Add Add Text funcs
          - Save Texts
          - Load Texts
          - Default coordinates
-
+        '''
 
 
 
