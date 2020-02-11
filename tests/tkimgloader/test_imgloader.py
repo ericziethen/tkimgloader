@@ -1,4 +1,7 @@
 
+import builtins
+import json
+
 from imgloader import ConfigDrawer
 
 
@@ -17,6 +20,18 @@ def test_config_saved(monkeypatch):
 
     drawer.config = test_config
     assert drawer.config == test_config
+
+
+def test_background_set(monkeypatch):
+    def mockreturn(mock_self):
+        return None
+    monkeypatch.setattr(ConfigDrawer, 'draw', mockreturn)
+    
+    drawer = ConfigDrawer('fake_canvas')
+    assert 'background' not in drawer.config
+
+    drawer.background = 'my_path'
+    assert drawer.config['background'] == 'my_path'
 
 
 def test_text_added_in_config(monkeypatch):
