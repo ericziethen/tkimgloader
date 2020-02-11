@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 class ConfigDrawer():
     def __init__(self, canvas):
         self.canvas = canvas
-        self._config = {'text': {}}
+        self._config = {'background': None, 'text': {}}
         self.images = {}
         self.config_path = None
 

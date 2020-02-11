@@ -34,6 +34,9 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
         # Draw the Menu Bar
         self._draw_menu()
 
+        # draw the text options
+        self._draw_text_options()
+
     @property
     def unsaved_changes(self):
         return self.img_loader.config != self.saved_img_config
@@ -68,6 +71,13 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
             menubar.entryconfig('Add Text', state="disabled")
 
         self.root_window.config(menu=menubar)
+
+    def _draw_text_options(self):
+        for idx, (text_id, text_details) in enumerate(self.img_loader.config['text'].items()):
+            # Actual Text
+            label = tk.Label(self.root_window, text=text_details['text'])
+            label.grid(row=idx, column=0)
+
 
     def _open_background_image(self):
         file_path = ask_image_filepath('Select the Background Image', self.working_dir)
