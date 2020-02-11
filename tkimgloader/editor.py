@@ -23,9 +23,7 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
         self.working_dir = working_dir
         self.canvas = None
         self.columnspan = 20
-        self.large_pxl_move = 10
 
-        self.saved_img_config = {}
         self.config_path = None
 
         # Init the Canvas
@@ -33,6 +31,7 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
 
         # Init the Config Drawer
         self.img_loader = ConfigDrawer(self.canvas)
+        self.saved_img_config = self.img_loader.config
 
         # Draw the Menu Bar
         self._draw_menu()
@@ -77,38 +76,45 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
         self.root_window.config(menu=menubar)
 
     def _draw_text_options(self):
-        logger.debug(F'Drawing Text Options for', self.img_loader.config['text'])
+        logger.debug(F'Drawing Text Options for: {self.img_loader.config["text"]}')
 
         directions = [
             ('▲', 0, -1),
             ('▼', 0, 1),
             ('◀', -1, 0),
-            ('▶', 1, 0),]
+            ('▶', 1, 0)]
 
-        for idx, (text_id, text_details) in enumerate(self.img_loader.config['text'].items()):
+        row = 0
+        for _, (text_id, text_details) in enumerate(self.img_loader.config['text'].items()):
             text = text_details['text']
 
-            row = col = 0
+            row += 1
+            col = 0
 
             # Actual Text
             label = tk.Label(self.root_window, text=F'{text} [{text_details["x"]},{text_details["y"]}]')
-            label.grid(row=1, column=col)
-            self.root_window.grid_columnconfigure(col, weight=1)
-            col += 1
-
-            # Large Nav Text
-            label = tk.Label(self.root_window, text=F'Move {self.large_pxl_move}')
             label.grid(row=row, column=col)
             self.root_window.grid_columnconfigure(col, weight=1)
             col += 1
 
-            # Large Nav Buttons
-            for direction in directions:
-                button = tk.Button(
-                    self.root_window, borderwidth=1, text=direction[0],
-                    command=partial(self.adjust_text, text, direction[1]*self.large_pxl_move, direction[2]*self.large_pxl_move))
-                button.grid(row=row, column=col)
+            nav_intervals = [50, 10, 1]
+            for interval in nav_intervals:
+                # Large Nav Text
+                label = tk.Label(self.root_window, text=F'Move {interval}')
+                label.grid(row=row, column=col)
+                self.root_window.grid_columnconfigure(col, weight=1)
                 col += 1
+
+                # Large Nav Buttons
+                for direction in directions:
+                    button = tk.Button(
+                        self.root_window, borderwidth=1, text=direction[0],
+                        command=partial(
+                            self.move_text, text_id,
+                            direction[1] * interval,
+                            direction[2] * interval))
+                    button.grid(row=row, column=col)
+                    col += 1
 
     def _open_background_image(self):
         file_path = ask_image_filepath('Select the Background Image', self.working_dir)
@@ -179,13 +185,8 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
             # Draw Editor Parts
             self._draw_text_options()
 
-    def move_text(self, idx, x, y):
-        #- need to modify text - call update text methiod
-        # TODO
-        pass
-
-
-
+    def move_text(self, idx, move_x, move_y):
+        self.img_loader.move_text(text_id=idx, move_x=move_x, move_y=move_y)
 
 
 def ask_directory(title):

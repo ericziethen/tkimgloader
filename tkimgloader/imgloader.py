@@ -44,6 +44,7 @@ class ConfigDrawer():
         # Draw the Text
         if 'text' in self.config and self.config['text']:
             for _, text_dict in self.config['text'].items():
+                logger.debug(F'''Create Text "{text_dict['text']}" @ {text_dict['x']}x{text_dict['y']}''')
                 self.canvas.create_text(
                     text_dict['x'], text_dict['y'], anchor=tk.NW,
                     font="Times 10 italic bold", text=text_dict['text'])
@@ -65,6 +66,12 @@ class ConfigDrawer():
         self.config['text'][text_id]['x'] = pos_x
         self.config['text'][text_id]['y'] = pos_y
         self.draw()
+
+    def move_text(self, *, text_id, move_x, move_y):
+        self.update_text(
+            text_id=text_id,
+            pos_x=self.config['text'][text_id]['x'] + move_x,
+            pos_y=self.config['text'][text_id]['y'] + move_y)
 
     def remove_text(self, *, text_id):
         del self.config['text'][text_id]
