@@ -54,8 +54,11 @@ class ConfigDrawer():
         with open(config_path, 'w') as file_ptr:
             json.dump(self.config, file_ptr, indent=4)
 
-    def add_text(self, *, text_id, text, x, y):
+    def add_text(self, *, text_id, text, pos_x, pos_y):
         if 'text' not in self.config:
             self.config['text'] = {}
-        self.config['text'][text_id] = {'text': text, 'x': x, 'y': y}
+        self.config['text'][text_id] = {'text': text, 'x': pos_x, 'y': pos_y}
         self.draw()
+
+    def remove_text(self, *, text_id):
+        del self.config['text'][text_id]
