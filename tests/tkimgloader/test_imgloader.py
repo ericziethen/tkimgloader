@@ -5,9 +5,9 @@ import json
 from imgloader import ConfigDrawer
 
 
-def test_empty_config_after_init():
+def test_config_after_init():
     drawer = ConfigDrawer('fake_canvas')
-    assert not drawer.config
+    assert 'text' in drawer.config
 
 
 def test_config_saved(monkeypatch):
