@@ -1,9 +1,12 @@
 
+
+import datetime
 import logging
 import os
 
 import tkinter as tk
 from tkinter import filedialog, messagebox
+import tkinter.simpledialog as simpledialog
 
 import project_logger
 from imgloader import ConfigDrawer
@@ -59,6 +62,11 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
         file_menu.add_command(label='Exit', command=self.exit)
 
         menubar.add_cascade(label='File', menu=file_menu)
+        menubar.add_command(label='Add Text', command=self.add_text)
+
+        if not self.img_loader.background:
+            menubar.entryconfig('Add Text', state="disabled")
+
         self.root_window.config(menu=menubar)
 
     def _open_background_image(self):
@@ -68,6 +76,7 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
             rel_path = self._get_rel_path(file_path)
             logger.debug(F'Rel Filepath Selected: "{rel_path}"')
             self.img_loader.background = rel_path
+            self._draw_menu()  # To enable Insert Box
 
     def _load_config(self):
         can_load = True
@@ -83,6 +92,7 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
                 self.img_loader.load_config(config_path)
                 self.saved_img_config = self.img_loader.config.copy()
                 self._set_window_title(config_path)
+                self._draw_menu()  # To enable Insert Box
 
     def _save_config(self):
         config_path = self.config_path
@@ -114,6 +124,13 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
         if can_exit:
             logger.debug('Exit Application')
             self.root_window.quit()
+
+    def add_text(self):
+        answer = simpledialog.askstring("Input", "Enter the text to add",
+                                        parent=self.root_window)
+        if answer:
+            key = str(datetime.datetime.now())
+            self.img_loader.add_text(text_id=key, text=answer, pos_x=100, pos_y=100)
 
 
 def ask_directory(title):

@@ -46,6 +46,13 @@ class ConfigDrawer():
         else:
             logger.debug('No Background to Draw')
 
+        # Draw the Text
+        if 'text' in self.config and self.config['text']:
+            for _, text_dict in self.config['text'].items():
+                self.canvas.create_text(
+                    text_dict['x'], text_dict['y'], anchor=tk.NW,
+                    font="Times 10 italic bold", text=text_dict['text'])
+
     def load_config(self, config_path):
         with open(config_path) as file_ptr:
             self.config = json.load(file_ptr)
@@ -53,3 +60,12 @@ class ConfigDrawer():
     def save_config(self, config_path):
         with open(config_path, 'w') as file_ptr:
             json.dump(self.config, file_ptr, indent=4)
+
+    def add_text(self, *, text_id, text, pos_x, pos_y):
+        if 'text' not in self.config:
+            self.config['text'] = {}
+        self.config['text'][text_id] = {'text': text, 'x': pos_x, 'y': pos_y}
+        self.draw()
+
+    def remove_text(self, *, text_id):
+        del self.config['text'][text_id]
