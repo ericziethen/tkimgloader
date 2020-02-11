@@ -12,20 +12,15 @@ logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 class ConfigDrawer():
     def __init__(self, canvas):
         self.canvas = canvas
-        self._config = {'background': None, 'text': {}}
+        self.config = {'background': None, 'text': {}}
         self.images = {}
         self.config_path = None
 
     @property
-    def config(self):
-        return self._config
+    def background(self):
+        return self.config['background']
 
-    @config.setter
-    def config(self, config):
-        self._config = config
-        self.draw()
-
-    @config.setter
+    @background.setter
     def background(self, file_path):
         self.config['background'] = file_path
         self.draw()
@@ -34,7 +29,7 @@ class ConfigDrawer():
         logger.debug(F'Drawing Content: {self.config}')
 
         # Draw the Background
-        if 'background' in self.config:
+        if self.config['background']:
             img_path = self.config['background']
             logger.debug(F'Drawing Background file "{img_path}"')
 
@@ -56,6 +51,7 @@ class ConfigDrawer():
     def load_config(self, config_path):
         with open(config_path) as file_ptr:
             self.config = json.load(file_ptr)
+            self.draw()
 
     def save_config(self, config_path):
         with open(config_path, 'w') as file_ptr:
