@@ -20,6 +20,12 @@ class ConfigDrawer():
     def background(self):
         return self.config['background']
 
+    @property
+    def dimensions(self):
+        if self.config['background']:
+            return (self.images['background'].width(), self.images['background'].height())
+        return (0, 0)
+
     @background.setter
     def background(self, file_path):
         self.config['background'] = file_path
@@ -52,11 +58,13 @@ class ConfigDrawer():
     def load_config(self, config_path):
         with open(config_path) as file_ptr:
             self.config = json.load(file_ptr)
+            self.config_path = config_path
             self.draw()
 
     def save_config(self, config_path):
         with open(config_path, 'w') as file_ptr:
             json.dump(self.config, file_ptr, indent=4)
+            self.config_path = config_path
 
     def add_text(self, *, text_id, text, pos_x, pos_y):
         self.config['text'][text_id] = {'text': text, 'x': pos_x, 'y': pos_y}

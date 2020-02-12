@@ -17,15 +17,13 @@ from imgloader import ConfigDrawer
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
-class ImgEditor():  # pylint: disable=too-many-instance-attributes
+class ImgEditor():
     def __init__(self, root, working_dir):
         logger.debug(F'Working Dir: {working_dir}')
         self.root_window = root
         self.working_dir = working_dir
         self.canvas = None
         self.columnspan = 20
-
-        self.config_path = None
 
         self.text_frames = {}
 
@@ -77,6 +75,9 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
 
         self.root_window.config(menu=menubar)
 
+        # Set our job to refresh screen data
+        self.root_window.after(1000, self._refresh_screen_data)
+
     def _draw_text_options(self):  # pylint: disable=too-many-locals
         logger.debug(F'Drawing Text Options for: {self.img_loader.config["text"]}')
 
@@ -101,7 +102,7 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
                 sep.grid(column=0, row=row, columnspan=self.columnspan, sticky='ew')
                 row += 1
 
-            frame = tk.Frame(self.root_window, width=self.root_window.winfo_screenwidth(),
+            frame = tk.Frame(self.root_window, width=self.root_window.winfo_width(),
                              bg="SystemButtonFace", colormap="new")
             frame.grid(row=row, columnspan=self.columnspan, sticky=tk.NSEW)
 
@@ -161,14 +162,13 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
             if config_path:
                 self.img_loader.load_config(config_path)
                 self.saved_img_config = copy.deepcopy(self.img_loader.config)
-                self._set_window_title(config_path)
 
                 # Draw Editor Parts
                 self._draw_menu()  # To enable Insert Box
                 self._draw_text_options()
 
     def _save_config(self):
-        config_path = self.config_path
+        config_path = self.img_loader.config_path
         if not config_path:
             config_path = filedialog.asksaveasfilename(
                 title='Select File to Save', initialdir=self.working_dir,
@@ -179,11 +179,6 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
                 config_path += '.json'
             self.img_loader.save_config(config_path)
             self.saved_img_config = copy.deepcopy(self.img_loader.config)
-            self._set_window_title(config_path)
-
-    def _set_window_title(self, path):
-        self.config_path = path
-        self.root_window.title(F'Config: "{self.config_path}"')
 
     def _get_rel_path(self, path):
         return os.path.relpath(path, self.working_dir)
@@ -222,6 +217,16 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
     def form_text_bar_label(self, text_id):
         text_details = self.img_loader.config['text'][text_id]
         return F'{text_details["text"]} [{text_details["x"]},{text_details["y"]}]'
+
+    def _refresh_screen_data(self):
+        # https://riptutorial.com/tkinter/example/22870/-after--
+
+        dims = self.img_loader.dimensions
+        resolution = F'{dims[0]} x {dims[1]}'
+
+        self.root_window.title(F'Resolution: {resolution}, Config: "{self.img_loader.config_path}"')
+
+        self.root_window.after(1000, self._refresh_screen_data)
 
 
 def ask_directory(title):
