@@ -91,9 +91,7 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
             ('▶', 1, 0)]
 
         row = 0
-        for count, (text_id, text_details) in enumerate(self.img_loader.config['text'].items()):
-            text = text_details['text']
-
+        for count, (text_id, _) in enumerate(self.img_loader.config['text'].items()):
             row += 1
             col = 0
 
@@ -109,8 +107,8 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
 
             # Actual Text
             text_col_span = 4
-            label = tk.Label(frame, text=F'{text} [{text_details["x"]},{text_details["y"]}]', anchor="w")
-            label.grid(row=row, column=col, columnspan=text_col_span, sticky=tk.W)
+            main_text = tk.Label(frame, text=self.form_text_bar_label(text_id), anchor="w")
+            main_text.grid(row=row, column=col, columnspan=text_col_span, sticky=tk.W)
             frame.grid_columnconfigure(col, weight=1)
             col += text_col_span
 
@@ -129,7 +127,8 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
                         command=partial(
                             self.move_text, text_id,
                             direction[1] * interval,
-                            direction[2] * interval))
+                            direction[2] * interval,
+                            main_text_label=main_text))
                     button.grid(row=row, column=col, sticky=tk.NSEW)
                     col += 1
 
@@ -210,14 +209,19 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
             # Draw Editor Parts
             self._draw_text_options()
 
-    def move_text(self, idx, move_x, move_y):
+    def move_text(self, idx, move_x, move_y, *, main_text_label):
         self.img_loader.move_text(text_id=idx, move_x=move_x, move_y=move_y)
+        main_text_label.config(text=self.form_text_bar_label(idx))
 
     def remove_text(self, idx):
         logger.debug(F'Config Before Removal: {self.img_loader.config}')
         self.img_loader.remove_text(text_id=idx)
         logger.debug(F'Config After Removal: {self.img_loader.config}')
         self._draw_text_options()
+
+    def form_text_bar_label(self, text_id):
+        text_details = self.img_loader.config['text'][text_id]
+        return F'{text_details["text"]} [{text_details["x"]},{text_details["y"]}]'
 
 
 def ask_directory(title):
