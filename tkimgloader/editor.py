@@ -1,10 +1,13 @@
 
-
+import copy
 import datetime
 import logging
 import os
 
+from functools import partial
+
 import tkinter as tk
+import tkinter.ttk as ttk
 from tkinter import filedialog, messagebox
 import tkinter.simpledialog as simpledialog
 
@@ -22,17 +25,22 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
         self.canvas = None
         self.columnspan = 20
 
-        self.saved_img_config = {}
         self.config_path = None
+
+        self.text_frames = {}
 
         # Init the Canvas
         self._init_canvas()
 
         # Init the Config Drawer
         self.img_loader = ConfigDrawer(self.canvas)
+        self.saved_img_config = copy.deepcopy(self.img_loader.config)
 
         # Draw the Menu Bar
         self._draw_menu()
+
+        # draw the text options
+        self._draw_text_options()
 
     @property
     def unsaved_changes(self):
@@ -69,6 +77,69 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
 
         self.root_window.config(menu=menubar)
 
+    def _draw_text_options(self):  # pylint: disable=too-many-locals
+        logger.debug(F'Drawing Text Options for: {self.img_loader.config["text"]}')
+
+        # Remove existing frames to redraw
+        for frame in self.text_frames.values():
+            frame.destroy()
+
+        directions = [
+            ('▲', 0, -1),
+            ('▼', 0, 1),
+            ('◀', -1, 0),
+            ('▶', 1, 0)]
+
+        row = 0
+        for count, (text_id, text_details) in enumerate(self.img_loader.config['text'].items()):
+            text = text_details['text']
+
+            row += 1
+            col = 0
+
+            # Draw the separatpr
+            if count > 0:
+                sep = ttk.Separator(self.root_window, orient=tk.HORIZONTAL)
+                sep.grid(column=0, row=row, columnspan=self.columnspan, sticky='ew')
+                row += 1
+
+            frame = tk.Frame(self.root_window, width=self.root_window.winfo_screenwidth(),
+                             bg="SystemButtonFace", colormap="new")
+            frame.grid(row=row, columnspan=self.columnspan, sticky=tk.NSEW)
+
+            # Actual Text
+            text_col_span = 4
+            label = tk.Label(frame, text=F'{text} [{text_details["x"]},{text_details["y"]}]', anchor="w")
+            label.grid(row=row, column=col, columnspan=text_col_span, sticky=tk.W)
+            frame.grid_columnconfigure(col, weight=1)
+            col += text_col_span
+
+            # Text Moving Navigation
+            nav_intervals = [50, 10, 1]
+            for interval in nav_intervals:
+                # Large Nav Text
+                label = tk.Label(frame, text=F'Move {interval}')
+                label.grid(row=row, column=col, sticky=tk.NSEW)
+                col += 1
+
+                # Large Nav Buttons
+                for direction in directions:
+                    button = tk.Button(
+                        frame, borderwidth=1, text=direction[0],
+                        command=partial(
+                            self.move_text, text_id,
+                            direction[1] * interval,
+                            direction[2] * interval))
+                    button.grid(row=row, column=col, sticky=tk.NSEW)
+                    col += 1
+
+            # Remove Button
+            remove_button = tk.Button(frame, borderwidth=1, text='Remove',
+                                      command=partial(self.remove_text, text_id))
+            remove_button.grid(row=row, column=col, sticky=tk.NSEW)
+
+            self.text_frames[text_id] = frame
+
     def _open_background_image(self):
         file_path = ask_image_filepath('Select the Background Image', self.working_dir)
         if file_path:
@@ -90,9 +161,12 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
                 filetypes=(('Save Config', '.json'),))
             if config_path:
                 self.img_loader.load_config(config_path)
-                self.saved_img_config = self.img_loader.config.copy()
+                self.saved_img_config = copy.deepcopy(self.img_loader.config)
                 self._set_window_title(config_path)
+
+                # Draw Editor Parts
                 self._draw_menu()  # To enable Insert Box
+                self._draw_text_options()
 
     def _save_config(self):
         config_path = self.config_path
@@ -105,7 +179,7 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
             if not config_path.lower().endswith('.json'):
                 config_path += '.json'
             self.img_loader.save_config(config_path)
-            self.saved_img_config = self.img_loader.config.copy()
+            self.saved_img_config = copy.deepcopy(self.img_loader.config)
             self._set_window_title(config_path)
 
     def _set_window_title(self, path):
@@ -117,6 +191,7 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
 
     def exit(self):
         can_exit = True
+
         if self.unsaved_changes:
             if not messagebox.askyesno('Unsaved Changes', 'Exit without Saving?'):
                 can_exit = False
@@ -131,6 +206,18 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
         if answer:
             key = str(datetime.datetime.now())
             self.img_loader.add_text(text_id=key, text=answer, pos_x=100, pos_y=100)
+
+            # Draw Editor Parts
+            self._draw_text_options()
+
+    def move_text(self, idx, move_x, move_y):
+        self.img_loader.move_text(text_id=idx, move_x=move_x, move_y=move_y)
+
+    def remove_text(self, idx):
+        logger.debug(F'Config Before Removal: {self.img_loader.config}')
+        self.img_loader.remove_text(text_id=idx)
+        logger.debug(F'Config After Removal: {self.img_loader.config}')
+        self._draw_text_options()
 
 
 def ask_directory(title):
