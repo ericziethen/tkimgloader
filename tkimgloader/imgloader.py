@@ -75,3 +75,4 @@ class ConfigDrawer():
 
     def remove_text(self, *, text_id):
         del self.config['text'][text_id]
+        self.draw()

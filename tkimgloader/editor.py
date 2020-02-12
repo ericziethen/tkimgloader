@@ -23,8 +23,11 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
         self.working_dir = working_dir
         self.canvas = None
         self.columnspan = 20
+        self.text_items = {}
 
         self.config_path = None
+
+        self.text_frames = {}
 
         # Init the Canvas
         self._init_canvas()
@@ -38,6 +41,10 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
 
         # draw the text options
         self._draw_text_options()
+
+
+
+
 
     # TODO - Does this still work?
     @property
@@ -78,11 +85,28 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
     def _draw_text_options(self):
         logger.debug(F'Drawing Text Options for: {self.img_loader.config["text"]}')
 
+        frame = tk.Frame(self.root_window, width=self.root_window.winfo_screenwidth(), borderwidth=1, highlightthickness=1, bg="", colormap="new")
+        frame.grid(row=1, columnspan=self.columnspan, sticky=tk.NSEW)
+        frame.grid_columnconfigure(0, weight=1)
+        for span in range(self.columnspan):
+            label = tk.Label(frame, text=F'{span}')
+            label.grid(row=1, column=span, sticky=tk.NSEW)
+
+
+
+
+
+
+
+        for frame in self.text_frames.values():
+            frame.destroy()
+
         directions = [
             ('▲', 0, -1),
             ('▼', 0, 1),
             ('◀', -1, 0),
             ('▶', 1, 0)]
+
 
         row = 0
         for _, (text_id, text_details) in enumerate(self.img_loader.config['text'].items()):
@@ -91,30 +115,45 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
             row += 1
             col = 0
 
+            frame = tk.Frame(self.root_window, width=self.root_window.winfo_screenwidth(),  bg="", colormap="new")
+            frame.grid(row=row, columnspan=self.columnspan)
+
             # Actual Text
-            label = tk.Label(self.root_window, text=F'{text} [{text_details["x"]},{text_details["y"]}]')
+            label = tk.Label(frame, text=F'{text} [{text_details["x"]},{text_details["y"]}]')
             label.grid(row=row, column=col)
-            self.root_window.grid_columnconfigure(col, weight=1)
+            frame.grid_columnconfigure(col, weight=1)
+            #self.text_items[text].append(label)
             col += 1
 
+            # Text Moving Navigation
             nav_intervals = [50, 10, 1]
             for interval in nav_intervals:
                 # Large Nav Text
-                label = tk.Label(self.root_window, text=F'Move {interval}')
+                label = tk.Label(frame, text=F'Move {interval}')
                 label.grid(row=row, column=col)
-                self.root_window.grid_columnconfigure(col, weight=1)
+                #self.text_items[text].append(label)
+                frame.grid_columnconfigure(col, weight=1)
                 col += 1
 
                 # Large Nav Buttons
                 for direction in directions:
                     button = tk.Button(
-                        self.root_window, borderwidth=1, text=direction[0],
+                        frame, borderwidth=1, text=direction[0],
                         command=partial(
                             self.move_text, text_id,
                             direction[1] * interval,
                             direction[2] * interval))
                     button.grid(row=row, column=col)
+                    #self.text_items[text].append(button)
                     col += 1
+
+            # Remove Button
+            remove_button = tk.Button(frame, borderwidth=1, text='Remove',
+                                      command=partial(self.remove_text, text_id))
+            remove_button.grid(row=row, column=col)
+            #self.text_items[text].append(remove_button)
+
+            self.text_frames[text_id] = frame
 
     def _open_background_image(self):
         file_path = ask_image_filepath('Select the Background Image', self.working_dir)
@@ -187,6 +226,13 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
 
     def move_text(self, idx, move_x, move_y):
         self.img_loader.move_text(text_id=idx, move_x=move_x, move_y=move_y)
+
+
+    def remove_text(self, idx):
+        logger.debug(F'Config Before Removal: {self.img_loader.config}')
+        self.img_loader.remove_text(text_id=idx)
+        logger.debug(F'Config After Removal: {self.img_loader.config}')
+        self._draw_text_options()
 
 
 def ask_directory(title):
