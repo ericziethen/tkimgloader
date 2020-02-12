@@ -42,8 +42,6 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
         # draw the text options
         self._draw_text_options()
 
-
-    # TODO - Does this still work?
     @property
     def unsaved_changes(self):
         return self.img_loader.config != self.saved_img_config
@@ -79,7 +77,7 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
 
         self.root_window.config(menu=menubar)
 
-    def _draw_text_options(self):
+    def _draw_text_options(self):  # pylint: disable=too-many-locals
         logger.debug(F'Drawing Text Options for: {self.img_loader.config["text"]}')
 
         # Remove existing frames to redraw
@@ -105,13 +103,14 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
                 sep.grid(column=0, row=row, columnspan=self.columnspan, sticky='ew')
                 row += 1
 
-            frame = tk.Frame(self.root_window, width=self.root_window.winfo_screenwidth(), bg="SystemButtonFace", colormap="new")
+            frame = tk.Frame(self.root_window, width=self.root_window.winfo_screenwidth(),
+                             bg="SystemButtonFace", colormap="new")
             frame.grid(row=row, columnspan=self.columnspan, sticky=tk.NSEW)
 
             # Actual Text
             text_col_span = 4
             label = tk.Label(frame, text=F'{text} [{text_details["x"]},{text_details["y"]}]', anchor="w")
-            label.grid(row=row, column=col, columnspan=4, sticky=tk.W)
+            label.grid(row=row, column=col, columnspan=text_col_span, sticky=tk.W)
             frame.grid_columnconfigure(col, weight=1)
             col += text_col_span
 
@@ -121,7 +120,6 @@ class ImgEditor():  # pylint: disable=too-many-instance-attributes
                 # Large Nav Text
                 label = tk.Label(frame, text=F'Move {interval}')
                 label.grid(row=row, column=col, sticky=tk.NSEW)
-                #frame.grid_columnconfigure(col, weight=1)
                 col += 1
 
                 # Large Nav Buttons
