@@ -1,5 +1,4 @@
 
-import copy
 import datetime
 import logging
 import os
@@ -32,17 +31,12 @@ class ImgEditor():
 
         # Init the Config Drawer
         self.img_loader = ConfigDrawer(self.canvas)
-        self.saved_img_config = copy.deepcopy(self.img_loader.config)
 
         # Draw the Menu Bar
         self._draw_menu()
 
         # draw the text options
         self._draw_text_options()
-
-    @property
-    def unsaved_changes(self):
-        return self.img_loader.config != self.saved_img_config
 
     def _init_canvas(self):
         self.root_window.title(F'Config: N/A')
@@ -151,7 +145,7 @@ class ImgEditor():
 
     def _load_config(self):
         can_load = True
-        if self.unsaved_changes:
+        if self.img_loader.unsaved_changes:
             if not messagebox.askyesno('Unsaved Changes', 'Load Config without saving?'):
                 can_load = False
 
@@ -161,7 +155,6 @@ class ImgEditor():
                 filetypes=(('Save Config', '.json'),))
             if config_path:
                 self.img_loader.load_config(config_path)
-                self.saved_img_config = copy.deepcopy(self.img_loader.config)
 
                 # Draw Editor Parts
                 self._draw_menu()  # To enable Insert Box
@@ -178,7 +171,6 @@ class ImgEditor():
             if not config_path.lower().endswith('.json'):
                 config_path += '.json'
             self.img_loader.save_config(config_path)
-            self.saved_img_config = copy.deepcopy(self.img_loader.config)
 
     def _get_rel_path(self, path):
         return os.path.relpath(path, self.working_dir)
@@ -186,7 +178,7 @@ class ImgEditor():
     def exit(self):
         can_exit = True
 
-        if self.unsaved_changes:
+        if self.img_loader.unsaved_changes:
             if not messagebox.askyesno('Unsaved Changes', 'Exit without Saving?'):
                 can_exit = False
 
