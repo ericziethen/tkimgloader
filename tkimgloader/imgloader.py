@@ -1,4 +1,5 @@
 
+import copy
 import json
 import logging
 
@@ -13,6 +14,7 @@ class ConfigDrawer():
     def __init__(self, canvas):
         self.canvas = canvas
         self.config = {'background': None, 'text': {}}
+        self.saved_img_config = copy.deepcopy(self.config)
         self.images = {}
         self.config_path = None
 
@@ -25,6 +27,10 @@ class ConfigDrawer():
         if self.config['background']:
             return (self.images['background'].width(), self.images['background'].height())
         return (0, 0)
+
+    @property
+    def unsaved_changes(self):
+        return self.config != self.saved_img_config
 
     @background.setter
     def background(self, file_path):
@@ -56,15 +62,15 @@ class ConfigDrawer():
                     font="Times 10 italic bold", text=text_dict['text'])
 
     def load_config(self, config_path):
-        with open(config_path) as file_ptr:
-            self.config = json.load(file_ptr)
-            self.config_path = config_path
-            self.draw()
+        self.config = load_json(config_path)
+        self.config_path = config_path
+        self.saved_img_config = copy.deepcopy(self.config)
+        self.draw()
 
     def save_config(self, config_path):
-        with open(config_path, 'w') as file_ptr:
-            json.dump(self.config, file_ptr, indent=4)
-            self.config_path = config_path
+        dump_json(config_path, self.config)
+        self.config_path = config_path
+        self.saved_img_config = copy.deepcopy(self.config)
 
     def add_text(self, *, text_id, text, pos_x, pos_y):
         self.config['text'][text_id] = {'text': text, 'x': pos_x, 'y': pos_y}
@@ -84,3 +90,13 @@ class ConfigDrawer():
     def remove_text(self, *, text_id):
         del self.config['text'][text_id]
         self.draw()
+
+
+def load_json(file_path):
+    with open(file_path) as file_ptr:
+        return json.load(file_ptr)
+
+
+def dump_json(file_path, config):
+    with open(file_path, 'w') as file_ptr:
+        json.dump(config, file_ptr, indent=4)
