@@ -61,35 +61,43 @@ class ConfigDrawer():
                     text_dict['x'], text_dict['y'], anchor=tk.NW,
                     font="Times 10 italic bold", text=text_dict['text'])
 
-    def load_config(self, config_path):
+    def load_config(self, config_path, *, redraw=True):
         self.config = load_json(config_path)
         self.config_path = config_path
         self.saved_img_config = copy.deepcopy(self.config)
-        self.draw()
+        if redraw:
+            self.draw()
 
     def save_config(self, config_path):
         dump_json(config_path, self.config)
         self.config_path = config_path
         self.saved_img_config = copy.deepcopy(self.config)
 
-    def add_text(self, *, text_id, text, pos_x, pos_y):
+    # Text Related Functionality
+    def add_text(self, *, text_id, text, pos_x, pos_y, redraw=True):
         self.config['text'][text_id] = {'text': text, 'x': pos_x, 'y': pos_y}
-        self.draw()
+        if redraw:
+            self.draw()
 
-    def update_text(self, *, text_id, pos_x, pos_y):
+    def update_text(self, *, text_id, pos_x, pos_y, redraw=True):
         self.config['text'][text_id]['x'] = pos_x
         self.config['text'][text_id]['y'] = pos_y
-        self.draw()
+        if redraw:
+            self.draw()
 
-    def move_text(self, *, text_id, move_x, move_y):
+    def move_text(self, *, text_id, move_x, move_y, redraw=True):
         self.update_text(
             text_id=text_id,
             pos_x=self.config['text'][text_id]['x'] + move_x,
-            pos_y=self.config['text'][text_id]['y'] + move_y)
+            pos_y=self.config['text'][text_id]['y'] + move_y,
+            redraw=redraw)
 
-    def remove_text(self, *, text_id):
+    def remove_text(self, *, text_id, redraw=True):
         del self.config['text'][text_id]
-        self.draw()
+        if redraw:
+            self.draw()
+
+    # Image Button Related Functionality
 
 
 def load_json(file_path):
