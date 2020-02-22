@@ -54,7 +54,6 @@ def test_adjust_button_position():
     assert drawer.config['image_buttons']['butt1']['y'] == 600
 
 
-'''
 def test_move_button_relative():
     drawer = ConfigDrawer('fake_canvas')
 
@@ -62,8 +61,11 @@ def test_move_button_relative():
     assert drawer.config['image_buttons']['butt1']['x'] == 100
     assert drawer.config['image_buttons']['butt1']['y'] == 200
 
-    drawer.move_image_button(button_id='butt1', move_x=400, move_y=-50, redraw=False)
-'''
+    drawer.move_image_button(button_id='butt1', move_x=150, move_y=-75, redraw=False)
+    assert drawer.config['image_buttons']['butt1']['x'] == 250
+    assert drawer.config['image_buttons']['butt1']['y'] == 125
+    
+
 
 '''
 

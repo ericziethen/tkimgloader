@@ -123,6 +123,13 @@ class ConfigDrawer():
         if redraw:
             self.draw()
 
+    def move_image_button(self, *, button_id, move_x, move_y, redraw=True):
+        self.update_image_position(
+            button_id=button_id,
+            pos_x=self.config['image_buttons'][button_id]['x'] + move_x,
+            pos_y=self.config['image_buttons'][button_id]['y'] + move_y,
+            redraw=redraw)
+
 
 
 
