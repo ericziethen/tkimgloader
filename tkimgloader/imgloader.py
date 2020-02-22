@@ -103,6 +103,9 @@ class ConfigDrawer():
 
     # Image Button Related Functionality
     def add_image_button(self, *, button_id, pos_x, pos_y, orig_on_release, images, redraw=True):
+        if button_id in self.config['image_buttons']:
+            raise ValueError('No Duplicate IDs for Buttons allowed')
+
         button_dic = {
             'x': pos_x,
             'y': pos_y,

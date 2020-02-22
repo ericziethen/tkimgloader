@@ -1,4 +1,6 @@
 
+import pytest
+
 from imgloader import ConfigDrawer
 
 
@@ -23,15 +25,25 @@ def test_add_button():
     assert drawer.config['image_buttons']['butt1']['images']['3'] == 'path3'
 
 
+def test_add_button_orig_image_on_release():
+    drawer = ConfigDrawer('fake_canvas')
 
+    drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1', 'path2', 'path3'], redraw=False)
+
+    assert drawer.config['image_buttons']['butt1']['orig_image_on_release']
+
+
+def test_reject_duplicate_ids():
+    drawer = ConfigDrawer('fake_canvas')
+
+    drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1', 'path2', 'path3'], redraw=False)
+
+    with pytest.raises(ValueError):
+        drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1', 'path2', 'path3'], redraw=False)
 
 
 '''
-def test_add_button_orig_image_on_release():
-    assert False
 
-def test_reject_duplicate_ids():
-    assert False
 
 def test_move_button():
     assert False
