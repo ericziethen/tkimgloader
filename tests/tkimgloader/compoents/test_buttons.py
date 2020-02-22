@@ -2,21 +2,46 @@
 from imgloader import ConfigDrawer
 
 
-#def test_add_button()
+def test_button_dic_initialized():
+    drawer = ConfigDrawer('fake_canvas')
+
+    assert 'image_buttons' in drawer.config
+    assert not drawer.config['image_buttons']
+
+
+def test_add_button():
+    drawer = ConfigDrawer('fake_canvas')
+
+    drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=False, images=['path1', 'path2', 'path3'], redraw=False)
+
+    assert 'butt1' in drawer.config['image_buttons']
+    assert drawer.config['image_buttons']['butt1']['x']
+    assert drawer.config['image_buttons']['butt1']['y']
+    assert drawer.config['image_buttons']['butt1']['orig_image_on_release'] == False
+    assert drawer.config['image_buttons']['butt1']['images']['1'] == 'path1'
+    assert drawer.config['image_buttons']['butt1']['images']['2'] == 'path2'
+    assert drawer.config['image_buttons']['butt1']['images']['3'] == 'path3'
 
 
 
 
 
+'''
+def test_add_button_orig_image_on_release():
+    assert False
 
+def test_reject_duplicate_ids():
+    assert False
 
+def test_move_button():
+    assert False
 
+def test_remove_current_image():
+    assert False
 
-
-
-
-
-
+def test_remove_button():
+    assert False
+'''
 
 '''
 
@@ -50,7 +75,7 @@ Roles for Button/Switches
 
 Expected Config:
 
-    "buttons": {
+    "image_buttons": {
         "{id}": {
                 "x": 100,
                 "y": 100,
