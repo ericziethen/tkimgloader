@@ -135,6 +135,79 @@ def test_show_next_previous_image_single_image():
     assert drawer.config['image_buttons']['butt1']['current_image'] == 1
 
 
+def test_remove_button():
+    drawer = ConfigDrawer('fake_canvas')
+
+    drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1'], redraw=False)
+    assert 'butt1' in drawer.config['image_buttons']
+
+    drawer.remove_image_button(button_id='butt1', redraw=False)
+    assert 'butt1' not in drawer.config['image_buttons']
+
+
+def test_remove_current_image_reindex_list():
+    drawer = ConfigDrawer('fake_canvas')
+
+    drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=False,
+        images=['path1', 'path2', 'path3', 'path4'], redraw=False)
+
+    assert len(drawer.config['image_buttons']['butt1']['images']) == 4
+    assert drawer.config['image_buttons']['butt1']['images']['1'] == 'path1'
+    assert drawer.config['image_buttons']['butt1']['images']['2'] == 'path2'
+    assert drawer.config['image_buttons']['butt1']['images']['3'] == 'path3'
+    assert drawer.config['image_buttons']['butt1']['images']['4'] == 'path4'
+    assert drawer.config['image_buttons']['butt1']['current_image'] == 1
+
+    drawer.remove_current_button_image(button_id='butt1', redraw=False)
+    assert len(drawer.config['image_buttons']['butt1']['images']) == 3
+    assert drawer.config['image_buttons']['butt1']['images']['1'] == 'path2'
+    assert drawer.config['image_buttons']['butt1']['images']['2'] == 'path3'
+    assert drawer.config['image_buttons']['butt1']['images']['3'] == 'path4'
+    assert drawer.config['image_buttons']['butt1']['current_image'] == 3
+
+
+
+
+
+'''
+def test_remove_last_image_delete_button():
+
+def test_remove_middle_image():
+
+
+def test_remove_last_image():
+
+def test_remove_current_image():
+    drawer = ConfigDrawer('fake_canvas')
+
+    drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True,
+                            images=['path1', 'path2', 'path3', 'path4', 'path5'], redraw=False)
+
+    assert len(drawer.config['image_buttons']['butt1']['images']) == 4
+    assert drawer.config['image_buttons']['butt1']['current_image'] == 1
+
+    # Remove First Image
+    drawer.remove_current_button_image(button_id='butt1', redraw=False)
+    assert len(drawer.config['image_buttons']['butt1']['images']) == 4
+    assert drawer.config['image_buttons']['butt1']['current_image'] == 4
+
+    # Remove Last Image
+
+
+    # Remove Middle Image
+
+
+    drawer.next_button_image(button_id='butt1', redraw=False)
+    drawer.next_button_image(button_id='butt1', redraw=False)
+    assert drawer.config['image_buttons']['butt1']['current_image'] == 3
+
+    drawer.remove_current_button_image(button_id='butt1', redraw=False)
+    assert len(drawer.config['image_buttons']['butt1']['images']) == 3
+    assert drawer.config['image_buttons']['butt1']['current_image'] == 2
+'''
+
+
+
 '''
 
 

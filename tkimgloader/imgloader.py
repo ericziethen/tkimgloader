@@ -163,6 +163,40 @@ class ConfigDrawer():
         if redraw and (previous_image != button['current_image']):
             self.draw()
 
+    def remove_current_button_image(self, *, button_id, redraw=True):
+        # Delete this buttn if its the only image that is deleted
+        if len(self.config['image_buttons'][button_id]['images']) == 1:
+            self.remove_image_button(button_id=button_id, redraw=redraw)
+        else:
+            button = self.config['image_buttons'][button_id]
+
+            image_to_delete = button['current_image']
+
+            # Set the previous image as the current one
+            self.previous_button_image(button_id=button_id, redraw=redraw)
+
+            # Remove the Image
+            del button['images'][str(image_to_delete)]
+
+            # Reindex the remaining images
+            image_dic = {str(idx): path for idx, path in enumerate(button['images'].values(), 1)}
+            button['images'] = image_dic
+
+            # Set the new Current Image
+            if image_to_delete > 1:
+                button['current_image'] = image_to_delete - 1
+            else:
+                button['current_image'] = len(button['images'])
+
+            if redraw:
+                self.draw()
+
+    def remove_image_button(self, *, button_id, redraw=True):
+        del self.config['image_buttons'][button_id]
+
+        if redraw:
+            self.draw()
+
 
 def load_json(file_path):
     with open(file_path) as file_ptr:
