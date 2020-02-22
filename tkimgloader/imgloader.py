@@ -32,6 +32,7 @@ class ConfigDrawer():
     def unsaved_changes(self):
         return self.config != self.saved_img_config
 
+
     @background.setter
     def background(self, file_path):
         self.config['background'] = file_path
@@ -107,10 +108,13 @@ class ConfigDrawer():
         if button_id in self.config['image_buttons']:
             raise ValueError('No Duplicate IDs for Buttons allowed')
 
+        if not images:
+            raise ValueError('Image list cannot be empty')
+
         image_dic = {str(idx): path for idx, path in enumerate(images, 1)}
         current_image = None
         if '1' in image_dic:
-            current_image = image_dic['1']
+            current_image = 1
 
         button_dic = {
             'x': pos_x,
@@ -137,8 +141,16 @@ class ConfigDrawer():
             pos_y=self.config['image_buttons'][button_id]['y'] + move_y,
             redraw=redraw)
 
+    def next_button_image(self, *, button_id, redraw=True):
+        button = self.config['image_buttons'][button_id]
+        previous_image = button['current_image']
+        if len(button['images']) > button['current_image']:
+            button['current_image'] += 1
+        else:
+            button['current_image'] = 1
 
-
+        if redraw and (previous_image != button['current_image']):
+            self.draw()
 
 
 
