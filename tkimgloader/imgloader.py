@@ -152,9 +152,16 @@ class ConfigDrawer():
         if redraw and (previous_image != button['current_image']):
             self.draw()
 
+    def previous_button_image(self, *, button_id, redraw=True):
+        button = self.config['image_buttons'][button_id]
+        previous_image = button['current_image']
+        if button['current_image'] > 1:
+            button['current_image'] -= 1
+        else:
+            button['current_image'] = len(button['images'])
 
-
-
+        if redraw and (previous_image != button['current_image']):
+            self.draw()
 
 
 def load_json(file_path):

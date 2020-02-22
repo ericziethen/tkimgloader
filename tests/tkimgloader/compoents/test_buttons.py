@@ -98,7 +98,29 @@ def test_show_next_image():
     assert drawer.config['image_buttons']['butt1']['current_image'] == 1
 
 
-def test_show_next_image_single_image():
+def test_show_previous_image():
+    drawer = ConfigDrawer('fake_canvas')
+
+    drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True,
+                            images=['path1', 'path2', 'path3', 'path2'], redraw=False)
+
+    assert len(drawer.config['image_buttons']['butt1']['images']) == 4
+    assert drawer.config['image_buttons']['butt1']['current_image'] == 1
+
+    drawer.previous_button_image(button_id='butt1', redraw=False)
+    assert drawer.config['image_buttons']['butt1']['current_image'] == 4
+
+    drawer.previous_button_image(button_id='butt1', redraw=False)
+    assert drawer.config['image_buttons']['butt1']['current_image'] == 3
+
+    drawer.previous_button_image(button_id='butt1', redraw=False)
+    assert drawer.config['image_buttons']['butt1']['current_image'] == 2
+
+    drawer.previous_button_image(button_id='butt1', redraw=False)
+    assert drawer.config['image_buttons']['butt1']['current_image'] == 1
+
+
+def test_show_next_previous_image_single_image():
     drawer = ConfigDrawer('fake_canvas')
 
     drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1'], redraw=False)
@@ -109,16 +131,13 @@ def test_show_next_image_single_image():
     drawer.next_button_image(button_id='butt1', redraw=False)
     assert drawer.config['image_buttons']['butt1']['current_image'] == 1
 
-
-
+    drawer.previous_button_image(button_id='butt1', redraw=False)
+    assert drawer.config['image_buttons']['butt1']['current_image'] == 1
 
 
 '''
 
-def test_show_previous_image():
-    assert False
 
-def test_show_previous_image_single_image():
 
 
 def test_remove_current_image():
