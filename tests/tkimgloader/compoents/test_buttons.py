@@ -149,7 +149,7 @@ def test_remove_current_image_reindex_list():
     drawer = ConfigDrawer('fake_canvas')
 
     drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=False,
-        images=['path1', 'path2', 'path3', 'path4'], redraw=False)
+                            images=['path1', 'path2', 'path3', 'path4'], redraw=False)
 
     assert len(drawer.config['image_buttons']['butt1']['images']) == 4
     assert drawer.config['image_buttons']['butt1']['images']['1'] == 'path1'
@@ -166,63 +166,17 @@ def test_remove_current_image_reindex_list():
     assert drawer.config['image_buttons']['butt1']['current_image'] == 3
 
 
-
-
-
-'''
 def test_remove_last_image_delete_button():
-
-def test_remove_middle_image():
-
-
-def test_remove_last_image():
-
-def test_remove_current_image():
     drawer = ConfigDrawer('fake_canvas')
 
-    drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True,
-                            images=['path1', 'path2', 'path3', 'path4', 'path5'], redraw=False)
-
-    assert len(drawer.config['image_buttons']['butt1']['images']) == 4
-    assert drawer.config['image_buttons']['butt1']['current_image'] == 1
-
-    # Remove First Image
-    drawer.remove_current_button_image(button_id='butt1', redraw=False)
-    assert len(drawer.config['image_buttons']['butt1']['images']) == 4
-    assert drawer.config['image_buttons']['butt1']['current_image'] == 4
-
-    # Remove Last Image
-
-
-    # Remove Middle Image
-
-
-    drawer.next_button_image(button_id='butt1', redraw=False)
-    drawer.next_button_image(button_id='butt1', redraw=False)
-    assert drawer.config['image_buttons']['butt1']['current_image'] == 3
+    drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1'], redraw=False)
+    assert 'butt1' in drawer.config['image_buttons']
 
     drawer.remove_current_button_image(button_id='butt1', redraw=False)
-    assert len(drawer.config['image_buttons']['butt1']['images']) == 3
-    assert drawer.config['image_buttons']['butt1']['current_image'] == 2
-'''
-
+    assert 'butt1' not in drawer.config['image_buttons']
 
 
 '''
-
-
-
-
-def test_remove_current_image():
-    assert False
-
-
-def test_remove_button():
-    assert False
-'''
-
-'''
-
 Current config is something like
     {
         "background": "AufstellungsScreen\\grafik_cpr-0000001450_Background.jpg",
@@ -270,8 +224,6 @@ Expected Config:
 
         }
     }
-
-
 
 
 '''
