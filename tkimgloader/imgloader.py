@@ -63,6 +63,7 @@ class ConfigDrawer():
 
         # Draw image Buttons
         # TODO
+        # TODO - Keep a local Image storage with the path as key to swap easily
 
 
     def load_config(self, config_path, *, redraw=True):
@@ -106,11 +107,17 @@ class ConfigDrawer():
         if button_id in self.config['image_buttons']:
             raise ValueError('No Duplicate IDs for Buttons allowed')
 
+        image_dic = {str(idx): path for idx, path in enumerate(images, 1)}
+        current_image = None
+        if '1' in image_dic:
+            current_image = image_dic['1']
+
         button_dic = {
             'x': pos_x,
             'y': pos_y,
             'orig_image_on_release': orig_on_release,
-            'images': {str(idx): path for idx, path in enumerate(images, 1)}
+            'current_image': current_image,
+            'images': image_dic
         }
 
         self.config['image_buttons'][button_id] = button_dic

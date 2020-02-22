@@ -23,6 +23,7 @@ def test_add_button():
     assert drawer.config['image_buttons']['butt1']['images']['1'] == 'path1'
     assert drawer.config['image_buttons']['butt1']['images']['2'] == 'path2'
     assert drawer.config['image_buttons']['butt1']['images']['3'] == 'path3'
+    assert drawer.config['image_buttons']['butt1']['current_image'] == 'path1'
 
 
 def test_add_button_orig_image_on_release():
@@ -64,15 +65,21 @@ def test_move_button_relative():
     drawer.move_image_button(button_id='butt1', move_x=150, move_y=-75, redraw=False)
     assert drawer.config['image_buttons']['butt1']['x'] == 250
     assert drawer.config['image_buttons']['butt1']['y'] == 125
-    
+
+
+def test_remove_current_image():
+    assert False
+
+
+
+
 
 
 '''
 
 
 
-def test_remove_current_image():
-    assert False
+
 
 def test_remove_button():
     assert False
