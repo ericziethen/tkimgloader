@@ -17,7 +17,7 @@ def test_add_button():
     assert 'butt1' in drawer.config['image_buttons']
     assert drawer.config['image_buttons']['butt1']['x']
     assert drawer.config['image_buttons']['butt1']['y']
-    assert drawer.config['image_buttons']['butt1']['orig_image_on_release'] == False
+    assert not drawer.config['image_buttons']['butt1']['orig_image_on_release']
     assert drawer.config['image_buttons']['butt1']['images']['1'] == 'path1'
     assert drawer.config['image_buttons']['butt1']['images']['2'] == 'path2'
     assert drawer.config['image_buttons']['butt1']['images']['3'] == 'path3'
