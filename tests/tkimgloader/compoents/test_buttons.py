@@ -17,8 +17,8 @@ def test_add_button():
     drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=False, images=['path1', 'path2', 'path3'], redraw=False)
 
     assert 'butt1' in drawer.config['image_buttons']
-    assert drawer.config['image_buttons']['butt1']['x']
-    assert drawer.config['image_buttons']['butt1']['y']
+    assert drawer.config['image_buttons']['butt1']['x'] == 100
+    assert drawer.config['image_buttons']['butt1']['y'] == 200
     assert not drawer.config['image_buttons']['butt1']['orig_image_on_release']
     assert drawer.config['image_buttons']['butt1']['images']['1'] == 'path1'
     assert drawer.config['image_buttons']['butt1']['images']['2'] == 'path2'
@@ -42,11 +42,32 @@ def test_reject_duplicate_ids():
         drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1', 'path2', 'path3'], redraw=False)
 
 
+def test_adjust_button_position():
+    drawer = ConfigDrawer('fake_canvas')
+
+    drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1', 'path2', 'path3'], redraw=False)
+    assert drawer.config['image_buttons']['butt1']['x'] == 100
+    assert drawer.config['image_buttons']['butt1']['y'] == 200
+
+    drawer.update_image_position(button_id='butt1', pos_x=400, pos_y=600, redraw=False)
+    assert drawer.config['image_buttons']['butt1']['x'] == 400
+    assert drawer.config['image_buttons']['butt1']['y'] == 600
+
+
+'''
+def test_move_button_relative():
+    drawer = ConfigDrawer('fake_canvas')
+
+    drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1', 'path2', 'path3'], redraw=False)
+    assert drawer.config['image_buttons']['butt1']['x'] == 100
+    assert drawer.config['image_buttons']['butt1']['y'] == 200
+
+    drawer.move_image_button(button_id='butt1', move_x=400, move_y=-50, redraw=False)
+'''
+
 '''
 
 
-def test_move_button():
-    assert False
 
 def test_remove_current_image():
     assert False

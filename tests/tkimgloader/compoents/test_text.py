@@ -13,19 +13,19 @@ def test_text_added_in_config():
     assert drawer.config['text']['id']['y'] == 200
 
 
-def test_adjust_text():
+def test_adjust_text_position():
     drawer = ConfigDrawer('fake_canvas')
 
     drawer.add_text(text_id='id', text='sample_text', pos_x=100, pos_y=200, redraw=False)
     assert drawer.config['text']['id']['x'] == 100
     assert drawer.config['text']['id']['y'] == 200
 
-    drawer.update_text(text_id='id', pos_x=400, pos_y=500, redraw=False)
+    drawer.update_text_position(text_id='id', pos_x=400, pos_y=500, redraw=False)
     assert drawer.config['text']['id']['x'] == 400
     assert drawer.config['text']['id']['y'] == 500
 
 
-def test_move_text():
+def test_move_text_relative():
     drawer = ConfigDrawer('fake_canvas')
 
     drawer.add_text(text_id='id', text='sample_text', pos_x=100, pos_y=200, redraw=False)

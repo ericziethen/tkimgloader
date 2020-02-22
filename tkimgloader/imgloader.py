@@ -83,14 +83,14 @@ class ConfigDrawer():
         if redraw:
             self.draw()
 
-    def update_text(self, *, text_id, pos_x, pos_y, redraw=True):
+    def update_text_position(self, *, text_id, pos_x, pos_y, redraw=True):
         self.config['text'][text_id]['x'] = pos_x
         self.config['text'][text_id]['y'] = pos_y
         if redraw:
             self.draw()
 
     def move_text(self, *, text_id, move_x, move_y, redraw=True):
-        self.update_text(
+        self.update_text_position(
             text_id=text_id,
             pos_x=self.config['text'][text_id]['x'] + move_x,
             pos_y=self.config['text'][text_id]['y'] + move_y,
@@ -117,7 +117,11 @@ class ConfigDrawer():
         if redraw:
             self.draw()
 
-
+    def update_image_position(self, *, button_id, pos_x, pos_y, redraw=True):
+        self.config['image_buttons'][button_id]['x'] = pos_x
+        self.config['image_buttons'][button_id]['y'] = pos_y
+        if redraw:
+            self.draw()
 
 
 
