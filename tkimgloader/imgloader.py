@@ -1,5 +1,6 @@
 
 import copy
+import functools
 import json
 import logging
 
@@ -106,11 +107,25 @@ class ConfigDrawer():
                 self.images[img_path] = image
 
             img_button = self.canvas.create_image(button_dic['x'], button_dic['y'], image=image)
+            self.canvas.tag_bind(img_button, '<Button-1>',
+                                 functools.partial(self.image_button_pressed, button_id=button_id))
+            self.canvas.tag_bind(img_button, '<ButtonRelease-1>',
+                                 functools.partial(self.image_button_released, button_id=button_id))
+
+            self.canvas.tag_bind(img_button, '<Button-3>',
+                                 functools.partial(self.image_button_pressed, button_id=button_id))
+            self.canvas.tag_bind(img_button, '<ButtonRelease-3>',
+                                 functools.partial(self.image_button_released, button_id=button_id))
+
+
+            ### TODO - IS THAT ACTUALY NEEDED, 
+            # the id is known from the caller for updating, and we can pass the button id
+            # Maybe we need a update function for each for which we can pass the widget, i.e. from the event?
             self.canvas_image_button_details[button_id]['canvas_id'] = img_button
 
         # TODO - Make sure not creating more and more
         #print('Canvas Items:', self.canvas.find_all())
-        #print('Canvas Item Count:', len(self.canvas.find_all()))
+        print('Canvas Item Count:', len(self.canvas.find_all()))
 
 
     def _load_config(self, config, *, config_path, redraw=True):
@@ -273,6 +288,22 @@ class ConfigDrawer():
 
         if redraw:
             self.draw()
+
+    def image_button_pressed(self, event, *, button_id):
+        if (event.num == 1) and (self.config['image_buttons'][button_id]['orig_image_on_release']):
+            self.next_button_image(button_id=button_id)
+
+    def image_button_released(self, event, *, button_id):
+        # TODO - THe custom callback needs to be called here on button release
+
+
+        if event.num == 1:
+            if self.config['image_buttons'][button_id]['orig_image_on_release']:
+                self.previous_button_image(button_id=button_id)
+            else:
+                self.next_button_image(button_id=button_id)
+        elif (event.num == 3) and not self.config['image_buttons'][button_id]['orig_image_on_release']:
+            self.previous_button_image(button_id=button_id)
 
 
 def load_json(file_path):
