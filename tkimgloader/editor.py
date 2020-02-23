@@ -140,7 +140,7 @@ class ImgEditor():
             logger.debug(F'Filepath Selected: "{file_path}""')
             rel_path = self._get_rel_path(file_path)
             logger.debug(F'Rel Filepath Selected: "{rel_path}"')
-            self.img_loader.background = rel_path
+            self.img_loader.load_background(rel_path)
             self._draw_menu()  # To enable Insert Box
 
     def _load_config(self):
@@ -154,7 +154,7 @@ class ImgEditor():
                 title='Select File to Save', initialdir=self.working_dir,
                 filetypes=(('Save Config', '.json'),))
             if config_path:
-                self.img_loader.load_config(config_path)
+                self.img_loader.load_config_file(config_path)
 
                 # Draw Editor Parts
                 self._draw_menu()  # To enable Insert Box
