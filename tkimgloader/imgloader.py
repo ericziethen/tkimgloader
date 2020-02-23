@@ -22,18 +22,30 @@ class ConfigDrawer():
     def __eq__(self, other):
         # Compare config
         if self.config != other.config:
+            print('##### Config Differs')
+            print(self.config)
+            print(other.config)
             return False
 
         # compare comfig path
         if self.config_path != other.config_path:
+            print('##### Config Path Differs')
+            print(self.config_path)
+            print(other.config_path)
             return False
 
         # compare image keys
         if self.images.keys() != other.images.keys():
+            print('##### Image Keys Differs')
+            print(self.images.keys())
+            print(other.images.keys())
             return False
 
         # compare canvas_image_button_details keys
         if self.canvas_image_button_details.keys() != other.canvas_image_button_details.keys():
+            print('##### Image Button Keys Differs')
+            print(self.canvas_image_button_details.keys())
+            print(other.canvas_image_button_details.keys())
             return False
 
         return True
@@ -52,11 +64,10 @@ class ConfigDrawer():
     def unsaved_changes(self):
         return self.config != self.saved_img_config
 
-
-    @background.setter
-    def background(self, file_path):
-        self.config['background'] = file_path
-        self.draw()
+    def load_background(self, path, redraw=True):
+        self.config['background'] = path
+        if redraw:
+            self.draw()
 
     def draw(self):
         logger.debug(F'Drawing Content: {self.config}')
@@ -102,18 +113,45 @@ class ConfigDrawer():
         #print('Canvas Item Count:', len(self.canvas.find_all()))
 
 
-
-    def load_config(self, config_path, *, redraw=True):
-        self.config = load_json(config_path)
+    def _load_config(self, config, *, config_path, redraw=True):
+        # Set config vars
         self.config_path = config_path
+
+        # Load the background
+        if 'background' in config:
+            self.load_background(config['background'], redraw=False)
+
+        # Load the Text Items
+        if 'text' in config:
+            for text_id, text_item in config['text'].items():
+                self.add_text(text_id=text_id, text=text_item['text'],
+                              pos_x=text_item['x'], pos_y=text_item['y'], redraw=False)
+
+        # Load the image button items
+        if 'image_buttons' in config:
+            for button_id, button_dic in config['image_buttons'].items():
+                self.add_image_button(button_id=button_id, pos_x=button_dic['x'], pos_y=button_dic['y'],
+                                      orig_on_release=button_dic['orig_image_on_release'],
+                                      images=list(button_dic['images'].values()), redraw=False)
+
         self.saved_img_config = copy.deepcopy(self.config)
+
+        # Redraw
         if redraw:
             self.draw()
 
-    def save_config(self, config_path):
+    def load_config_file(self, config_path, *, redraw=True):
+        config = load_json(config_path)
+        self._load_config(config, config_path=config_path, redraw=redraw)
+
+    def save_config_to_file(self, config_path):
         dump_json(config_path, self.config)
         self.config_path = config_path
         self.saved_img_config = copy.deepcopy(self.config)
+
+    def save_config_to_str(self, config):
+        # TODO - work together with save_config
+        pass
 
     # Text Related Functionality
     def add_text(self, *, text_id, text, pos_x, pos_y, redraw=True):
