@@ -60,3 +60,29 @@ def test_save_config_no_unsaved_changes(monkeypatch):
 
     drawer.save_config('fake_path')
     assert not drawer.unsaved_changes
+
+
+def test_save_load_config_identical():
+    # Create 1 Config from Blank $ Confirm empty
+    # Add Text
+    # Add Buttons
+
+    # Save the Config
+
+    # Copy of the output json
+    # Confirm Text there
+    # Confirm Button there
+
+    # Create Config 2 & Confirm Empty
+
+    # Load Config
+    
+    # Call the equal method of the imgloader (compare config, and other things that are setup automatically)
+        # Compare config
+        # Compare imgloader.saved_img_config
+        # Compare imgloader.images
+        # Compare imgloader.canvas_image_button_details
+        # Compare imgloader.config_path
+
+
+    assert False

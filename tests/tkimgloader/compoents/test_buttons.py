@@ -1,6 +1,7 @@
 
 import pytest
 
+import imgloader
 from imgloader import ConfigDrawer
 
 
@@ -24,7 +25,7 @@ def test_add_button():
     assert drawer.config['image_buttons']['butt1']['images']['2'] == 'path2'
     assert drawer.config['image_buttons']['butt1']['images']['3'] == 'path3'
     assert drawer.config['image_buttons']['butt1']['current_image'] == 1
-
+    assert 'butt1' in drawer.canvas_image_button_details
 
 def test_add_button_orig_image_on_release():
     drawer = ConfigDrawer('fake_canvas')
@@ -140,9 +141,11 @@ def test_remove_button():
 
     drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1'], redraw=False)
     assert 'butt1' in drawer.config['image_buttons']
+    assert 'butt1' in drawer.canvas_image_button_details
 
     drawer.remove_image_button(button_id='butt1', redraw=False)
     assert 'butt1' not in drawer.config['image_buttons']
+    assert 'butt1' not in drawer.canvas_image_button_details
 
 
 def test_remove_current_image_reindex_list():
@@ -174,7 +177,6 @@ def test_remove_last_image_delete_button():
 
     drawer.remove_current_button_image(button_id='butt1', redraw=False)
     assert 'butt1' not in drawer.config['image_buttons']
-
 
 '''
 Current config is something like

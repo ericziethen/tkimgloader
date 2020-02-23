@@ -16,6 +16,7 @@ class ConfigDrawer():
         self.config = {'background': None, 'text': {}, 'image_buttons': {}}
         self.saved_img_config = copy.deepcopy(self.config)
         self.images = {}
+        self.canvas_image_button_details = {}  # TODO - unit test for adding callbacks
         self.config_path = None
 
     @property
@@ -66,6 +67,22 @@ class ConfigDrawer():
         # TODO
         # TODO - Keep a local Image storage with the path as key to swap easily
 
+        for button_id, button_dic in self.config['image_buttons'].items():
+            img_path = button_dic['images'][str(button_dic['current_image'])]
+            if img_path in self.images:
+                image = self.images[img_path]
+            else:
+                image = ImageTk.PhotoImage(file=img_path)
+                self.images[img_path] = image
+
+            img_button = self.canvas.create_image(button_dic['x'], button_dic['y'], image=image)
+            self.canvas_image_button_details[button_id]['canvas_id'] = img_button
+
+        # TODO - Make sure not creating more and more
+        #print('Canvas Items:', self.canvas.find_all())
+        #print('Canvas Item Count:', len(self.canvas.find_all()))
+
+
 
     def load_config(self, config_path, *, redraw=True):
         self.config = load_json(config_path)
@@ -110,6 +127,8 @@ class ConfigDrawer():
 
         if not images:
             raise ValueError('Image list cannot be empty')
+
+        self.canvas_image_button_details[button_id] = {}
 
         image_dic = {str(idx): path for idx, path in enumerate(images, 1)}
         current_image = None
@@ -193,6 +212,7 @@ class ConfigDrawer():
 
     def remove_image_button(self, *, button_id, redraw=True):
         del self.config['image_buttons'][button_id]
+        del self.canvas_image_button_details[button_id]
 
         if redraw:
             self.draw()
