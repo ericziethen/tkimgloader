@@ -19,6 +19,25 @@ class ConfigDrawer():
         self.canvas_image_button_details = {}  # TODO - unit test for adding callbacks
         self.config_path = None
 
+    def __eq__(self, other):
+        # Compare config
+        if self.config != other.config:
+            return False
+
+        # compare comfig path
+        if self.config_path != other.config_path:
+            return False
+
+        # compare image keys
+        if self.images.keys() != other.images.keys():
+            return False
+
+        # compare canvas_image_button_details keys
+        if self.canvas_image_button_details.keys() != other.canvas_image_button_details.keys():
+            return False
+
+        return True
+
     @property
     def background(self):
         return self.config['background']

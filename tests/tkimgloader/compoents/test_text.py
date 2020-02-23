@@ -56,3 +56,13 @@ def test_add_text_unsaved_changes():
 
     drawer.add_text(text_id='id', text='sample_text', pos_x=100, pos_y=200, redraw=False)
     assert drawer.unsaved_changes
+
+
+def test_equal_text():
+    drawer1 = ConfigDrawer('fake_canvas')
+    drawer2 = ConfigDrawer('fake_canvas')
+
+    drawer1.add_text(text_id='id', text='sample_text', pos_x=100, pos_y=200, redraw=False)
+    drawer2.add_text(text_id='id', text='sample_text', pos_x=100, pos_y=200, redraw=False)
+
+    assert drawer1 == drawer2

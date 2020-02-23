@@ -178,6 +178,16 @@ def test_remove_last_image_delete_button():
     drawer.remove_current_button_image(button_id='butt1', redraw=False)
     assert 'butt1' not in drawer.config['image_buttons']
 
+
+def test_equal_button():
+    drawer1 = ConfigDrawer('fake_canvas')
+    drawer2 = ConfigDrawer('fake_canvas')
+    
+    drawer1.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1'], redraw=False)
+    drawer2.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1'], redraw=False)
+
+    assert drawer1 == drawer2
+
 '''
 Current config is something like
     {

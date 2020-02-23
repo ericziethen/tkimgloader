@@ -62,6 +62,14 @@ def test_save_config_no_unsaved_changes(monkeypatch):
     assert not drawer.unsaved_changes
 
 
+def test_equal_init():
+    drawer1 = ConfigDrawer('fake_canvas')
+    drawer2 = ConfigDrawer('fake_canvas')
+
+    assert drawer1 == drawer2
+
+
+
 def test_save_load_config_identical():
     # Create 1 Config from Blank $ Confirm empty
     # Add Text
