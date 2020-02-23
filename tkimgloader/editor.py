@@ -186,6 +186,7 @@ class ImgEditor():
             logger.debug('Exit Application')
             self.root_window.quit()
 
+    # Text Related Options
     def add_text(self):
         answer = simpledialog.askstring("Input", "Enter the text to add",
                                         parent=self.root_window)

@@ -11,6 +11,18 @@ from PIL import ImageTk
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
+# TODO Does draw() need to be called all the time?
+#  DO WE EVEN NEED IT,
+# WHAT IF
+#   - Add Methods Write to config and draw from there
+#   - Move/Update/Delete Methods update the config and the widget
+#   - Load Config calls all Item add methods
+#  
+
+
+
+
+
 class ConfigDrawer():
     def __init__(self, canvas):
         self.canvas = canvas
@@ -70,6 +82,8 @@ class ConfigDrawer():
         if redraw:
             self.draw()
 
+    # TODO - THIS IS PROBABLY NOT NEEDED ANYMORE, 
+    # TODO - DO THE STUFF IN EACH METHOD
     def draw(self):
         logger.debug(F'Drawing Content: {self.config}')
 
