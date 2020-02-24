@@ -238,13 +238,27 @@ class ImgEditor():
 
     # Button Related Data
     def add_image_button(self):
+        # TODO - Have a nicer Input Dialog
+
         # Ask for the Button ID
-        answer = simpledialog.askstring("Input", "Enter the unique Button Identifier",
-                                        parent=self.root_window)
+        button_id = simpledialog.askstring("Input", "Enter the unique Button Identifier",
+                                           parent=self.root_window)
 
-        # Ask for the Button Image
+        if button_id:
+            if self.img_loader.image_button_id_available(button_id):
+                # Ask if a BUtton or Switch
+                button_or_switch = messagebox.askyesno("Question","Is this a Button (Otherwise Switch)?")
 
-
+                # Ask for the Button Image
+                file_path_tuple = ask_multi_image_filepath('Select the Button Images', self.working_dir)
+                if file_path_tuple:
+                    img_list = [self._get_rel_path(file_path) for file_path in file_path_tuple]
+                    self.img_loader.add_image_button(
+                        button_id=button_id, pos_x=100, pos_y=200, orig_on_release=button_or_switch, images=img_list)
+                else:
+                    messagebox.showerror('Error', F'At least 1 image needs to be selected')
+            else:
+                messagebox.showerror('Error', F'Button id "{button_id}" already used')
 
 
     def _refresh_screen_data(self):
@@ -264,6 +278,12 @@ def ask_directory(title):
 
 def ask_image_filepath(title, initial_dir):
     return filedialog.askopenfilename(
+        title=title, initialdir=initial_dir,
+        filetypes=(('Image files', '.bmp .gif .jpg .jpeg .png'),))
+
+
+def ask_multi_image_filepath(title, initial_dir):
+    return filedialog.askopenfilenames(
         title=title, initialdir=initial_dir,
         filetypes=(('Image files', '.bmp .gif .jpg .jpeg .png'),))
 
