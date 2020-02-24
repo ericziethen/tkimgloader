@@ -15,6 +15,12 @@ from imgloader import ConfigDrawer
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
+NAV_DIRECTIONS = [
+    ('▲', 0, -1),
+    ('▼', 0, 1),
+    ('◀', -1, 0),
+    ('▶', 1, 0)]
+
 
 class ImgEditor():
     def __init__(self, root, working_dir):
@@ -36,10 +42,7 @@ class ImgEditor():
         self._draw_menu()
 
         # draw the text options
-        self._draw_text_options()
-
-        # draw the image button options
-        self._draw_image_button_options()
+        self._draw_navigation_options()
 
     def _init_canvas(self):
         self.root_window.title(F'Config: N/A')
@@ -77,80 +80,90 @@ class ImgEditor():
         # Set our job to refresh screen data
         self.root_window.after(1000, self._refresh_screen_data)
 
-    def _draw_text_options(self):  # pylint: disable=too-many-locals
+    def _draw_navigation_options(self):  # pylint: disable=too-many-locals
         logger.debug(F'Drawing Text Options for: {self.img_loader.config["text"]}')
 
         # Remove existing frames to redraw
         for frame in self.text_frames.values():
             frame.destroy()
 
-        directions = [
-            ('▲', 0, -1),
-            ('▼', 0, 1),
-            ('◀', -1, 0),
-            ('▶', 1, 0)]
+        # Build up the list of items
+        items_to_draw = {
+            'text': {
+                'move_func': self.move_text,
+                'remove_func': self.remove_text,
+                'label_func': self.form_text_bar_label,
+                'id_list': [text_id for text_id in self.img_loader.config['text']],
+            }
+        }
+
+        print('items_to_draw', items_to_draw)
 
         row = 0
-        for count, (text_id, _) in enumerate(self.img_loader.config['text'].items()):
-            row += 1
-            col = 0
-
-            # Draw the separatpr
-            if count > 0:
-                sep = ttk.Separator(self.root_window, orient=tk.HORIZONTAL)
-                sep.grid(column=0, row=row, columnspan=self.columnspan, sticky='ew')
+        for group_detail in items_to_draw.values():
+            for item_id in group_detail['id_list']:
                 row += 1
+                col = 0
 
-            frame = tk.Frame(self.root_window, width=self.root_window.winfo_width(),
-                             bg="SystemButtonFace", colormap="new")
-            frame.grid(row=row, columnspan=self.columnspan, sticky=tk.NSEW)
+                frame = tk.Frame(self.root_window, width=self.root_window.winfo_width(),
+                                 bg="SystemButtonFace", colormap="new")
+                frame.grid(row=row, columnspan=self.columnspan, sticky=tk.NSEW)
 
-            # Actual Text
-            text_col_span = 4
-            main_text = tk.Label(frame, text=self.form_text_bar_label(text_id), anchor="w")
-            main_text.grid(row=row, column=col, columnspan=text_col_span, sticky=tk.W)
-            frame.grid_columnconfigure(col, weight=1)
-            col += text_col_span
+                # Actual Text
+                text_col_span = 4
+                main_text = tk.Label(frame, text=group_detail['label_func'](item_id), anchor="w")
+                main_text.grid(row=row, column=col, columnspan=text_col_span, sticky=tk.W)
+                frame.grid_columnconfigure(col, weight=1)
+                col += text_col_span
 
-            # Text Moving Navigation
-            nav_intervals = [50, 10, 1]
-            for interval in nav_intervals:
-                # Large Nav Text
-                label = tk.Label(frame, text=F'Move {interval}')
-                label.grid(row=row, column=col, sticky=tk.NSEW)
-                col += 1
-
-                # Large Nav Buttons
-                for direction in directions:
-                    button = tk.Button(
-                        frame, borderwidth=1, text=direction[0],
-                        command=partial(
-                            self.move_text, text_id,
-                            direction[1] * interval,
-                            direction[2] * interval,
-                            main_text_label=main_text))
-                    button.grid(row=row, column=col, sticky=tk.NSEW)
+                # Text Moving Navigation
+                nav_intervals = [50, 10, 1]
+                for interval in nav_intervals:
+                    # Large Nav Text
+                    label = tk.Label(frame, text=F'Move {interval}')
+                    label.grid(row=row, column=col, sticky=tk.NSEW)
                     col += 1
 
-            # Remove Button
-            remove_button = tk.Button(frame, borderwidth=1, text='Remove',
-                                      command=partial(self.remove_text, text_id))
-            remove_button.grid(row=row, column=col, sticky=tk.NSEW)
+                    # Large Nav Buttons
+                    for direction in NAV_DIRECTIONS:
+                        button = tk.Button(
+                            frame, borderwidth=1, text=direction[0],
+                            command=partial(
+                                group_detail['move_func'], item_id,
+                                direction[1] * interval,
+                                direction[2] * interval,
+                                main_text_label=main_text))
+                        button.grid(row=row, column=col, sticky=tk.NSEW)
+                        col += 1
 
-            self.text_frames[text_id] = frame
+                # Remove Button
+                remove_button = tk.Button(
+                    frame, borderwidth=1, text='Remove',
+                    command=partial(group_detail['remove_func'], item_id))
+                remove_button.grid(row=row, column=col, sticky=tk.NSEW)
+                row += 1
 
-    def _draw_image_button_options(self):
-        ''' PSEUDO CODE
+                # Draw the separatpr
+                sep = ttk.Separator(self.root_window, orient=tk.HORIZONTAL)
+                sep.grid(column=0, row=row, columnspan=self.columnspan, sticky='ew')
 
-            for each image button
-                draw the button id
-                draw add additional image button
-                draw remove current image button
-                draw the navigation buttons
-                draw the delete button
+                self.text_frames[item_id] = frame
 
-        '''
+        # Draw button nav
 
+
+
+
+            ''' PSEUDO CODE
+
+                for each image button
+                    draw the button id
+                    draw add additional image button
+                    draw remove current image button
+                    draw the navigation buttons
+                    draw the delete button
+
+            '''
 
 
 
@@ -183,7 +196,7 @@ class ImgEditor():
 
                 # Draw Editor Parts
                 self._draw_menu()  # To enable Insert Box
-                self._draw_text_options()
+                self._draw_navigation_options()
 
     def _save_config(self):
         config_path = self.img_loader.config_path
@@ -220,7 +233,7 @@ class ImgEditor():
             self.img_loader.add_text(text_id=key, text=answer, pos_x=100, pos_y=100)
 
             # Draw Editor Parts
-            self._draw_text_options()
+            self._draw_navigation_options()
 
     def move_text(self, idx, move_x, move_y, *, main_text_label):
         self.img_loader.move_text(text_id=idx, move_x=move_x, move_y=move_y)
@@ -230,7 +243,7 @@ class ImgEditor():
         logger.debug(F'Config Before Removal: {self.img_loader.config}')
         self.img_loader.remove_text(text_id=idx)
         logger.debug(F'Config After Removal: {self.img_loader.config}')
-        self._draw_text_options()
+        self._draw_navigation_options()
 
     def form_text_bar_label(self, text_id):
         text_details = self.img_loader.config['text'][text_id]
@@ -255,6 +268,10 @@ class ImgEditor():
                     img_list = [self._get_rel_path(file_path) for file_path in file_path_tuple]
                     self.img_loader.add_image_button(
                         button_id=button_id, pos_x=100, pos_y=200, orig_on_release=button_or_switch, images=img_list)
+
+                    # Draw Editor Parts
+                    self._draw_navigation_options()
+
                 else:
                     messagebox.showerror('Error', F'At least 1 image needs to be selected')
             else:
