@@ -211,6 +211,12 @@ class ImgEditor():
         text_details = self.img_loader.config['text'][text_id]
         return F'{text_details["text"]} [{text_details["x"]},{text_details["y"]}]'
 
+    # Button Related Data
+
+
+
+
+
     def _refresh_screen_data(self):
         # https://riptutorial.com/tkinter/example/22870/-after--
 
