@@ -27,6 +27,14 @@ def test_add_button():
     assert drawer.config['image_buttons']['butt1']['current_image'] == 1
     assert 'butt1' in drawer.canvas_image_button_details
 
+
+def test_image_button_id_available():
+    drawer = ConfigDrawer('fake_canvas')
+
+    assert drawer.image_button_id_available('butt1')
+    drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=False, images=['path1', 'path2', 'path3'], redraw=False)
+    assert not drawer.image_button_id_available('butt1')
+
 def test_add_button_orig_image_on_release():
     drawer = ConfigDrawer('fake_canvas')
 

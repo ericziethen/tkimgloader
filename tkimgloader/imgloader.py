@@ -139,7 +139,7 @@ class ConfigDrawer():
 
         # TODO - Make sure not creating more and more
         #print('Canvas Items:', self.canvas.find_all())
-        print('Canvas Item Count:', len(self.canvas.find_all()))
+        #print('Canvas Item Count:', len(self.canvas.find_all()))
 
 
     def _load_config(self, config, *, config_path, redraw=True):
@@ -207,6 +207,9 @@ class ConfigDrawer():
             self.draw()
 
     # Image Button Related Functionality
+    def image_button_id_available(self, button_id):
+        return button_id not in self.config['image_buttons']
+
     def add_image_button(self, *, button_id, pos_x, pos_y, orig_on_release, images, redraw=True):
         if button_id in self.config['image_buttons']:
             raise ValueError('No Duplicate IDs for Buttons allowed')

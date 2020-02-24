@@ -66,9 +66,11 @@ class ImgEditor():
 
         menubar.add_cascade(label='File', menu=file_menu)
         menubar.add_command(label='Add Text', command=self.add_text)
+        menubar.add_command(label='Add Image Button', command=self.add_image_button)
 
         if not self.img_loader.background:
             menubar.entryconfig('Add Text', state="disabled")
+            menubar.entryconfig('Add Image Button', state="disabled")
 
         self.root_window.config(menu=menubar)
 
@@ -235,7 +237,12 @@ class ImgEditor():
         return F'{text_details["text"]} [{text_details["x"]},{text_details["y"]}]'
 
     # Button Related Data
+    def add_image_button(self):
+        # Ask for the Button ID
+        answer = simpledialog.askstring("Input", "Enter the unique Button Identifier",
+                                        parent=self.root_window)
 
+        # Ask for the Button Image
 
 
 
