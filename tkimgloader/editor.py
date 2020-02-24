@@ -38,6 +38,9 @@ class ImgEditor():
         # draw the text options
         self._draw_text_options()
 
+        # draw the image button options
+        self._draw_image_button_options()
+
     def _init_canvas(self):
         self.root_window.title(F'Config: N/A')
         self.canvas = tk.Canvas(self.root_window)
@@ -133,6 +136,26 @@ class ImgEditor():
             remove_button.grid(row=row, column=col, sticky=tk.NSEW)
 
             self.text_frames[text_id] = frame
+
+    def _draw_image_button_options(self):
+        ''' PSEUDO CODE
+
+            for each image button
+                draw the button id
+                draw add additional image button
+                draw remove current image button
+                draw the navigation buttons
+                draw the delete button
+
+        '''
+
+
+
+
+
+
+
+
 
     def _open_background_image(self):
         file_path = ask_image_filepath('Select the Background Image', self.working_dir)
