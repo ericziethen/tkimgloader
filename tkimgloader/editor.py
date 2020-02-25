@@ -214,7 +214,7 @@ class ImgEditor():
         if config_path:
             if not config_path.lower().endswith('.json'):
                 config_path += '.json'
-            self.img_loader.save_config(config_path)
+            self.img_loader.save_config_to_file(config_path)
 
     def _get_rel_path(self, path):
         return os.path.relpath(path, self.working_dir)

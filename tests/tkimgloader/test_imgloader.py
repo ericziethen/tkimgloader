@@ -81,6 +81,8 @@ def test_save_load_config_identical(monkeypatch):
     drawer1.load_background('path', redraw=False)
     drawer1.add_text(text_id='id', text='sample_text', pos_x=100, pos_y=200, redraw=False)
     drawer1.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1'], redraw=False)
+    drawer1.add_image_button(button_id='butt2', pos_x=100, pos_y=200, orig_on_release=False, images=['path1', 'path2'], redraw=False)
+    drawer1.next_button_image(button_id='butt2', redraw=False)
 
     # Save the Config
     drawer1.save_config_to_file('fake_path')

@@ -120,6 +120,8 @@ class ConfigDrawer():
                 image = ImageTk.PhotoImage(file=img_path)
                 self.images[img_path] = image
 
+                print(F'Button: "{button_id}" - Current Image: "{button_dic["current_image"]}"')
+
             img_button = self.canvas.create_image(button_dic['x'], button_dic['y'], image=image)
             self.canvas.tag_bind(img_button, '<Button-1>',
                                  functools.partial(self.image_button_pressed, button_id=button_id))
@@ -161,6 +163,7 @@ class ConfigDrawer():
             for button_id, button_dic in config['image_buttons'].items():
                 self.add_image_button(button_id=button_id, pos_x=button_dic['x'], pos_y=button_dic['y'],
                                       orig_on_release=button_dic['orig_image_on_release'],
+                                      current_image=button_dic['current_image'],
                                       images=list(button_dic['images'].values()), redraw=False)
 
         self.saved_img_config = copy.deepcopy(self.config)
@@ -210,7 +213,7 @@ class ConfigDrawer():
     def image_button_id_available(self, button_id):
         return button_id not in self.config['image_buttons']
 
-    def add_image_button(self, *, button_id, pos_x, pos_y, orig_on_release, images, redraw=True):
+    def add_image_button(self, *, button_id, pos_x, pos_y, orig_on_release, images, current_image=1, redraw=True):
         if button_id in self.config['image_buttons']:
             raise ValueError('No Duplicate IDs for Buttons allowed')
 
@@ -220,9 +223,6 @@ class ConfigDrawer():
         self.canvas_image_button_details[button_id] = {}
 
         image_dic = {str(idx): path for idx, path in enumerate(images, 1)}
-        current_image = None
-        if '1' in image_dic:
-            current_image = 1
 
         button_dic = {
             'x': pos_x,
