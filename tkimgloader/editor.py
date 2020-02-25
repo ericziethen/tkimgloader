@@ -93,13 +93,13 @@ class ImgEditor():
                 'move_func': self.move_text,
                 'remove_func': self.remove_text,
                 'label_func': self.form_text_bar_label,
-                'id_list': [text_id for text_id in self.img_loader.config['text']],
+                'id_list': self.img_loader.config['text'].keys(),
             },
             'image_buttons': {
                 'move_func': self.move_image_button,
                 'remove_func': self.remove_image_button,
                 'label_func': self.form_image_button_bar_label,
-                'id_list': [button_id for button_id in self.img_loader.config['image_buttons']],
+                'id_list': self.img_loader.config['image_buttons'].keys(),
             }
         }
 

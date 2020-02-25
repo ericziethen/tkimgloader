@@ -11,7 +11,7 @@ from PIL import ImageTk
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
-class ConfigDrawer():
+class ConfigDrawer():  # pylint: disable=too-many-public-methods
     def __init__(self, canvas):
         self.canvas = canvas
         self.config = {'background': None, 'text': {}, 'image_buttons': {}}
@@ -68,9 +68,9 @@ class ConfigDrawer():
     def load_background(self, path, redraw=True):
         self.config['background'] = path
         if redraw:
-            self.draw()
+            self._draw()
 
-    def draw(self):
+    def _draw(self):
         logger.debug(F'Drawing Content: {self.config}')
 
         # Draw the Background
@@ -146,7 +146,7 @@ class ConfigDrawer():
 
         # Redraw
         if redraw:
-            self.draw()
+            self._draw()
 
     def load_config_file(self, config_path, *, redraw=True):
         config = load_json(config_path)
@@ -161,13 +161,13 @@ class ConfigDrawer():
     def add_text(self, *, text_id, text, pos_x, pos_y, redraw=True):
         self.config['text'][text_id] = {'text': text, 'x': pos_x, 'y': pos_y}
         if redraw:
-            self.draw()
+            self._draw()
 
     def update_text_position(self, *, text_id, pos_x, pos_y, redraw=True):
         self.config['text'][text_id]['x'] = pos_x
         self.config['text'][text_id]['y'] = pos_y
         if redraw:
-            self.draw()
+            self._draw()
 
     def move_text(self, *, text_id, move_x, move_y, redraw=True):
         self.update_text_position(
@@ -179,7 +179,7 @@ class ConfigDrawer():
     def remove_text(self, *, text_id, redraw=True):
         del self.config['text'][text_id]
         if redraw:
-            self.draw()
+            self._draw()
 
     # Image Button Related Functionality
     def image_button_id_available(self, button_id):
@@ -206,7 +206,7 @@ class ConfigDrawer():
 
         self.config['image_buttons'][button_id] = button_dic
         if redraw:
-            self.draw()
+            self._draw()
 
     def add_image_button_callback(self, *, button_id, func):
         self.canvas_image_button_details[button_id]['on_release_callback'] = func
@@ -215,7 +215,7 @@ class ConfigDrawer():
         self.config['image_buttons'][button_id]['x'] = pos_x
         self.config['image_buttons'][button_id]['y'] = pos_y
         if redraw:
-            self.draw()
+            self._draw()
 
     def move_image_button(self, *, button_id, move_x, move_y, redraw=True):
         self.update_image_position(
@@ -233,7 +233,7 @@ class ConfigDrawer():
             button['current_image'] = 1
 
         if redraw and (previous_image != button['current_image']):
-            self.draw()
+            self._draw()
 
     def previous_button_image(self, *, button_id, redraw=True):
         button = self.config['image_buttons'][button_id]
@@ -244,7 +244,7 @@ class ConfigDrawer():
             button['current_image'] = len(button['images'])
 
         if redraw and (previous_image != button['current_image']):
-            self.draw()
+            self._draw()
 
     def remove_current_button_image(self, *, button_id, redraw=True):
         # Delete this buttn if its the only image that is deleted
@@ -272,14 +272,14 @@ class ConfigDrawer():
                 button['current_image'] = len(button['images'])
 
             if redraw:
-                self.draw()
+                self._draw()
 
     def remove_image_button(self, *, button_id, redraw=True):
         del self.config['image_buttons'][button_id]
         del self.canvas_image_button_details[button_id]
 
         if redraw:
-            self.draw()
+            self._draw()
 
     def image_button_pressed(self, event, *, button_id):
         if (event.num == 1) and (self.config['image_buttons'][button_id]['orig_image_on_release']):
