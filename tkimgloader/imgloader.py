@@ -220,7 +220,7 @@ class ConfigDrawer():
         if not images:
             raise ValueError('Image list cannot be empty')
 
-        self.canvas_image_button_details[button_id] = {}
+        self.canvas_image_button_details[button_id] = {'on_release_callback': None}
 
         image_dic = {str(idx): path for idx, path in enumerate(images, 1)}
 
@@ -235,6 +235,9 @@ class ConfigDrawer():
         self.config['image_buttons'][button_id] = button_dic
         if redraw:
             self.draw()
+
+    def add_image_button_callback(self, *, button_id, func):
+        self.canvas_image_button_details[button_id]['on_release_callback'] = func
 
     def update_image_position(self, *, button_id, pos_x, pos_y, redraw=True):
         self.config['image_buttons'][button_id]['x'] = pos_x

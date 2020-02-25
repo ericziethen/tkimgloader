@@ -26,6 +26,8 @@ def test_add_button():
     assert drawer.config['image_buttons']['butt1']['images']['3'] == 'path3'
     assert drawer.config['image_buttons']['butt1']['current_image'] == 1
     assert 'butt1' in drawer.canvas_image_button_details
+    assert 'on_release_callback' in drawer.canvas_image_button_details['butt1']
+    assert not drawer.canvas_image_button_details['butt1']['on_release_callback']
 
 
 def test_image_button_id_available():
@@ -196,56 +198,16 @@ def test_equal_button():
 
     assert drawer1 == drawer2
 
-'''
-Current config is something like
-    {
-        "background": "AufstellungsScreen\\grafik_cpr-0000001450_Background.jpg",
-        "text": {
-            "Pos": {
-                "x": 100,
-                "y": 100,
-                "text": "Pos"
-            }
-        }
-    }
-
-Roles for Button/Switches
-    - Config:
-        - id, position for the image button
-        - images to be used as confirm buttons i.e. change back on release
-        - images to be used as switch, i.e. stay the same
-
-    - Imgloader:
-        - keep track of callbacks for each button based on id (unique, cant add 2) to be used on release
-        - update graphics on click
-        - update grahics on release (and call callback)
-        - keep track of the current images for each button
-
-    - Using Program:
-        - after button initialized, set the callbacks for each buttons
-            - Params TBC
-        - Left Mouse - Next Image
-        - Right Mouse - Previoue Image
-
-Expected Config:
-
-    "image_buttons": {
-        "{id}": {
-                "x": 100,
-                "y": 100,
-                "orig_image_on_release: True,   # Return to the original image on release
-                "images": {
-                    "1": "path1",                  # This will be the original image
-                    "2": "path2",
-                }
-
-        }
-        "{id}": {
-
-        }
-    }
 
 
-'''
+def test_set_image_button_callback():
+    def callback_func():
+        pass
 
+    drawer = ConfigDrawer('fake_canvas')
 
+    drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1'], redraw=False)
+    assert not drawer.canvas_image_button_details['butt1']['on_release_callback']
+
+    drawer.add_image_button_callback(button_id='butt1', func=callback_func)
+    assert drawer.canvas_image_button_details['butt1']['on_release_callback'] == callback_func
