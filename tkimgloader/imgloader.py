@@ -11,25 +11,13 @@ from PIL import ImageTk
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
-# TODO Does draw() need to be called all the time?
-#  DO WE EVEN NEED IT,
-# WHAT IF
-#   - Add Methods Write to config and draw from there
-#   - Move/Update/Delete Methods update the config and the widget
-#   - Load Config calls all Item add methods
-#  
-
-
-
-
-
 class ConfigDrawer():
     def __init__(self, canvas):
         self.canvas = canvas
         self.config = {'background': None, 'text': {}, 'image_buttons': {}}
         self.saved_img_config = copy.deepcopy(self.config)
         self.images = {}
-        self.canvas_image_button_details = {}  # TODO - unit test for adding callbacks
+        self.canvas_image_button_details = {}
         self.config_path = None
 
     def __eq__(self, other):
@@ -82,8 +70,6 @@ class ConfigDrawer():
         if redraw:
             self.draw()
 
-    # TODO - THIS IS PROBABLY NOT NEEDED ANYMORE, 
-    # TODO - DO THE STUFF IN EACH METHOD
     def draw(self):
         logger.debug(F'Drawing Content: {self.config}')
 
@@ -108,10 +94,6 @@ class ConfigDrawer():
                     text_dict['x'], text_dict['y'], anchor=tk.NW,
                     font="Times 10 italic bold", text=text_dict['text'])
 
-        # Draw image Buttons
-        # TODO
-        # TODO - Keep a local Image storage with the path as key to swap easily
-
         for button_id, button_dic in self.config['image_buttons'].items():
             img_path = button_dic['images'][str(button_dic['current_image'])]
             if img_path in self.images:
@@ -133,16 +115,10 @@ class ConfigDrawer():
             self.canvas.tag_bind(img_button, '<ButtonRelease-3>',
                                  functools.partial(self.image_button_released, button_id=button_id))
 
-
-            ### TODO - IS THAT ACTUALY NEEDED, 
-            # the id is known from the caller for updating, and we can pass the button id
-            # Maybe we need a update function for each for which we can pass the widget, i.e. from the event?
             self.canvas_image_button_details[button_id]['canvas_id'] = img_button
 
-        # TODO - Make sure not creating more and more
-        #print('Canvas Items:', self.canvas.find_all())
-        #print('Canvas Item Count:', len(self.canvas.find_all()))
-
+        # print('Canvas Items:', self.canvas.find_all())
+        # print('Canvas Item Count:', len(self.canvas.find_all()))
 
     def _load_config(self, config, *, config_path, redraw=True):
         # Set config vars
@@ -180,10 +156,6 @@ class ConfigDrawer():
         dump_json(config_path, self.config)
         self.config_path = config_path
         self.saved_img_config = copy.deepcopy(self.config)
-
-    def save_config_to_str(self, config):
-        # TODO - work together with save_config
-        pass
 
     # Text Related Functionality
     def add_text(self, *, text_id, text, pos_x, pos_y, redraw=True):
@@ -314,9 +286,6 @@ class ConfigDrawer():
             self.next_button_image(button_id=button_id)
 
     def image_button_released(self, event, *, button_id):
-        # TODO - THe custom callback needs to be called here on button release
-
-
         if event.num == 1:
             if self.config['image_buttons'][button_id]['orig_image_on_release']:
                 self.previous_button_image(button_id=button_id)
@@ -324,6 +293,10 @@ class ConfigDrawer():
                 self.next_button_image(button_id=button_id)
         elif (event.num == 3) and not self.config['image_buttons'][button_id]['orig_image_on_release']:
             self.previous_button_image(button_id=button_id)
+
+        callback = self.canvas_image_button_details[button_id]['on_release_callback']
+        if callback:
+            callback()
 
 
 def load_json(file_path):

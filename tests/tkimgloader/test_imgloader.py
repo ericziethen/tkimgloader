@@ -4,6 +4,7 @@ import copy
 import imgloader
 from imgloader import ConfigDrawer
 
+
 def test_config_after_init():
     drawer = ConfigDrawer('fake_canvas')
 
@@ -37,7 +38,7 @@ def test_config_saved():
 
 def test_load_config_no_unsaved_changed():
     config = {
-        "background": "path", 
+        "background": "path",
         "text": {
             "key": {"text": "Test", "x": 100, "y": 100}
         }

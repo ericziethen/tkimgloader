@@ -1,7 +1,6 @@
 
 import pytest
 
-import imgloader
 from imgloader import ConfigDrawer
 
 
@@ -36,6 +35,7 @@ def test_image_button_id_available():
     assert drawer.image_button_id_available('butt1')
     drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=False, images=['path1', 'path2', 'path3'], redraw=False)
     assert not drawer.image_button_id_available('butt1')
+
 
 def test_add_button_orig_image_on_release():
     drawer = ConfigDrawer('fake_canvas')
@@ -192,12 +192,11 @@ def test_remove_last_image_delete_button():
 def test_equal_button():
     drawer1 = ConfigDrawer('fake_canvas')
     drawer2 = ConfigDrawer('fake_canvas')
-    
+
     drawer1.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1'], redraw=False)
     drawer2.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1'], redraw=False)
 
     assert drawer1 == drawer2
-
 
 
 def test_set_image_button_callback():

@@ -155,29 +155,6 @@ class ImgEditor():
 
                 self.text_frames[item_id] = frame
 
-        # Draw button nav
-
-
-
-
-            ''' PSEUDO CODE
-
-                for each image button
-                    draw the button id
-                    draw add additional image button
-                    draw remove current image button
-                    draw the navigation buttons
-                    draw the delete button
-
-            '''
-
-
-
-
-
-
-
-
     def _open_background_image(self):
         file_path = ask_image_filepath('Select the Background Image', self.working_dir)
         if file_path:
@@ -257,8 +234,6 @@ class ImgEditor():
 
     # Button Related Data
     def add_image_button(self):
-        # TODO - Have a nicer Input Dialog
-
         # Ask for the Button ID
         button_id = simpledialog.askstring("Input", "Enter the unique Button Identifier",
                                            parent=self.root_window)
@@ -266,7 +241,7 @@ class ImgEditor():
         if button_id:
             if self.img_loader.image_button_id_available(button_id):
                 # Ask if a BUtton or Switch
-                button_or_switch = messagebox.askyesno("Question","Is this a Button (Otherwise Switch)?")
+                button_or_switch = messagebox.askyesno("Question", "Is this a Button (Otherwise Switch)?")
 
                 # Ask for the Button Image
                 file_path_tuple = ask_multi_image_filepath('Select the Button Images', self.working_dir)
