@@ -94,6 +94,12 @@ class ImgEditor():
                 'remove_func': self.remove_text,
                 'label_func': self.form_text_bar_label,
                 'id_list': [text_id for text_id in self.img_loader.config['text']],
+            },
+            'image_buttons': {
+                'move_func': self.move_image_button,
+                'remove_func': self.remove_image_button,
+                'label_func': self.form_image_button_bar_label,
+                'id_list': [button_id for button_id in self.img_loader.config['image_buttons']],
             }
         }
 
@@ -277,6 +283,17 @@ class ImgEditor():
             else:
                 messagebox.showerror('Error', F'Button id "{button_id}" already used')
 
+    def move_image_button(self, idx, move_x, move_y, *, main_text_label):
+        self.img_loader.move_image_button(button_id=idx, move_x=move_x, move_y=move_y)
+        main_text_label.config(text=self.form_image_button_bar_label(idx))
+
+    def remove_image_button(self, idx):
+        self.img_loader.remove_image_button(button_id=idx)
+        self._draw_navigation_options()
+
+    def form_image_button_bar_label(self, button_id):
+        button_details = self.img_loader.config['image_buttons'][button_id]
+        return F'{button_id} [{button_details["x"]},{button_details["y"]}]'
 
     def _refresh_screen_data(self):
         # https://riptutorial.com/tkinter/example/22870/-after--
