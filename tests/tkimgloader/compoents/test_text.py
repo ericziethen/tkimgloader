@@ -20,7 +20,7 @@ def test_adjust_text_position():
     assert drawer.config['text']['id']['x'] == 100
     assert drawer.config['text']['id']['y'] == 200
 
-    drawer.update_text_position(text_id='id', pos_x=400, pos_y=500, redraw=False)
+    drawer._update_text_position(text_id='id', pos_x=400, pos_y=500, redraw=False)
     assert drawer.config['text']['id']['x'] == 400
     assert drawer.config['text']['id']['y'] == 500
 

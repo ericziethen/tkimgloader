@@ -163,14 +163,14 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
         if redraw:
             self._draw()
 
-    def update_text_position(self, *, text_id, pos_x, pos_y, redraw=True):
+    def _update_text_position(self, *, text_id, pos_x, pos_y, redraw=True):
         self.config['text'][text_id]['x'] = pos_x
         self.config['text'][text_id]['y'] = pos_y
         if redraw:
             self._draw()
 
     def move_text(self, *, text_id, move_x, move_y, redraw=True):
-        self.update_text_position(
+        self._update_text_position(
             text_id=text_id,
             pos_x=self.config['text'][text_id]['x'] + move_x,
             pos_y=self.config['text'][text_id]['y'] + move_y,
