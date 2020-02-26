@@ -103,8 +103,6 @@ class ImgEditor():
             }
         }
 
-        print('items_to_draw', items_to_draw)
-
         row = 0
         for group_detail in items_to_draw.values():
             for item_id in group_detail['id_list']:
