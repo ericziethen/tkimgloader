@@ -70,7 +70,7 @@ def test_adjust_button_position():
     assert drawer.config['image_buttons']['butt1']['x'] == 100
     assert drawer.config['image_buttons']['butt1']['y'] == 200
 
-    drawer.update_image_position(button_id='butt1', pos_x=400, pos_y=600, redraw=False)
+    drawer._update_image_position(button_id='butt1', pos_x=400, pos_y=600, redraw=False)
     assert drawer.config['image_buttons']['butt1']['x'] == 400
     assert drawer.config['image_buttons']['butt1']['y'] == 600
 

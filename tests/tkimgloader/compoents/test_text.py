@@ -11,6 +11,7 @@ def test_text_added_in_config():
     assert drawer.config['text']['id']['text'] == 'sample_text'
     assert drawer.config['text']['id']['x'] == 100
     assert drawer.config['text']['id']['y'] == 200
+    assert 'id' in drawer.canvas_text_details
 
 
 def test_adjust_text_position():
@@ -20,7 +21,7 @@ def test_adjust_text_position():
     assert drawer.config['text']['id']['x'] == 100
     assert drawer.config['text']['id']['y'] == 200
 
-    drawer.update_text_position(text_id='id', pos_x=400, pos_y=500, redraw=False)
+    drawer._update_text_position(text_id='id', pos_x=400, pos_y=500, redraw=False)
     assert drawer.config['text']['id']['x'] == 400
     assert drawer.config['text']['id']['y'] == 500
 
@@ -44,7 +45,7 @@ def test_removed_text_from_config():
     assert len(drawer.config['text']) == 1
     assert 'id' in drawer.config['text']
 
-    drawer.remove_text(text_id='id')
+    drawer.remove_text(text_id='id', redraw=False)
     assert 'text' in drawer.config
     assert 'id' not in drawer.config['text']
 
