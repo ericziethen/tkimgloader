@@ -104,7 +104,7 @@ class ImgEditor():
         }
 
         row = 0
-        for group_detail in items_to_draw.values():
+        for group_id, group_detail in items_to_draw.items():
             for item_id in group_detail['id_list']:
                 row += 1
                 col = 0
@@ -119,6 +119,20 @@ class ImgEditor():
                 main_text.grid(row=row, column=col, columnspan=text_col_span, sticky=tk.W)
                 frame.grid_columnconfigure(col, weight=1)
                 col += text_col_span
+
+                # Image Button Specific Menus
+                if group_id == 'image_buttons':
+                    button = tk.Button(
+                        frame, borderwidth=1, text='+ Image',
+                        command=partial(print, '- Image')) # TODO COMPLETE
+                    button.grid(row=row, column=col, sticky=tk.NSEW)
+                    col += 1
+
+                    button = tk.Button(
+                        frame, borderwidth=1, text='- Image',
+                        command=partial(self.remove_current_image, item_id))
+                    button.grid(row=row, column=col, sticky=tk.NSEW)
+                    col += 1
 
                 # Text Moving Navigation
                 nav_intervals = [50, 10, 1]
@@ -267,6 +281,11 @@ class ImgEditor():
     def form_image_button_bar_label(self, button_id):
         button_details = self.img_loader.config['image_buttons'][button_id]
         return F'{button_id} [{button_details["x"]},{button_details["y"]}]'
+
+    def remove_current_image(self, idx):
+        deleted = self.img_loader.remove_current_button_image(button_id=idx)
+        if deleted:
+            self._draw_navigation_options()
 
     def _refresh_screen_data(self):
         # https://riptutorial.com/tkinter/example/22870/-after--

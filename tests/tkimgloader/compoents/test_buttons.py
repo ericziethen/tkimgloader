@@ -171,7 +171,8 @@ def test_remove_current_image_reindex_list():
     assert drawer.config['image_buttons']['butt1']['images']['4'] == 'path4'
     assert drawer.config['image_buttons']['butt1']['current_image'] == 1
 
-    drawer.remove_current_button_image(button_id='butt1', redraw=False)
+    deleted = drawer.remove_current_button_image(button_id='butt1', redraw=False)
+    assert not deleted
     assert len(drawer.config['image_buttons']['butt1']['images']) == 3
     assert drawer.config['image_buttons']['butt1']['images']['1'] == 'path2'
     assert drawer.config['image_buttons']['butt1']['images']['2'] == 'path3'
@@ -185,9 +186,9 @@ def test_remove_last_image_delete_button():
     drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1'], redraw=False)
     assert 'butt1' in drawer.config['image_buttons']
 
-    drawer.remove_current_button_image(button_id='butt1', redraw=False)
+    deleted = drawer.remove_current_button_image(button_id='butt1', redraw=False)
+    assert deleted
     assert 'butt1' not in drawer.config['image_buttons']
-
 
 def test_equal_button():
     drawer1 = ConfigDrawer('fake_canvas')

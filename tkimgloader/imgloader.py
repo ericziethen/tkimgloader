@@ -238,6 +238,7 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
         # Delete this buttn if its the only image that is deleted
         if len(self.config['image_buttons'][button_id]['images']) == 1:
             self.remove_image_button(button_id=button_id, redraw=redraw)
+            return True
         else:
             button = self.config['image_buttons'][button_id]
 
@@ -258,6 +259,7 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
                 button['current_image'] = image_to_delete - 1
             else:
                 button['current_image'] = len(button['images'])
+            return False
 
     def remove_image_button(self, *, button_id, redraw=True):
         if redraw:
