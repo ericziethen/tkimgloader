@@ -124,7 +124,7 @@ class ImgEditor():
                 if group_id == 'image_buttons':
                     button = tk.Button(
                         frame, borderwidth=1, text='+ Image',
-                        command=partial(print, '- Image')) # TODO COMPLETE
+                        command=partial(self.add_image_to_button, item_id))
                     button.grid(row=row, column=col, sticky=tk.NSEW)
                     col += 1
 
@@ -281,6 +281,12 @@ class ImgEditor():
     def form_image_button_bar_label(self, button_id):
         button_details = self.img_loader.config['image_buttons'][button_id]
         return F'{button_id} [{button_details["x"]},{button_details["y"]}]'
+
+    def add_image_to_button(self, button_id):
+        file_path_tuple = ask_multi_image_filepath('Select the Button Images', self.working_dir)
+        if file_path_tuple:
+            img_list = [self._get_rel_path(file_path) for file_path in file_path_tuple]
+            self.img_loader.add_new_button_image(button_id=button_id, path_list=img_list)
 
     def remove_current_image(self, idx):
         deleted = self.img_loader.remove_current_button_image(button_id=idx)

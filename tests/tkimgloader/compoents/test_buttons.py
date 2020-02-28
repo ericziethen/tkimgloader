@@ -158,6 +158,67 @@ def test_remove_button():
     assert 'butt1' not in drawer.canvas_image_button_details
 
 
+def test_add_new_button_image_middle_position():
+    drawer = ConfigDrawer('fake_canvas')
+
+    drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=False,
+                            images=['path1', 'path3'], redraw=False)
+    assert len(drawer.config['image_buttons']['butt1']['images']) == 2
+    assert drawer.config['image_buttons']['butt1']['images']['1'] == 'path1'
+    assert drawer.config['image_buttons']['butt1']['images']['2'] == 'path3'
+    assert drawer.config['image_buttons']['butt1']['current_image'] == 1
+
+    drawer.add_new_button_image(button_id='butt1', path_list=['path2'], redraw=False)
+
+    assert len(drawer.config['image_buttons']['butt1']['images']) == 3
+    assert drawer.config['image_buttons']['butt1']['images']['1'] == 'path1'
+    assert drawer.config['image_buttons']['butt1']['images']['2'] == 'path2'
+    assert drawer.config['image_buttons']['butt1']['images']['3'] == 'path3'
+    assert drawer.config['image_buttons']['butt1']['current_image'] == 2
+
+
+def test_add_multiple_new_button_image_middle_position():
+    drawer = ConfigDrawer('fake_canvas')
+
+    drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=False,
+                            images=['path1', 'path4'], redraw=False)
+    assert len(drawer.config['image_buttons']['butt1']['images']) == 2
+    assert drawer.config['image_buttons']['butt1']['images']['1'] == 'path1'
+    assert drawer.config['image_buttons']['butt1']['images']['2'] == 'path4'
+    assert drawer.config['image_buttons']['butt1']['current_image'] == 1
+
+    drawer.add_new_button_image(button_id='butt1', path_list=['path2','path3'], redraw=False)
+
+    assert len(drawer.config['image_buttons']['butt1']['images']) == 4
+    assert drawer.config['image_buttons']['butt1']['images']['1'] == 'path1'
+    assert drawer.config['image_buttons']['butt1']['images']['2'] == 'path2'
+    assert drawer.config['image_buttons']['butt1']['images']['3'] == 'path3'
+    assert drawer.config['image_buttons']['butt1']['images']['4'] == 'path4'
+    assert drawer.config['image_buttons']['butt1']['current_image'] == 2
+
+
+def test_add_new_button_image_end_position():
+    drawer = ConfigDrawer('fake_canvas')
+
+    drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=False,
+                            images=['path1', 'path2'], redraw=False)
+    assert len(drawer.config['image_buttons']['butt1']['images']) == 2
+    assert drawer.config['image_buttons']['butt1']['images']['1'] == 'path1'
+    assert drawer.config['image_buttons']['butt1']['images']['2'] == 'path2'
+    assert drawer.config['image_buttons']['butt1']['current_image'] == 1
+
+    drawer.next_button_image(button_id='butt1', redraw=False)
+    assert drawer.config['image_buttons']['butt1']['current_image'] == 2
+
+    drawer.add_new_button_image(button_id='butt1', path_list=['path3'], redraw=False)
+
+    assert len(drawer.config['image_buttons']['butt1']['images']) == 3
+    assert drawer.config['image_buttons']['butt1']['images']['1'] == 'path1'
+    assert drawer.config['image_buttons']['butt1']['images']['2'] == 'path2'
+    assert drawer.config['image_buttons']['butt1']['images']['3'] == 'path3'
+    assert drawer.config['image_buttons']['butt1']['current_image'] == 3
+
+
 def test_remove_current_image_reindex_list():
     drawer = ConfigDrawer('fake_canvas')
 
