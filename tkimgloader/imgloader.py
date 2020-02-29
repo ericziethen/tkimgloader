@@ -240,7 +240,8 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
 
         # Add Image to Path
         new_path_list = list(old_button['images'].values())
-        new_path_list = new_path_list[:old_button['current_image']] + path_list + new_path_list[old_button['current_image']:]
+        new_path_list = (new_path_list[:old_button['current_image']] +
+                         path_list + new_path_list[old_button['current_image']:])
 
         # Remove Old Button
         self.remove_image_button(button_id=button_id, redraw=redraw)
@@ -257,27 +258,28 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
         if len(self.config['image_buttons'][button_id]['images']) == 1:
             self.remove_image_button(button_id=button_id, redraw=redraw)
             return True
+
+        # Remove the button
+        button = self.config['image_buttons'][button_id]
+
+        image_to_delete = button['current_image']
+
+        # Set the previous image as the current one
+        self.previous_button_image(button_id=button_id, redraw=redraw)
+
+        # Remove the Image
+        del button['images'][str(image_to_delete)]
+
+        # Reindex the remaining images
+        image_dic = {str(idx): path for idx, path in enumerate(button['images'].values(), 1)}
+        button['images'] = image_dic
+
+        # Set the new Current Image
+        if image_to_delete > 1:
+            button['current_image'] = image_to_delete - 1
         else:
-            button = self.config['image_buttons'][button_id]
-
-            image_to_delete = button['current_image']
-
-            # Set the previous image as the current one
-            self.previous_button_image(button_id=button_id, redraw=redraw)
-
-            # Remove the Image
-            del button['images'][str(image_to_delete)]
-
-            # Reindex the remaining images
-            image_dic = {str(idx): path for idx, path in enumerate(button['images'].values(), 1)}
-            button['images'] = image_dic
-
-            # Set the new Current Image
-            if image_to_delete > 1:
-                button['current_image'] = image_to_delete - 1
-            else:
-                button['current_image'] = len(button['images'])
-            return False
+            button['current_image'] = len(button['images'])
+        return False
 
     def remove_image_button(self, *, button_id, redraw=True):
         if redraw:
