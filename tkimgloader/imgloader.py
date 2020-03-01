@@ -11,6 +11,11 @@ from PIL import ImageTk
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
+
+
+
+
+
 class ConfigDrawer():  # pylint: disable=too-many-public-methods
     def __init__(self, canvas):
         self.canvas = canvas

@@ -5,6 +5,20 @@ import imgloader
 from imgloader import ConfigDrawer
 
 
+
+
+
+# TODO - Once Classes are implemented
+# def test_duplicate_widget_ids():
+
+
+
+
+
+
+
+
+
 def test_config_after_init():
     drawer = ConfigDrawer('fake_canvas')
 
