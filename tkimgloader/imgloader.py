@@ -72,7 +72,7 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
 
         return True
 
-    def _add_widget(self, widget):
+    def add_widget(self, widget):
         widget_id = _form_full_widget_id(widget.id, widget.widget_type)
 
         if widget_id in self.widgets:

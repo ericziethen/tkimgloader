@@ -5,6 +5,13 @@ from tkimgloader.widgets import CanvasText
 
 def test_add_text():
     drawer = ConfigDrawer('fake_canvas')
+
+
+
+    # TODO - add_text will be deprecated,
+    - !!! Call the add_widget with the correct widget instead !!!
+
+
     drawer.add_text(text_id='id', text='sample_text', pos_x=100, pos_y=200, redraw=False)
 
     #TODO - CONTAINS?
