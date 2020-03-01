@@ -36,6 +36,11 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
         self.canvas_text_details = {}
         self.config_path = None
 
+    @property
+    def unsaved_changes(self):
+        # TODO - Call cal config function and compare that !!!
+        return self.config != self.saved_img_config
+
     def __eq__(self, other):
         # Compare config
         if self.config != other.config:
@@ -67,18 +72,33 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
 
         return True
 
-    @property
-    def unsaved_changes(self):
-        # TODO - Call cal config function and compare that !!!
-        return self.config != self.saved_img_config
-
-    def add_widget(self, widget):
-        widget_id = form_widget_id(widget.id, widget.widget_type)
+    def _add_widget(self, widget):
+        widget_id = _form_full_widget_id(widget.id, widget.widget_type)
 
         if widget_id in self.widgets:
             raise ValueError(F'Widget type "{widget.widget_type}" with Id "{widget.id}" already exists"')
 
         self.widgets[widget_id] = widget
+
+    def contains_widget(self, widget_id, widget_type):
+        return _form_full_widget_id(widget_id, widget_type) in self.widgets
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -333,7 +353,7 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
             callback()
 
 
-def form_widget_id(widget_id, widget_type):
+def _form_full_widget_id(widget_id, widget_type):
     return widget_type.value + '_' + widget_id
 
 

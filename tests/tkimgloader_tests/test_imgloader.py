@@ -102,11 +102,20 @@ def test_save_load_config_identical(monkeypatch):
     assert drawer1 == drawer2
 
 
-def test_form_widget_id():
+def test_form_full_widget_id():
     widget_type = WidgetType.BUTTON
     button_id = 'My Button'
 
-    assert imgloader.form_widget_id(button_id, widget_type) == WidgetType.BUTTON.value + '_' + button_id
+    assert imgloader._form_full_widget_id(button_id, widget_type) == WidgetType.BUTTON.value + '_' + button_id
+
+
+def test_widget_exists():
+    drawer = ConfigDrawer('fake_canvas')
+
+    widget_type = WidgetType.BUTTON
+    button_id = 'My Button'
+
+    assert not drawer.contains_widget(button_id, widget_type)
 
 
 def test_add_widget():
@@ -114,17 +123,16 @@ def test_add_widget():
     assert not drawer.widgets
 
     widget = Widget(widget_id='id', widget_category=WidgetCategory.CANVAS, widget_type=WidgetType.TEXT, pos_x=100, pos_y=200)
-    drawer.add_widget(widget)
+    drawer._add_widget(widget)
 
-    widget_id = imgloader.form_widget_id('id', WidgetType.TEXT)
-    assert widget_id in drawer.widgets
+    assert drawer.contains_widget('id', WidgetType.TEXT)
 
 
 def test_add_widget_duplicate_id():
     drawer = ConfigDrawer('fake_canvas')
 
     widget = Widget(widget_id='id', widget_category=WidgetCategory.CANVAS, widget_type=WidgetType.TEXT, pos_x=100, pos_y=200)
-    drawer.add_widget(widget)
+    drawer._add_widget(widget)
     with pytest.raises(ValueError):
         widget = Widget(widget_id='id', widget_category=WidgetCategory.CANVAS, widget_type=WidgetType.TEXT, pos_x=100, pos_y=200)
-        drawer.add_widget(widget)
+        drawer._add_widget(widget)

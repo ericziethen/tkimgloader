@@ -2,30 +2,23 @@
 from imgloader import ConfigDrawer
 from tkimgloader.widgets import CanvasText
 
-'''
-def test_text_added_in_config():
+
+def test_add_text():
     drawer = ConfigDrawer('fake_canvas')
-
-    text = CanvasText(text_id='id', text='my_text', pos_x=100, pos_y=200)
-    assert not drawer.widgets
-
-    drawer.add_widget(text)
-    assert len(drawer.widgets) == 1
-    assert drawer.widgets.values()[0] == text
-
-
-
-
-
-    ###
     drawer.add_text(text_id='id', text='sample_text', pos_x=100, pos_y=200, redraw=False)
+
+    #TODO - CONTAINS?
+
+
+
+
     assert 'text' in drawer.config
     assert 'id' in drawer.config['text']
     assert drawer.config['text']['id']['text'] == 'sample_text'
     assert drawer.config['text']['id']['x'] == 100
     assert drawer.config['text']['id']['y'] == 200
     assert 'id' in drawer.canvas_text_details
-'''
+
 
 
 
