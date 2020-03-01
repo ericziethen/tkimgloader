@@ -1,0 +1,35 @@
+{
+    "background": ".eric\\grafik_cpr-0000002012.jpg",
+    "text": {
+        "2020-02-12 09:48:22.904533": {
+            "text": "Name",
+            "x": 540,
+            "y": 130
+        }
+    },
+    "image_buttons": {
+        "button123": {
+            "x": 100,
+            "y": 100,
+            "orig_image_on_release": true,
+            "current_image": 1,
+            "images": {
+                "1": ".eric\\OK Not Selected (grafik_cpr-0000002713)_TRANS.png",
+                "2": ".eric\\OK Selected (grafik_cpr-0000002704)_TRANS.png"
+            }
+        },
+        "switch": {
+            "x": 550,
+            "y": 300,
+            "orig_image_on_release": false,
+            "current_image": 2,
+            "images": {
+                "1": ".eric\\grafik_cpr-0000000446.jpg",
+                "2": ".eric\\grafik_cpr-0000000447.jpg",
+                "3": ".eric\\grafik_cpr-0000000448.jpg",
+                "4": ".eric\\grafik_cpr-0000000449.jpg",
+                "5": ".eric\\grafik_cpr-0000000450.jpg"
+            }
+        }
+    }
+}
