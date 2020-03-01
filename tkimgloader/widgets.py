@@ -52,6 +52,14 @@ class Widget():
             raise ValueError(F'Invalid type " {widget_type}" Passed, not of type WidgetType')
         self._widget_type = widget_type
 
+    def move_to(self, *, pos_x, pos_y):
+        self.pos_x = pos_x
+        self.pos_y = pos_y
+
+    def move_by(self, *, x, y):
+        self.pos_x += x
+        self.pos_y += y
+
 
 class CanvasText(Widget):
     def __init__(self, *, text_id, pos_x, pos_y):
