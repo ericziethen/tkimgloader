@@ -7,9 +7,10 @@ from tkimgloader.widgets import (
 
 
 def test_init():
-    text = CanvasText(text_id='id', pos_x=100, pos_y=200)
+    text = CanvasText(text_id='id', text='my text', pos_x=100, pos_y=200)
 
     assert text.id == 'id'
+    assert text.text == 'my text'
     assert text.widget_category == WidgetCategory.CANVAS
     assert text.widget_type == WidgetType.TEXT
     assert text.pos_x == 100
@@ -17,7 +18,7 @@ def test_init():
 
 
 def test_move_to():
-    text = CanvasText(text_id='id', pos_x=100, pos_y=200)
+    text = CanvasText(text_id='id', text='my text', pos_x=100, pos_y=200)
 
     assert text.pos_x == 100
     assert text.pos_y == 200
@@ -28,7 +29,7 @@ def test_move_to():
 
 
 def test_move_by():
-    text = CanvasText(text_id='id', pos_x=100, pos_y=200)
+    text = CanvasText(text_id='id', text='my text', pos_x=100, pos_y=200)
 
     assert text.pos_x == 100
     assert text.pos_y == 200

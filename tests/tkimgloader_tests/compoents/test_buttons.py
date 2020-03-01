@@ -1,14 +1,14 @@
 
 import pytest
 
-from imgloader import ConfigDrawer
+from tkimgloader.imgloader import ConfigDrawer
 
 
-def test_button_dic_initialized():
-    drawer = ConfigDrawer('fake_canvas')
 
-    assert 'image_buttons' in drawer.config
-    assert not drawer.config['image_buttons']
+
+########################
+##### UNREFACTORED #####
+########################
 
 
 def test_add_button():
@@ -28,6 +28,9 @@ def test_add_button():
     assert 'on_release_callback' in drawer.canvas_image_button_details['butt1']
     assert not drawer.canvas_image_button_details['butt1']['on_release_callback']
 
+
+# TODO - Once Classes are implemented
+# def test_duplicate_widget_ids():
 
 def test_image_button_id_available():
     drawer = ConfigDrawer('fake_canvas')

@@ -19,8 +19,18 @@ logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 class ConfigDrawer():  # pylint: disable=too-many-public-methods
     def __init__(self, canvas):
         self.canvas = canvas
-        self.config = {'background': None, 'text': {}, 'image_buttons': {}}
+        self.background_path = ''
+        self.widgets = {}
+
+
+
+
+
+        # OLD - REMOVE WHEN REFACTORED
+        self.config = {'background': None, 'text': {}, 'image_buttons': {}} # TODO - To be replaced, generate config from Widgets
         self.saved_img_config = copy.deepcopy(self.config)
+
+
         self.images = {}
         self.canvas_image_button_details = {}
         self.canvas_text_details = {}
@@ -58,21 +68,31 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
         return True
 
     @property
-    def background(self):
-        return self.config['background']
-
-    @property
-    def dimensions(self):
-        if 'background' in self.images:
-            return (self.images['background'].width(), self.images['background'].height())
-        return (0, 0)
-
-    @property
     def unsaved_changes(self):
+        # TODO - Call cal config function and compare that !!!
         return self.config != self.saved_img_config
 
+    def add_widget(self, widget):
+        widget_id = form_widget_id(widget.id, widget.widget_type)
+
+        if widget_id in self.widgets:
+            raise ValueError(F'Widget type "{widget.widget_type}" with Id "{widget.id}" already exists"')
+
+        self.widgets[widget_id] = widget
+
+
+
+
+
+
+
+
+
+
+
+
     def load_background(self, path, redraw=True):
-        self.config['background'] = path
+        self.background_path = path
 
         if redraw:
             logger.debug(F'Drawing Background file "{path}"')
@@ -311,6 +331,10 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
         callback = self.canvas_image_button_details[button_id]['on_release_callback']
         if callback:
             callback()
+
+
+def form_widget_id(widget_id, widget_type):
+    return widget_type.value + '_' + widget_id
 
 
 def load_json(file_path):

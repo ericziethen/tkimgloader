@@ -1,53 +1,32 @@
 
 import copy
 
-import imgloader
-from imgloader import ConfigDrawer
+import pytest
 
-
-
-
-
-# TODO - Once Classes are implemented
-# def test_duplicate_widget_ids():
-
-
-
-
-
-
-
-
+import tkimgloader.imgloader as imgloader
+from tkimgloader.imgloader import ConfigDrawer
+from tkimgloader.widgets import Widget, WidgetCategory, WidgetType
 
 def test_config_after_init():
     drawer = ConfigDrawer('fake_canvas')
 
-    assert 'background' in drawer.config
-    assert not drawer.config['background']
-    assert 'text' in drawer.config
-    assert not drawer.config['text']
+    assert drawer.canvas == 'fake_canvas'
+    assert not drawer.background_path
+    assert not drawer.widgets
 
 
 def test_load_background():
     drawer = ConfigDrawer('fake_canvas')
 
-    assert not drawer.config['background']
+    assert not drawer.background_path
     drawer.load_background('path', redraw=False)
-    assert drawer.config['background'] == 'path'
+    assert drawer.background_path == 'path'
 
 
 def test_init_no_unsaved_changes():
     drawer = ConfigDrawer('fake_canvas')
 
     assert not drawer.unsaved_changes
-
-
-def test_config_saved():
-    drawer = ConfigDrawer('fake_canvas')
-    test_config = {1: 'config'}
-
-    drawer.config = test_config
-    assert drawer.config == test_config
 
 
 def test_load_config_no_unsaved_changed():
@@ -121,3 +100,31 @@ def test_save_load_config_identical(monkeypatch):
 
     # Check both configs the same
     assert drawer1 == drawer2
+
+
+def test_form_widget_id():
+    widget_type = WidgetType.BUTTON
+    button_id = 'My Button'
+
+    assert imgloader.form_widget_id(button_id, widget_type) == WidgetType.BUTTON.value + '_' + button_id
+
+
+def test_add_widget():
+    drawer = ConfigDrawer('fake_canvas')
+    assert not drawer.widgets
+
+    widget = Widget(widget_id='id', widget_category=WidgetCategory.CANVAS, widget_type=WidgetType.TEXT, pos_x=100, pos_y=200)
+    drawer.add_widget(widget)
+
+    widget_id = imgloader.form_widget_id('id', WidgetType.TEXT)
+    assert widget_id in drawer.widgets
+
+
+def test_add_widget_duplicate_id():
+    drawer = ConfigDrawer('fake_canvas')
+
+    widget = Widget(widget_id='id', widget_category=WidgetCategory.CANVAS, widget_type=WidgetType.TEXT, pos_x=100, pos_y=200)
+    drawer.add_widget(widget)
+    with pytest.raises(ValueError):
+        widget = Widget(widget_id='id', widget_category=WidgetCategory.CANVAS, widget_type=WidgetType.TEXT, pos_x=100, pos_y=200)
+        drawer.add_widget(widget)
