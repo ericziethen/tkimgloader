@@ -34,6 +34,6 @@ def test_move_by():
     assert text.pos_x == 100
     assert text.pos_y == 200
 
-    text.move_by(x=25, y=-50)
+    text.move_by(move_x=25, move_y=-50)
     assert text.pos_x == 125
     assert text.pos_y == 150

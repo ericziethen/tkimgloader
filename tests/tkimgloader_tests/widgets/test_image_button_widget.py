@@ -38,6 +38,6 @@ def test_move_by():
     assert button.pos_x == 100
     assert button.pos_y == 200
 
-    button.move_by(x=25, y=-50)
+    button.move_by(move_x=25, move_y=-50)
     assert button.pos_x == 125
     assert button.pos_y == 150

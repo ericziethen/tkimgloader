@@ -79,6 +79,7 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
             raise ValueError(F'Widget type "{widget.widget_type}" with Id "{widget.id}" already exists"')
 
         self.widgets[widget_id] = widget
+        self.widgets[widget_id].draw(self.canvas)
 
     def contains_widget(self, widget_id, widget_type):
         return _form_full_widget_id(widget_id, widget_type) in self.widgets

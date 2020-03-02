@@ -1,6 +1,6 @@
 
 import enum
-
+import tkinter as tk
 
 @enum.unique
 class WidgetCategory(enum.Enum):
@@ -29,8 +29,9 @@ class Widget():
         self.id = widget_id
         self.widget_category = widget_category
         self.widget_type = widget_type
-        self.pos_x = pos_x
-        self.pos_y = pos_y
+        self.pos_x = pos_x  # DONT STPRE RETRIEVE FROM WIDGET e.g. canvas.itemcget(widgetId, 'text'), canvas_eric.coords(text1))
+        self.pos_y = pos_y  # DONT STPRE RETRIEVE FROM WIDGET e.g. canvas.itemcget(widgetId, 'text'), canvas_eric.coords(text1))
+        self.canvas_widget = None
 
     @property
     def widget_category(self):
@@ -52,20 +53,26 @@ class Widget():
             raise ValueError(F'Invalid type " {widget_type}" Passed, not of type WidgetType')
         self._widget_type = widget_type
 
-    def move_to(self, *, pos_x, pos_y):
-        self.pos_x = pos_x
-        self.pos_y = pos_y
+    def draw(self, canvas):
+        raise NotImplementedError
 
-    def move_by(self, *, x, y):
-        self.pos_x += x
-        self.pos_y += y
+    def move_to(self, *, pos_x, pos_y):
+        self.pos_x = pos_x  # DIRECTLY UPDATE THE WIDGET
+        self.pos_y = pos_y  # DIRECTLY UPDATE THE WIDGET
+
+    def move_by(self, *, move_x, move_y):
+        self.move_to(pos_x=self.pos_x + move_x, pos_y=self.pos_y + move_y)
 
 
 class CanvasText(Widget):
     def __init__(self, *, text_id, text, pos_x, pos_y):
         super().__init__(widget_id=text_id, pos_x=pos_x, pos_y=pos_y,
                          widget_category=WidgetCategory.CANVAS, widget_type=WidgetType.TEXT)
-        self.text = text
+        self.text = text  # DONT STPRE RETRIEVE FROM WIDGET e.g. canvas.itemcget(widgetId, 'text'), canvas_eric.coords(text1))
+
+    def draw(self, canvas):
+        self.widget = canvas.create_text(self.pos_x, self.pos_y, text=self.text, anchor=tk.NW,
+                                         font='Times 10 italic bold')
 
 
 class CanvasImageButton(Widget):
