@@ -6,7 +6,8 @@ from tkimgloader.widgets import (
 )
 
 def test_init():
-    button = CanvasImageButton(button_id='id', button_type=ButtonType.RELEASE, pos_x=100, pos_y=200)
+    button = CanvasImageButton(button_id='id', button_type=ButtonType.RELEASE, pos_x=100, pos_y=200,
+                               image_list=['path1', 'path2', 'path3'])
 
     assert button.id == 'id'
     assert button.button_type == ButtonType.RELEASE
@@ -18,11 +19,13 @@ def test_init():
 
 def test_init_invalid_button_type():
     with pytest.raises(ValueError):
-        CanvasImageButton(button_id='id', button_type=None, pos_x=100, pos_y=200)
+        CanvasImageButton(button_id='id', button_type=None, pos_x=100, pos_y=200,
+                          image_list=['path1', 'path2', 'path3'])
 
 
 def test_move_to():
-    button = CanvasImageButton(button_id='id', button_type=ButtonType.RELEASE, pos_x=100, pos_y=200)
+    button = CanvasImageButton(button_id='id', button_type=ButtonType.RELEASE, pos_x=100, pos_y=200,
+                               image_list=['path1', 'path2', 'path3'])
 
     assert button.pos_x == 100
     assert button.pos_y == 200
@@ -33,7 +36,8 @@ def test_move_to():
 
 
 def test_move_by():
-    button = CanvasImageButton(button_id='id', button_type=ButtonType.RELEASE, pos_x=100, pos_y=200)
+    button = CanvasImageButton(button_id='id', button_type=ButtonType.RELEASE, pos_x=100, pos_y=200,
+                               image_list=['path1', 'path2', 'path3'])
 
     assert button.pos_x == 100
     assert button.pos_y == 200

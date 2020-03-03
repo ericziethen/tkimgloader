@@ -2,55 +2,37 @@
 import pytest
 
 from tkimgloader.imgloader import ConfigDrawer
+from tkimgloader.widgets import ButtonType, WidgetType
 
 
+def test_add_button_type_switch():
+    drawer = ConfigDrawer('fake_canvas')
+    assert not drawer.widgets
+
+    widget = drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=False,
+                                     images=['path1', 'path2', 'path3'], current_image=2, redraw=False)
+
+    assert drawer.contains_widget('butt1', WidgetType.BUTTON)
+    assert widget.button_type == ButtonType.SWITCH
+    assert widget.image_list == ['path1', 'path2', 'path3']
+    assert widget.current_image == 2
 
 
+def test_add_button_type_release():
+    drawer = ConfigDrawer('fake_canvas')
+
+    widget = drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True,
+                                     images=['path1', 'path2', 'path3'], current_image=2, redraw=False)
+    assert widget.button_type == ButtonType.RELEASE
 
 
-
-
-
-########################
-##### UNREFACTORED #####
-########################
-
-
-def test_add_button():
+def test_add_widget_duplicate_id():
     drawer = ConfigDrawer('fake_canvas')
 
     drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=False, images=['path1', 'path2', 'path3'], redraw=False)
 
-    assert 'butt1' in drawer.config['image_buttons']
-    assert drawer.config['image_buttons']['butt1']['x'] == 100
-    assert drawer.config['image_buttons']['butt1']['y'] == 200
-    assert not drawer.config['image_buttons']['butt1']['orig_image_on_release']
-    assert drawer.config['image_buttons']['butt1']['images']['1'] == 'path1'
-    assert drawer.config['image_buttons']['butt1']['images']['2'] == 'path2'
-    assert drawer.config['image_buttons']['butt1']['images']['3'] == 'path3'
-    assert drawer.config['image_buttons']['butt1']['current_image'] == 1
-    assert 'butt1' in drawer.canvas_image_button_details
-    assert 'on_release_callback' in drawer.canvas_image_button_details['butt1']
-    assert not drawer.canvas_image_button_details['butt1']['on_release_callback']
-
-
-# TODO - Once Classes are implemented
-# def test_duplicate_widget_ids():
-
-def test_image_button_id_available():
-    drawer = ConfigDrawer('fake_canvas')
-
-    assert drawer.image_button_id_available('butt1')
-    drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=False, images=['path1', 'path2', 'path3'], redraw=False)
-    assert not drawer.image_button_id_available('butt1')
-
-
-def test_add_button_orig_image_on_release():
-    drawer = ConfigDrawer('fake_canvas')
-
-    drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1', 'path2', 'path3'], redraw=False)
-
-    assert drawer.config['image_buttons']['butt1']['orig_image_on_release']
+    with pytest.raises(ValueError):
+        drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=False, images=['path1', 'path2', 'path3'], redraw=False)
 
 
 def test_add_button_reject_empty_image_list():
@@ -69,6 +51,40 @@ def test_reject_duplicate_ids():
         drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1', 'path2', 'path3'], redraw=False)
 
     drawer.add_image_button(button_id='butt2', pos_x=100, pos_y=200, orig_on_release=True, images=['path1', 'path2', 'path3'], redraw=False)
+
+
+
+
+
+########################
+##### UNREFACTORED #####
+########################
+
+
+# TODO - Once Classes are implemented
+# def test_duplicate_widget_ids():
+
+
+
+
+
+
+
+### TODO !!! SOME TESTS NEED TO BE MOVED INTO THE WIDGET, i.e. the NEXT IMAGE STUFF
+
+
+
+def test_image_button_id_available():
+    drawer = ConfigDrawer('fake_canvas')
+
+    assert drawer.image_button_id_available('butt1')
+    drawer.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=False, images=['path1', 'path2', 'path3'], redraw=False)
+    assert not drawer.image_button_id_available('butt1')
+
+
+
+
+
 
 
 def test_adjust_button_position():

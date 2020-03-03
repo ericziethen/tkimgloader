@@ -8,7 +8,7 @@ import tkinter as tk
 
 from PIL import ImageTk
 
-from tkimgloader.widgets import CanvasText, WidgetType
+from tkimgloader.widgets import ButtonType, CanvasImageButton, CanvasText, WidgetType
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -165,11 +165,17 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
         return button_id not in self.config['image_buttons']
 
     def add_image_button(self, *, button_id, pos_x, pos_y, orig_on_release, images, current_image=1, redraw=True):
-        if button_id in self.config['image_buttons']:
-            raise ValueError('No Duplicate IDs for Buttons allowed')
+        if orig_on_release:
+            button_type = ButtonType.RELEASE
+        else:
+            button_type = ButtonType.SWITCH
+        button_widget = CanvasImageButton(button_id=button_id, button_type=button_type, pos_x=pos_x, pos_y=pos_y,
+                                          image_list=images, current_image=current_image)
+        self._add_widget(button_widget, redraw)
 
-        if not images:
-            raise ValueError('Image list cannot be empty')
+
+        # TODO - REMOVE OLD
+
 
         self.canvas_image_button_details[button_id] = {'on_release_callback': None}
 
@@ -205,6 +211,12 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
                                  functools.partial(self.image_button_released, button_id=button_id))
 
             self.canvas_image_button_details[button_id]['widget'] = img_button
+
+
+
+        return button_widget
+
+
 
     def add_image_button_callback(self, *, button_id, func):
         self.canvas_image_button_details[button_id]['on_release_callback'] = func
@@ -261,6 +273,7 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
 
         # Remove Old Button
         self.remove_image_button(button_id=button_id, redraw=redraw)
+        self._remove_widget(_form_full_widget_id(button_id, WidgetType.BUTTON), draw=redraw)
 
         # Add new Button
         self.add_image_button(

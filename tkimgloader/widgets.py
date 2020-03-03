@@ -76,10 +76,16 @@ class CanvasText(Widget):
 
 
 class CanvasImageButton(Widget):
-    def __init__(self, *, button_id, button_type, pos_x, pos_y):
+    def __init__(self, *, button_id, button_type, pos_x, pos_y, image_list, current_image=1):
+        if not image_list:
+            raise ValueError('Image list cannot be empty')
+
+
         super().__init__(widget_id=button_id, pos_x=pos_x, pos_y=pos_y,
                          widget_category=WidgetCategory.CANVAS, widget_type=WidgetType.BUTTON)
         self.button_type = button_type
+        self.image_list = image_list
+        self.current_image = current_image
 
     @property
     def button_type(self):
