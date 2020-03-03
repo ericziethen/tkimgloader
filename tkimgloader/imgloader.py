@@ -8,12 +8,9 @@ import tkinter as tk
 
 from PIL import ImageTk
 
+from tkimgloader.widgets import CanvasText, WidgetType
+
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
-
-
-
-
-
 
 
 class ConfigDrawer():  # pylint: disable=too-many-public-methods
@@ -72,45 +69,23 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
 
         return True
 
-    def add_widget(self, widget):
+    def _add_widget(self, widget, draw=True):
         widget_id = _form_full_widget_id(widget.id, widget.widget_type)
 
         if widget_id in self.widgets:
             raise ValueError(F'Widget type "{widget.widget_type}" with Id "{widget.id}" already exists"')
 
         self.widgets[widget_id] = widget
-        self.widgets[widget_id].draw(self.canvas)
+        if draw:
+            self.widgets[widget_id].draw(self.canvas)
+
+    def _remove_widget(self, widget_id, draw=True):
+        if draw:
+            self.widgets[widget_id].destroy()
+        del self.widgets[widget_id]
 
     def contains_widget(self, widget_id, widget_type):
         return _form_full_widget_id(widget_id, widget_type) in self.widgets
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     def load_background(self, path, redraw=True):
         self.background_path = path
@@ -119,7 +94,7 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
             logger.debug(F'Drawing Background file "{path}"')
 
             background = ImageTk.PhotoImage(file=path)
-            self.images['background'] = background  # Make the image persistent
+            self.images['background'] = background
 
             self.canvas.config(width=background.width(), height=background.height())
             self.canvas.create_image(0, 0, image=background, anchor=tk.NW)
@@ -160,6 +135,10 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
 
     # Text Related Functionality
     def add_text(self, *, text_id, text, pos_x, pos_y, redraw=True):
+        text_widget = CanvasText(text_id=text_id, text=text, pos_x=pos_x, pos_y=pos_y)
+        self._add_widget(text_widget, redraw)
+
+        # TODO - REMOVE OLD
         text_dict = {'text': text, 'x': pos_x, 'y': pos_y}
         self.config['text'][text_id] = text_dict
         self.canvas_text_details[text_id] = {}
@@ -171,24 +150,15 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
                 font="Times 10 italic bold", text=text_dict['text'])
             self.canvas_text_details[text_id]['widget'] = widget
 
-    def _update_text_position(self, *, text_id, pos_x, pos_y, redraw=True):
-        self.config['text'][text_id]['x'] = pos_x
-        self.config['text'][text_id]['y'] = pos_y
-        if redraw:
-            self.canvas.coords(self.canvas_text_details[text_id]['widget'], pos_x, pos_y)
-
-    def move_text(self, *, text_id, move_x, move_y, redraw=True):
-        self._update_text_position(
-            text_id=text_id,
-            pos_x=self.config['text'][text_id]['x'] + move_x,
-            pos_y=self.config['text'][text_id]['y'] + move_y,
-            redraw=redraw)
+        return text_widget
 
     def remove_text(self, *, text_id, redraw=True):
         if redraw:
             self.canvas.delete(self.canvas_text_details[text_id]['widget'])
         del self.canvas_text_details[text_id]
         del self.config['text'][text_id]
+
+        self._remove_widget(_form_full_widget_id(text_id, WidgetType.TEXT), draw=redraw)
 
     # Image Button Related Functionality
     def image_button_id_available(self, button_id):

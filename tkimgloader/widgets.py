@@ -66,9 +66,9 @@ class Widget():
 
 class CanvasText(Widget):
     def __init__(self, *, text_id, text, pos_x, pos_y):
+        self.text = text  # DONT STOPRE RETRIEVE FROM WIDGET e.g. canvas.itemcget(widgetId, 'text'), canvas_eric.coords(text1))
         super().__init__(widget_id=text_id, pos_x=pos_x, pos_y=pos_y,
                          widget_category=WidgetCategory.CANVAS, widget_type=WidgetType.TEXT)
-        self.text = text  # DONT STPRE RETRIEVE FROM WIDGET e.g. canvas.itemcget(widgetId, 'text'), canvas_eric.coords(text1))
 
     def draw(self, canvas):
         self.widget = canvas.create_text(self.pos_x, self.pos_y, text=self.text, anchor=tk.NW,

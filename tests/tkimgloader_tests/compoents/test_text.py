@@ -1,49 +1,37 @@
 
+import pytest
+
 from imgloader import ConfigDrawer
-from tkimgloader.widgets import CanvasText
+from tkimgloader.widgets import WidgetType
 
 
+def test_add_text():
+    drawer = ConfigDrawer('fake_canvas')
+    assert not drawer.widgets
 
-########################
-##### UNREFACTORED #####
-########################
+    widget = drawer.add_text(text_id='id', text='sample_text', pos_x=100, pos_y=200, redraw=False)
+
+    assert drawer.contains_widget('id', WidgetType.TEXT)
+    assert widget.text == 'sample_text'
 
 
-
-def test_adjust_text_position():
+def test_add_widget_duplicate_id():
     drawer = ConfigDrawer('fake_canvas')
 
     drawer.add_text(text_id='id', text='sample_text', pos_x=100, pos_y=200, redraw=False)
-    assert drawer.config['text']['id']['x'] == 100
-    assert drawer.config['text']['id']['y'] == 200
 
-    drawer._update_text_position(text_id='id', pos_x=400, pos_y=500, redraw=False)
-    assert drawer.config['text']['id']['x'] == 400
-    assert drawer.config['text']['id']['y'] == 500
-
-
-def test_move_text_relative():
-    drawer = ConfigDrawer('fake_canvas')
-
-    drawer.add_text(text_id='id', text='sample_text', pos_x=100, pos_y=200, redraw=False)
-    assert drawer.config['text']['id']['x'] == 100
-    assert drawer.config['text']['id']['y'] == 200
-
-    drawer.move_text(text_id='id', move_x=400, move_y=-50, redraw=False)
-    assert drawer.config['text']['id']['x'] == 500
-    assert drawer.config['text']['id']['y'] == 150
+    with pytest.raises(ValueError):
+        drawer.add_text(text_id='id', text='sample_text', pos_x=100, pos_y=200, redraw=False)
 
 
 def test_removed_text_from_config():
     drawer = ConfigDrawer('fake_canvas')
 
     drawer.add_text(text_id='id', text='sample_text', pos_x=100, pos_y=200, redraw=False)
-    assert len(drawer.config['text']) == 1
-    assert 'id' in drawer.config['text']
+    assert drawer.contains_widget('id', WidgetType.TEXT)
 
     drawer.remove_text(text_id='id', redraw=False)
-    assert 'text' in drawer.config
-    assert 'id' not in drawer.config['text']
+    assert not drawer.widgets
 
 
 def test_add_text_unsaved_changes():

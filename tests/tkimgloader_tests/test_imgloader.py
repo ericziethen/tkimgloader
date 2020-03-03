@@ -116,23 +116,3 @@ def test_widget_exists():
     button_id = 'My Button'
 
     assert not drawer.contains_widget(button_id, widget_type)
-
-
-def test_add_widget():
-    drawer = ConfigDrawer('fake_canvas')
-    assert not drawer.widgets
-
-    widget = Widget(widget_id='id', widget_category=WidgetCategory.CANVAS, widget_type=WidgetType.TEXT, pos_x=100, pos_y=200)
-    drawer.add_widget(widget)
-
-    assert drawer.contains_widget('id', WidgetType.TEXT)
-
-
-def test_add_widget_duplicate_id():
-    drawer = ConfigDrawer('fake_canvas')
-
-    widget = Widget(widget_id='id', widget_category=WidgetCategory.CANVAS, widget_type=WidgetType.TEXT, pos_x=100, pos_y=200)
-    drawer.add_widget(widget)
-    with pytest.raises(ValueError):
-        widget = Widget(widget_id='id', widget_category=WidgetCategory.CANVAS, widget_type=WidgetType.TEXT, pos_x=100, pos_y=200)
-        drawer.add_widget(widget)
