@@ -1,6 +1,10 @@
 
 import enum
+import functools
 import tkinter as tk
+
+from PIL import ImageTk
+
 
 @enum.unique
 class WidgetCategory(enum.Enum):
@@ -27,6 +31,7 @@ class Widget():
     def __init__(self, *, widget_id, widget_category, widget_type, pos_x, pos_y):
         # Set Attributes
         self.id = widget_id
+        self.canvas = None
         self.widget_category = widget_category
         self.widget_type = widget_type
         self.pos_x = pos_x  # DONT STPRE RETRIEVE FROM WIDGET e.g. canvas.itemcget(widgetId, 'text'), canvas_eric.coords(text1))
@@ -53,15 +58,22 @@ class Widget():
             raise ValueError(F'Invalid type " {widget_type}" Passed, not of type WidgetType')
         self._widget_type = widget_type
 
-    def draw(self, canvas):
-        raise NotImplementedError
+    def __str__(self):
+        return F'{self.id} [{self.pos_x},{self.pos_y}]'     # TODO NEEDS A UNIT TEST
+
+    def draw(self):
+        raise NotImplemented
 
     def move_to(self, *, pos_x, pos_y):
         self.pos_x = pos_x  # DIRECTLY UPDATE THE WIDGET
         self.pos_y = pos_y  # DIRECTLY UPDATE THE WIDGET
+        self.redraw_widget()
 
     def move_by(self, *, move_x, move_y):
         self.move_to(pos_x=self.pos_x + move_x, pos_y=self.pos_y + move_y)
+
+    def redraw_widget(self):
+        self.canvas.coords(self.canvas_widget, self.pos_x, self.pos_y)
 
 
 class CanvasText(Widget):
@@ -70,9 +82,13 @@ class CanvasText(Widget):
         super().__init__(widget_id=text_id, pos_x=pos_x, pos_y=pos_y,
                          widget_category=WidgetCategory.CANVAS, widget_type=WidgetType.TEXT)
 
-    def draw(self, canvas):
-        self.widget = canvas.create_text(self.pos_x, self.pos_y, text=self.text, anchor=tk.NW,
-                                         font='Times 10 italic bold')
+    def __str__(self):
+        return F'{self.canvas.itemcget(self.canvas_widget, "text")} [{self.pos_x},{self.pos_y}]'     # TODO NEEDS A UNIT TEST
+
+    def draw(self):
+        if self.canvas:
+            self.canvas_widget = self.canvas.create_text(self.pos_x, self.pos_y, text=self.text, anchor=tk.NW,
+                                                         font='Times 10 italic bold')
 
 
 class CanvasImageButton(Widget):
@@ -80,12 +96,13 @@ class CanvasImageButton(Widget):
         if not image_list:
             raise ValueError('Image list cannot be empty')
 
-
         super().__init__(widget_id=button_id, pos_x=pos_x, pos_y=pos_y,
                          widget_category=WidgetCategory.CANVAS, widget_type=WidgetType.BUTTON)
         self.button_type = button_type
-        self.image_list = image_list
+        self.image_dic = dict(enumerate(image_list, start=1))
         self.current_image = current_image
+        self.images = {}
+        self.release_callback = None
 
     @property
     def button_type(self):
@@ -96,3 +113,49 @@ class CanvasImageButton(Widget):
         if not isinstance(button_type, ButtonType):
             raise ValueError(F'Invalid type " {button_type}" Passed, not of type ButtonType')
         self._button_type = button_type
+
+    def draw(self):
+        if self.canvas:
+            # Setup all images
+            for img_path in self.image_dic.values():
+                if img_path not in self.images:
+                    self.images[img_path] = ImageTk.PhotoImage(file=img_path)
+
+            # Draw the current image
+            current_img_path = self.image_dic[self.current_image]
+            current_img = self.images[current_img_path]
+
+            self.canvas_widget = self.canvas.create_image(self.pos_x, self.pos_y, image=current_img)
+
+            self.canvas.tag_bind(self.canvas_widget, '<Button-1>', self.button_pressed)
+            self.canvas.tag_bind(self.canvas_widget, '<ButtonRelease-1>', self.button_released)
+
+            self.canvas.tag_bind(self.canvas_widget, '<Button-3>', self.button_pressed)
+            self.canvas.tag_bind(self.canvas_widget, '<ButtonRelease-3>', self.button_released)
+
+    def button_pressed(self, event):
+        # TODO - Remove Prints
+        print(F'### image_button_pressed({self.id}) ###')
+        print('event.num', event.num)
+        print('self.__dict__', self.__dict__)
+        if (event.num == 1) and (self.button_type == ButtonType.RELEASE):
+            self.next_image()
+
+    def button_released(self, event):
+        if event.num == 1:
+            if self.button_type == ButtonType.RELEASE:
+                self.previous_image()
+            else:
+                self.next_image()
+        elif (self.button_type == ButtonType.SWITCH) and (event.num == 3):
+            self.previous_image()
+
+        if self.release_callback:
+            self.release_callback()
+
+    def next_image(self):
+        print('next_image')
+
+    def previous_image(self):
+        print('previous_image')
+

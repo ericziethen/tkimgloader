@@ -8,7 +8,7 @@ import tkinter as tk
 
 from PIL import ImageTk
 
-from tkimgloader.widgets import ButtonType, CanvasImageButton, CanvasText, WidgetType
+from widgets import ButtonType, CanvasImageButton, CanvasText, WidgetType
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -37,6 +37,12 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
     def unsaved_changes(self):
         # TODO - Call cal config function and compare that !!!
         return self.config != self.saved_img_config
+
+    @property
+    def dimensions(self):
+        if 'background' in self.images:
+            return (self.images['background'].width(), self.images['background'].height())
+        return (0, 0)
 
     def __eq__(self, other):
         # Compare config
@@ -77,7 +83,8 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
 
         self.widgets[widget_id] = widget
         if draw:
-            self.widgets[widget_id].draw(self.canvas)
+            widget.canvas = self.canvas
+            self.widgets[widget_id].draw()
 
     def _remove_widget(self, widget_id, draw=True):
         if draw:
@@ -138,18 +145,6 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
         text_widget = CanvasText(text_id=text_id, text=text, pos_x=pos_x, pos_y=pos_y)
         self._add_widget(text_widget, redraw)
 
-        # TODO - REMOVE OLD
-        text_dict = {'text': text, 'x': pos_x, 'y': pos_y}
-        self.config['text'][text_id] = text_dict
-        self.canvas_text_details[text_id] = {}
-
-        if redraw:
-            logger.debug(F'''Create Text "{text_dict['text']}" @ {text_dict['x']}x{text_dict['y']}''')
-            widget = self.canvas.create_text(
-                text_dict['x'], text_dict['y'], anchor=tk.NW,
-                font="Times 10 italic bold", text=text_dict['text'])
-            self.canvas_text_details[text_id]['widget'] = widget
-
         return text_widget
 
     def remove_text(self, *, text_id, redraw=True):
@@ -162,7 +157,9 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
 
     # Image Button Related Functionality
     def image_button_id_available(self, button_id):
-        return button_id not in self.config['image_buttons']
+        return _form_full_widget_id(button_id, WidgetType.BUTTON) not in self.widgets
+
+
 
     def add_image_button(self, *, button_id, pos_x, pos_y, orig_on_release, images, current_image=1, redraw=True):
         if orig_on_release:
@@ -173,9 +170,8 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
                                           image_list=images, current_image=current_image)
         self._add_widget(button_widget, redraw)
 
-
+        '''
         # TODO - REMOVE OLD
-
 
         self.canvas_image_button_details[button_id] = {'on_release_callback': None}
 
@@ -211,7 +207,7 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
                                  functools.partial(self.image_button_released, button_id=button_id))
 
             self.canvas_image_button_details[button_id]['widget'] = img_button
-
+            '''
 
 
         return button_widget

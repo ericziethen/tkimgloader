@@ -12,6 +12,7 @@ import tkinter.simpledialog as simpledialog
 
 import project_logger
 from imgloader import ConfigDrawer
+from widgets import WidgetType
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -71,7 +72,7 @@ class ImgEditor():
         menubar.add_command(label='Add Text', command=self.add_text)
         menubar.add_command(label='Add Image Button', command=self.add_image_button)
 
-        if not self.img_loader.background:
+        if not self.img_loader.background_path:
             menubar.entryconfig('Add Text', state="disabled")
             menubar.entryconfig('Add Image Button', state="disabled")
 
@@ -87,6 +88,69 @@ class ImgEditor():
         for frame in self.text_frames.values():
             frame.destroy()
 
+        row = 0
+        for widget in self.img_loader.widgets.values():
+            row += 1
+            col = 0
+
+            frame = tk.Frame(self.root_window, width=self.root_window.winfo_width(),
+                             bg="SystemButtonFace", colormap="new")
+            frame.grid(row=row, columnspan=self.columnspan, sticky=tk.NSEW)
+
+            # Widget Description
+            text_col_span = 4
+            main_text = tk.Label(frame, text=str(widget), anchor=tk.W)
+            main_text.grid(row=row, column=col, columnspan=text_col_span, sticky=tk.W)
+            frame.grid_columnconfigure(col, weight=2)
+            col += text_col_span
+
+            # Widget Type
+            text_col_span = 2
+            main_text = tk.Label(frame, text=widget.widget_type.value, anchor=tk.W)
+            main_text.grid(row=row, column=col, columnspan=text_col_span, sticky=tk.W)
+            frame.grid_columnconfigure(col, weight=1)
+            col += text_col_span
+
+            ''' TODO - Fix add + Remove Image'''
+            # Image Button Specific Menus
+            if widget.widget_type == WidgetType.BUTTON:
+                button = tk.Button(
+                    frame, borderwidth=1, text='+ Image',
+                    command=partial(self.add_image_to_button, widget.id))
+                button.grid(row=row, column=col, sticky=tk.NSEW)
+                col += 1
+
+                button = tk.Button(
+                    frame, borderwidth=1, text='- Image',
+                    command=partial(self.remove_current_image, widget.id))
+                button.grid(row=row, column=col, sticky=tk.NSEW)
+                col += 1
+
+            # Text Moving Navigation
+            nav_intervals = [50, 10, 1]
+            for interval in nav_intervals:
+                # Large Nav Text
+                label = tk.Label(frame, text=F'Move {interval}')
+                label.grid(row=row, column=col, sticky=tk.NSEW)
+                col += 1
+
+                # Large Nav Buttons
+                for direction in NAV_DIRECTIONS:
+                    button = tk.Button(
+                        frame, borderwidth=1, text=direction[0],
+                        command=partial(
+                            self.move_widget_by,
+                            direction[1] * interval,
+                            direction[2] * interval,
+                            widget=widget,
+                            main_text_label=main_text))
+                    button.grid(row=row, column=col, sticky=tk.NSEW)
+                    col += 1
+
+
+
+
+        '''
         # Build up the list of items
         items_to_draw = {
             'text': {
@@ -166,6 +230,7 @@ class ImgEditor():
                 sep.grid(column=0, row=row, columnspan=self.columnspan, sticky='ew')
 
                 self.text_frames[item_id] = frame
+            '''
 
     def _open_background_image(self):
         file_path = ask_image_filepath('Select the Background Image', self.working_dir)
@@ -219,6 +284,10 @@ class ImgEditor():
             logger.debug('Exit Application')
             self.root_window.quit()
 
+    def move_widget_by(self, move_x, move_y, *, widget, main_text_label):
+        widget.move_by(move_x=move_x, move_y=move_y)
+        main_text_label.config(text=str(widget))
+
     # Text Related Options
     def add_text(self):
         answer = simpledialog.askstring("Input", "Enter the text to add",
@@ -230,19 +299,17 @@ class ImgEditor():
             # Draw Editor Parts
             self._draw_navigation_options()
 
+    ''' TODO REMOVE
     def move_text(self, idx, move_x, move_y, *, main_text_label):
         self.img_loader.move_text(text_id=idx, move_x=move_x, move_y=move_y)
         main_text_label.config(text=self.form_text_bar_label(idx))
+    '''
 
     def remove_text(self, idx):
         logger.debug(F'Config Before Removal: {self.img_loader.config}')
         self.img_loader.remove_text(text_id=idx)
         logger.debug(F'Config After Removal: {self.img_loader.config}')
         self._draw_navigation_options()
-
-    def form_text_bar_label(self, text_id):
-        text_details = self.img_loader.config['text'][text_id]
-        return F'{text_details["text"]} [{text_details["x"]},{text_details["y"]}]'
 
     # Button Related Data
     def add_image_button(self):
@@ -270,9 +337,11 @@ class ImgEditor():
             else:
                 messagebox.showerror('Error', F'Button id "{button_id}" already used')
 
+    ''' TODO REMOVE
     def move_image_button(self, idx, move_x, move_y, *, main_text_label):
         self.img_loader.move_image_button(button_id=idx, move_x=move_x, move_y=move_y)
         main_text_label.config(text=self.form_image_button_bar_label(idx))
+    '''
 
     def remove_image_button(self, idx):
         self.img_loader.remove_image_button(button_id=idx)
@@ -302,6 +371,19 @@ class ImgEditor():
         self.root_window.title(F'Resolution: {resolution}, Config: "{self.img_loader.config_path}"')
 
         self.root_window.after(1000, self._refresh_screen_data)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def ask_directory(title):

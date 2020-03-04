@@ -45,3 +45,11 @@ def test_move_by():
     button.move_by(move_x=25, move_y=-50)
     assert button.pos_x == 125
     assert button.pos_y == 150
+
+
+
+
+
+
+
+
