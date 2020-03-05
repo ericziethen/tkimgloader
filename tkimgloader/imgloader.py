@@ -175,49 +175,7 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
                                           image_list=images, current_image=current_image)
         self._add_widget(button_widget, redraw)
 
-        '''
-        # TODO - REMOVE OLD
-
-        self.canvas_image_button_details[button_id] = {'on_release_callback': None}
-
-        image_dic = {str(idx): path for idx, path in enumerate(images, 1)}
-
-        button_dic = {
-            'x': pos_x,
-            'y': pos_y,
-            'orig_image_on_release': orig_on_release,
-            'current_image': current_image,
-            'images': image_dic
-        }
-
-        self.config['image_buttons'][button_id] = button_dic
-        if redraw:
-            # Setup all images
-            for img_path in button_dic['images'].values():
-                if img_path not in self.images:
-                    self.images[img_path] = ImageTk.PhotoImage(file=img_path)
-
-            current_img_path = button_dic['images'][str(button_dic['current_image'])]
-            current_img = self.images[current_img_path]
-
-            img_button = self.canvas.create_image(button_dic['x'], button_dic['y'], image=current_img)
-            self.canvas.tag_bind(img_button, '<Button-1>',
-                                 functools.partial(self.image_button_pressed, button_id=button_id))
-            self.canvas.tag_bind(img_button, '<ButtonRelease-1>',
-                                 functools.partial(self.image_button_released, button_id=button_id))
-
-            self.canvas.tag_bind(img_button, '<Button-3>',
-                                 functools.partial(self.image_button_pressed, button_id=button_id))
-            self.canvas.tag_bind(img_button, '<ButtonRelease-3>',
-                                 functools.partial(self.image_button_released, button_id=button_id))
-
-            self.canvas_image_button_details[button_id]['widget'] = img_button
-            '''
-
-
         return button_widget
-
-
 
     def add_image_button_callback(self, *, button_id, func):
         self.canvas_image_button_details[button_id]['on_release_callback'] = func
@@ -234,20 +192,6 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
             pos_x=self.config['image_buttons'][button_id]['x'] + move_x,
             pos_y=self.config['image_buttons'][button_id]['y'] + move_y,
             redraw=redraw)
-
-    def next_button_image(self, *, button_id, redraw=True):
-        button = self.config['image_buttons'][button_id]
-        previous_image = button['current_image']
-        if len(button['images']) > button['current_image']:
-            button['current_image'] += 1
-        else:
-            button['current_image'] = 1
-
-        if redraw and (previous_image != button['current_image']):
-            img_path = button['images'][str(button['current_image'])]
-            self.canvas.itemconfig(
-                self.canvas_image_button_details[button_id]['widget'],
-                image=self.images[img_path])
 
     def previous_button_image(self, *, button_id, redraw=True):
         button = self.config['image_buttons'][button_id]
@@ -310,34 +254,6 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
         else:
             button['current_image'] = len(button['images'])
         return False
-
-    ''' TODO - REMOVE
-    def remove_image_button(self, *, button_id, redraw=True):
-        if redraw:
-            self.canvas.delete(self.canvas_image_button_details[button_id]['widget'])
-        del self.canvas_image_button_details[button_id]
-        del self.config['image_buttons'][button_id]
-    '''
-
-    def image_button_pressed(self, event, *, button_id):
-        print(F'### image_button_pressed({button_id}) ###')
-        print('event.num', event.num)
-        print('orig_image_on_release', self.config['image_buttons'][button_id]['orig_image_on_release'])
-        if (event.num == 1) and (self.config['image_buttons'][button_id]['orig_image_on_release']):
-            self.next_button_image(button_id=button_id)
-
-    def image_button_released(self, event, *, button_id):
-        if event.num == 1:
-            if self.config['image_buttons'][button_id]['orig_image_on_release']:
-                self.previous_button_image(button_id=button_id)
-            else:
-                self.next_button_image(button_id=button_id)
-        elif (event.num == 3) and not self.config['image_buttons'][button_id]['orig_image_on_release']:
-            self.previous_button_image(button_id=button_id)
-
-        callback = self.canvas_image_button_details[button_id]['on_release_callback']
-        if callback:
-            callback()
 
 
 def _form_full_widget_id(widget_id, widget_type):

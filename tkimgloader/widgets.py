@@ -137,10 +137,6 @@ class CanvasImageButton(Widget):
             self.canvas.tag_bind(self.canvas_widget, '<ButtonRelease-3>', self.button_released)
 
     def button_pressed(self, event):
-        # TODO - Remove Prints
-        print(F'### image_button_pressed({self.id}) ###')
-        print('event.num', event.num)
-        print('self.__dict__', self.__dict__)
         if (event.num == 1) and (self.button_type == ButtonType.RELEASE):
             self.next_image()
 
@@ -154,11 +150,26 @@ class CanvasImageButton(Widget):
             self.previous_image()
 
         if self.release_callback:
-            self.release_callback()
+            self.release_callback() # TODO  - Set Callback function
 
     def next_image(self):
-        print('next_image')
+        previous_image = self.current_image
+        if len(self.image_dic) > self.current_image:
+            self.current_image += 1
+        else:
+            self.current_image = 1
+
+        if previous_image != self.current_image:
+            img_path = self.image_dic[self.current_image]
+            self.canvas.itemconfig(self.canvas_widget, image=self.images[img_path])
 
     def previous_image(self):
-        print('previous_image')
+        previous_image = self.current_image
+        if self.current_image > 1:
+            self.current_image -= 1
+        else:
+            self.current_image = len(self.image_dic)
 
+        if previous_image != self.current_image:
+            img_path = self.image_dic[self.current_image]
+            self.canvas.itemconfig(self.canvas_widget, image=self.images[img_path])
