@@ -64,6 +64,9 @@ class Widget():
     def draw(self):
         raise NotImplemented
 
+    def destroy(self):
+        self.canvas.delete(self.canvas_widget)
+
     def move_to(self, *, pos_x, pos_y):
         self.pos_x = pos_x  # DIRECTLY UPDATE THE WIDGET
         self.pos_y = pos_y  # DIRECTLY UPDATE THE WIDGET

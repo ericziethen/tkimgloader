@@ -91,6 +91,9 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
             self.widgets[widget_id].destroy()
         del self.widgets[widget_id]
 
+    def remove_widget(self, widget, draw=True):
+        self._remove_widget(_form_full_widget_id(widget.id, widget.widget_type), draw=draw)
+
     def contains_widget(self, widget_id, widget_type):
         return _form_full_widget_id(widget_id, widget_type) in self.widgets
 
@@ -147,6 +150,7 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
 
         return text_widget
 
+    ''' TODO Remove
     def remove_text(self, *, text_id, redraw=True):
         if redraw:
             self.canvas.delete(self.canvas_text_details[text_id]['widget'])
@@ -154,6 +158,7 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
         del self.config['text'][text_id]
 
         self._remove_widget(_form_full_widget_id(text_id, WidgetType.TEXT), draw=redraw)
+    '''
 
     # Image Button Related Functionality
     def image_button_id_available(self, button_id):
@@ -306,11 +311,13 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
             button['current_image'] = len(button['images'])
         return False
 
+    ''' TODO - REMOVE
     def remove_image_button(self, *, button_id, redraw=True):
         if redraw:
             self.canvas.delete(self.canvas_image_button_details[button_id]['widget'])
         del self.canvas_image_button_details[button_id]
         del self.config['image_buttons'][button_id]
+    '''
 
     def image_button_pressed(self, event, *, button_id):
         print(F'### image_button_pressed({button_id}) ###')
