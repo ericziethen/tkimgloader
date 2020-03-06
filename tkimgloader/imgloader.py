@@ -150,21 +150,9 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
 
         return text_widget
 
-    ''' TODO Remove
-    def remove_text(self, *, text_id, redraw=True):
-        if redraw:
-            self.canvas.delete(self.canvas_text_details[text_id]['widget'])
-        del self.canvas_text_details[text_id]
-        del self.config['text'][text_id]
-
-        self._remove_widget(_form_full_widget_id(text_id, WidgetType.TEXT), draw=redraw)
-    '''
-
     # Image Button Related Functionality
     def image_button_id_available(self, button_id):
         return _form_full_widget_id(button_id, WidgetType.BUTTON) not in self.widgets
-
-
 
     def add_image_button(self, *, button_id, pos_x, pos_y, orig_on_release, images, current_image=1, redraw=True):
         if orig_on_release:
@@ -192,68 +180,6 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
             pos_x=self.config['image_buttons'][button_id]['x'] + move_x,
             pos_y=self.config['image_buttons'][button_id]['y'] + move_y,
             redraw=redraw)
-
-    def previous_button_image(self, *, button_id, redraw=True):
-        button = self.config['image_buttons'][button_id]
-        previous_image = button['current_image']
-        if button['current_image'] > 1:
-            button['current_image'] -= 1
-        else:
-            button['current_image'] = len(button['images'])
-
-        if redraw and (previous_image != button['current_image']):
-            img_path = button['images'][str(button['current_image'])]
-            self.canvas.itemconfig(
-                self.canvas_image_button_details[button_id]['widget'],
-                image=self.images[img_path])
-
-    def add_new_button_image(self, *, button_id, path_list, redraw=True):
-        # The lazy Way, Delete Old Button and Create a new One
-        old_button = copy.deepcopy(self.config['image_buttons'][button_id])
-
-        # Add Image to Path
-        new_path_list = list(old_button['images'].values())
-        new_path_list = (new_path_list[:old_button['current_image']] +
-                         path_list + new_path_list[old_button['current_image']:])
-
-        # Remove Old Button
-        self.remove_image_button(button_id=button_id, redraw=redraw)
-        self._remove_widget(_form_full_widget_id(button_id, WidgetType.BUTTON), draw=redraw)
-
-        # Add new Button
-        self.add_image_button(
-            button_id=button_id, pos_x=old_button['x'], pos_y=old_button['y'],
-            orig_on_release=old_button['orig_image_on_release'],
-            current_image=old_button['current_image'] + 1,
-            images=list(new_path_list), redraw=redraw)
-
-    def remove_current_button_image(self, *, button_id, redraw=True):
-        # Delete this buttn if its the only image that is deleted
-        if len(self.config['image_buttons'][button_id]['images']) == 1:
-            self.remove_image_button(button_id=button_id, redraw=redraw)
-            return True
-
-        # Remove the button
-        button = self.config['image_buttons'][button_id]
-
-        image_to_delete = button['current_image']
-
-        # Set the previous image as the current one
-        self.previous_button_image(button_id=button_id, redraw=redraw)
-
-        # Remove the Image
-        del button['images'][str(image_to_delete)]
-
-        # Reindex the remaining images
-        image_dic = {str(idx): path for idx, path in enumerate(button['images'].values(), 1)}
-        button['images'] = image_dic
-
-        # Set the new Current Image
-        if image_to_delete > 1:
-            button['current_image'] = image_to_delete - 1
-        else:
-            button['current_image'] = len(button['images'])
-        return False
 
 
 def _form_full_widget_id(widget_id, widget_type):

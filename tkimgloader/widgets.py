@@ -102,7 +102,7 @@ class CanvasImageButton(Widget):
         super().__init__(widget_id=button_id, pos_x=pos_x, pos_y=pos_y,
                          widget_category=WidgetCategory.CANVAS, widget_type=WidgetType.BUTTON)
         self.button_type = button_type
-        self.image_dic = dict(enumerate(image_list, start=1))
+        self.image_path_dic = dict(enumerate(image_list, start=1))
         self.current_image = current_image
         self.images = {}
         self.release_callback = None
@@ -120,12 +120,12 @@ class CanvasImageButton(Widget):
     def draw(self):
         if self.canvas:
             # Setup all images
-            for img_path in self.image_dic.values():
+            for img_path in self.image_path_dic.values():
                 if img_path not in self.images:
                     self.images[img_path] = ImageTk.PhotoImage(file=img_path)
 
             # Draw the current image
-            current_img_path = self.image_dic[self.current_image]
+            current_img_path = self.image_path_dic[self.current_image]
             current_img = self.images[current_img_path]
 
             self.canvas_widget = self.canvas.create_image(self.pos_x, self.pos_y, image=current_img)
@@ -154,13 +154,13 @@ class CanvasImageButton(Widget):
 
     def next_image(self):
         previous_image = self.current_image
-        if len(self.image_dic) > self.current_image:
+        if len(self.image_path_dic) > self.current_image:
             self.current_image += 1
         else:
             self.current_image = 1
 
         if previous_image != self.current_image:
-            img_path = self.image_dic[self.current_image]
+            img_path = self.image_path_dic[self.current_image]
             self.canvas.itemconfig(self.canvas_widget, image=self.images[img_path])
 
     def previous_image(self):
@@ -168,8 +168,35 @@ class CanvasImageButton(Widget):
         if self.current_image > 1:
             self.current_image -= 1
         else:
-            self.current_image = len(self.image_dic)
+            self.current_image = len(self.image_path_dic)
 
         if previous_image != self.current_image:
-            img_path = self.image_dic[self.current_image]
+            img_path = self.image_path_dic[self.current_image]
             self.canvas.itemconfig(self.canvas_widget, image=self.images[img_path])
+
+    def add_new_images(self, path_list):
+        for image_path in path_list:
+            if image_path not in self.images:
+                self.images[image_path] = ImageTk.PhotoImage(file=image_path)
+
+        new_path_list = list(self.image_path_dic.values())
+        new_path_list = (new_path_list[:self.current_image] +
+                         path_list + new_path_list[self.current_image:])
+
+        self.image_path_dic = dict(enumerate(new_path_list, start=1))
+        self.next_image()
+
+    def remove_current_image(self):
+        if len(self.image_path_dic) == 1:
+            raise ValueError('Cannot delete the last image')
+
+        image_to_delete = self.current_image
+
+        # Set the previous image as the current one
+        self.previous_image()
+
+        # Remove the Image
+        del self.image_path_dic[image_to_delete]
+
+        # Reindex the remaining images
+        self.image_path_dic = dict(enumerate(self.image_path_dic.values(), start=1))

@@ -116,13 +116,13 @@ class ImgEditor():
             if widget.widget_type == WidgetType.BUTTON:
                 button = tk.Button(
                     frame, borderwidth=1, text='+ Image',
-                    command=partial(self.add_image_to_button, widget.id))
+                    command=partial(self.add_image_to_button, widget))
                 button.grid(row=row, column=col, sticky=tk.NSEW)
                 col += 1
 
                 button = tk.Button(
                     frame, borderwidth=1, text='- Image',
-                    command=partial(self.remove_current_image, widget.id))
+                    command=partial(self.remove_current_image, widget))
                 button.grid(row=row, column=col, sticky=tk.NSEW)
                 col += 1
 
@@ -263,16 +263,19 @@ class ImgEditor():
         button_details = self.img_loader.config['image_buttons'][button_id]
         return F'{button_id} [{button_details["x"]},{button_details["y"]}]'
 
-    def add_image_to_button(self, button_id):
+    def add_image_to_button(self, widget):
         file_path_tuple = ask_multi_image_filepath('Select the Button Images', self.working_dir)
         if file_path_tuple:
             img_list = [self._get_rel_path(file_path) for file_path in file_path_tuple]
-            self.img_loader.add_new_button_image(button_id=button_id, path_list=img_list)
+            widget.add_new_images(img_list)
 
-    def remove_current_image(self, idx):
-        deleted = self.img_loader.remove_current_button_image(button_id=idx)
-        if deleted:
-            self._draw_navigation_options()
+    def remove_current_image(self, widget):
+        try:
+            deleted = widget.remove_current_image()
+            if deleted:
+                self._draw_navigation_options()
+        except ValueError as error:
+            messagebox.showerror('Warning', error)
 
     def _refresh_screen_data(self):
         # https://riptutorial.com/tkinter/example/22870/-after--
