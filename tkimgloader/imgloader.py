@@ -86,13 +86,10 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
             widget.canvas = self.canvas
             self.widgets[widget_id].draw()
 
-    def _remove_widget(self, widget_id, draw=True):
-        if draw:
-            self.widgets[widget_id].destroy()
-        del self.widgets[widget_id]
-
     def remove_widget(self, widget, draw=True):
-        self._remove_widget(_form_full_widget_id(widget.id, widget.widget_type), draw=draw)
+        widget_id = _form_full_widget_id(widget.id, widget.widget_type)
+        self.widgets[widget_id].destroy()
+        del self.widgets[widget_id]
 
     def contains_widget(self, widget_id, widget_type):
         return _form_full_widget_id(widget_id, widget_type) in self.widgets
@@ -164,9 +161,6 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
         self._add_widget(button_widget, redraw)
 
         return button_widget
-
-    def add_image_button_callback(self, *, button_id, func):
-        self.canvas_image_button_details[button_id]['on_release_callback'] = func
 
     def _update_image_position(self, *, button_id, pos_x, pos_y, redraw=True):
         self.config['image_buttons'][button_id]['x'] = pos_x

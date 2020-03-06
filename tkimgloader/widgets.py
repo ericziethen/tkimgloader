@@ -150,7 +150,7 @@ class CanvasImageButton(Widget):
             self.previous_image()
 
         if self.release_callback:
-            self.release_callback() # TODO  - Set Callback function
+            self.release_callback(widget=self)
 
     def next_image(self):
         previous_image = self.current_image
@@ -200,3 +200,6 @@ class CanvasImageButton(Widget):
 
         # Reindex the remaining images
         self.image_path_dic = dict(enumerate(self.image_path_dic.values(), start=1))
+
+    def add_image_callback(self, *, button_release_func):
+        self.release_callback = button_release_func

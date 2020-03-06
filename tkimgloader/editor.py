@@ -248,8 +248,13 @@ class ImgEditor():
                 file_path_tuple = ask_multi_image_filepath('Select the Button Images', self.working_dir)
                 if file_path_tuple:
                     img_list = [self._get_rel_path(file_path) for file_path in file_path_tuple]
-                    self.img_loader.add_image_button(
+                    button = self.img_loader.add_image_button(
                         button_id=button_id, pos_x=100, pos_y=200, orig_on_release=button_or_switch, images=img_list)
+
+                    def test_release_callback(*, widget):
+                        logger.info(F'Callback called for Button "{widget}"')
+
+                    button.add_image_callback(button_release_func=test_release_callback)
 
                     # Draw Editor Parts
                     self._draw_navigation_options()
