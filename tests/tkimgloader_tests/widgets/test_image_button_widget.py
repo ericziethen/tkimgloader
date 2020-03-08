@@ -160,3 +160,14 @@ def test_remove_current_image_last_image():
 
     with pytest.raises(ValueError):
         widget.remove_current_image()
+
+
+def test_set_callback():
+    def callback_func():
+        pass
+
+    widget = CanvasImageButton(
+        button_id='myButton', button_type=ButtonType.RELEASE, pos_x=200, pos_y=300,
+        image_list=['path1'])
+    widget.add_image_callback(button_release_func=callback_func)
+    assert widget.release_callback == callback_func

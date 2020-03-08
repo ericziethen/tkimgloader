@@ -5,9 +5,19 @@ import pytest
 
 import tkimgloader.imgloader as imgloader
 from tkimgloader.imgloader import ConfigDrawer
-from tkimgloader.widgets import Widget, WidgetType
+from tkimgloader.widgets import CanvasText, WidgetType
 
 
+def test_add_widget_duplicate_id():
+    drawer = ConfigDrawer('fake_canvas')
+
+    drawer.add_text(text_id='myId', text='myText', pos_x=200, pos_y=300, redraw=False)
+    with pytest.raises(ValueError):
+        drawer.add_text(text_id='myId', text='myText', pos_x=200, pos_y=300, redraw=False)
+
+
+def test_test_equal_config():
+    assert False
 
 '''
 
