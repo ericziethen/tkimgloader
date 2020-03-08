@@ -32,6 +32,8 @@ def test_widget_to_dict():
 
 def test_move_to():
     widget = CanvasText(text_id='myId', text='myText', pos_x=200, pos_y=300)
+    assert widget.pos_x == 200
+    assert widget.pos_y == 300
 
     widget.move_to(pos_x=800, pos_y=600)
     assert widget.pos_x == 800
@@ -40,6 +42,8 @@ def test_move_to():
 
 def test_move_by():
     widget = CanvasText(text_id='myId', text='myText', pos_x=200, pos_y=300)
+    assert widget.pos_x == 200
+    assert widget.pos_y == 300
 
     widget.move_by(move_x=-50, move_y=150)
     assert widget.pos_x == 150

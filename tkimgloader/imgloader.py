@@ -98,6 +98,7 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
 
         return config
 
+    # TODO - REMOVE THE REDRAW COMMANDS, WIDGET NEEDS TO HANDLE IT
     def _load_config(self, config, *, config_path, redraw=True):
         # Set config vars
         self.config_path = config_path

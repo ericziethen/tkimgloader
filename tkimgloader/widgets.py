@@ -156,7 +156,8 @@ class CanvasImageButton(Widget):
 
         if previous_image != self.current_image:
             img_path = self.image_path_dic[self.current_image]
-            self.canvas.itemconfig(self.canvas_widget, image=self.images[img_path])
+            if self.canvas:
+                self.canvas.itemconfig(self.canvas_widget, image=self.images[img_path])
 
     def previous_image(self):
         previous_image = self.current_image
@@ -167,7 +168,8 @@ class CanvasImageButton(Widget):
 
         if previous_image != self.current_image:
             img_path = self.image_path_dic[self.current_image]
-            self.canvas.itemconfig(self.canvas_widget, image=self.images[img_path])
+            if self.canvas:
+                self.canvas.itemconfig(self.canvas_widget, image=self.images[img_path])
 
     def add_new_images(self, path_list):
         for image_path in path_list:

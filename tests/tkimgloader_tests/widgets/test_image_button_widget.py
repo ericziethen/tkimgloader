@@ -1,64 +1,135 @@
 
 import pytest
+from PIL import ImageTk
+
 
 from tkimgloader.widgets import (
     ButtonType, CanvasImageButton, WidgetType
 )
 
 
-'''
+def test_create_widget():
+    widget = CanvasImageButton(
+        button_id='myButton', button_type=ButtonType.RELEASE, pos_x=100, pos_y=200,
+        image_list=['path1', 'path2', 'path3'], current_image=3)
 
-!!!! CREATE WIDGET HERE
+    assert widget.id == 'myButton'
+    assert widget.widget_type == WidgetType.BUTTON
+    assert widget.pos_x == 100
+    assert widget.pos_y == 200
 
-
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!! DEFINE NEW TESTS BASED ON CODE
-
-
-
-
-
-def test_init():
-    button = CanvasImageButton(button_id='id', button_type=ButtonType.RELEASE, pos_x=100, pos_y=200,
-                               image_list=['path1', 'path2', 'path3'])
-
-    assert button.id == 'id'
-    assert button.button_type == ButtonType.RELEASE
-    assert button.widget_category == WidgetCategory.CANVAS
-    assert button.widget_type == WidgetType.BUTTON
-    assert button.pos_x == 100
-    assert button.pos_y == 200
+    assert widget.button_type == ButtonType.RELEASE
+    assert widget.image_path_dic == {1: 'path1', 2: 'path2', 3: 'path3'}
+    assert widget.current_image == 3
 
 
-def test_init_invalid_button_type():
-    with pytest.raises(ValueError):
-        CanvasImageButton(button_id='id', button_type=None, pos_x=100, pos_y=200,
-                          image_list=['path1', 'path2', 'path3'])
+def test_widget_str():
+    widget = CanvasImageButton(
+        button_id='myButton', button_type=ButtonType.RELEASE, pos_x=100, pos_y=200,
+        image_list=['path1', 'path2', 'path3'], current_image=3)
 
+    assert str(widget) == 'myButton [100,200]'
+
+
+def test_widget_to_dict():
+    widget = CanvasImageButton(
+        button_id='myButton', button_type=ButtonType.RELEASE, pos_x=100, pos_y=200,
+        image_list=['path1', 'path2', 'path3'], current_image=3)
+
+    assert widget.to_dict() == {
+        'x': 100,
+        'y': 200,
+        'orig_image_on_release': True,
+        'current_image': 3,
+        'images': {
+            1: 'path1',
+            2: 'path2',
+            3: 'path3'
+        }
+    }
 
 def test_move_to():
-    button = CanvasImageButton(button_id='id', button_type=ButtonType.RELEASE, pos_x=100, pos_y=200,
-                               image_list=['path1', 'path2', 'path3'])
+    widget = CanvasImageButton(
+        button_id='myButton', button_type=ButtonType.RELEASE, pos_x=100, pos_y=200,
+        image_list=['path1', 'path2', 'path3'], current_image=3)
+    assert widget.pos_x == 100
+    assert widget.pos_y == 200
 
-    assert button.pos_x == 100
-    assert button.pos_y == 200
-
-    button.move_to(pos_x=300, pos_y=250)
-    assert button.pos_x == 300
-    assert button.pos_y == 250
+    widget.move_to(pos_x=800, pos_y=600)
+    assert widget.pos_x == 800
+    assert widget.pos_y == 600
 
 
 def test_move_by():
-    button = CanvasImageButton(button_id='id', button_type=ButtonType.RELEASE, pos_x=100, pos_y=200,
-                               image_list=['path1', 'path2', 'path3'])
+    widget = CanvasImageButton(
+        button_id='myButton', button_type=ButtonType.RELEASE, pos_x=200, pos_y=300,
+        image_list=['path1', 'path2', 'path3'], current_image=3)
+    assert widget.pos_x == 200
+    assert widget.pos_y == 300
 
-    assert button.pos_x == 100
-    assert button.pos_y == 200
+    widget.move_by(move_x=-50, move_y=150)
+    assert widget.pos_x == 150
+    assert widget.pos_y == 450
 
-    button.move_by(move_x=25, move_y=-50)
-    assert button.pos_x == 125
-    assert button.pos_y == 150
+
+def test_next_image():
+    widget = CanvasImageButton(
+        button_id='myButton', button_type=ButtonType.RELEASE, pos_x=200, pos_y=300,
+        image_list=['path1', 'path2', 'path3'], current_image=3)
+    assert widget.current_image == 3
+
+    widget.next_image()
+    assert widget.current_image == 1
+
+    widget.next_image()
+    assert widget.current_image == 2
+
+    widget.next_image()
+    assert widget.current_image == 3
+
+
+def test_previous_image():
+    widget = CanvasImageButton(
+        button_id='myButton', button_type=ButtonType.RELEASE, pos_x=200, pos_y=300,
+        image_list=['path1', 'path2', 'path3'], current_image=3)
+    assert widget.current_image == 3
+
+    widget.previous_image()
+    assert widget.current_image == 2
+
+    widget.previous_image()
+    assert widget.current_image == 1
+
+    widget.previous_image()
+    assert widget.current_image == 3
+
+
+def test_add_new_images(monkeypatch):
+    def mock_photo_image(*args, **kwargs):
+        return None
+    monkeypatch.setattr(ImageTk, 'PhotoImage', mock_photo_image)
+
+    widget = CanvasImageButton(
+        button_id='myButton', button_type=ButtonType.RELEASE, pos_x=200, pos_y=300,
+        image_list=['path1'])
+    assert len(widget.image_path_dic) == 1
+    assert widget.current_image == 1
+
+    widget.add_new_images(['path2', 'path4'])
+    assert len(widget.image_path_dic) == 3
+    assert widget.current_image == 2
+    assert widget.image_path_dic[1] == 'path1'
+    assert widget.image_path_dic[2] == 'path2'
+    assert widget.image_path_dic[3] == 'path4'
+
+    widget.add_new_images(['path3'])
+    assert len(widget.image_path_dic) == 4
+    assert widget.current_image == 3
+    assert widget.image_path_dic[1] == 'path1'
+    assert widget.image_path_dic[2] == 'path2'
+    assert widget.image_path_dic[3] == 'path3'
+    assert widget.image_path_dic[4] == 'path4'
+
 
 
 
@@ -67,3 +138,13 @@ def test_move_by():
 
 
 
+
+def test_add_new_images():
+    assert False
+
+def test_remove_current_image():
+    assert False
+
+def test_remove_current_image_last_image():
+    assert False
+'''
