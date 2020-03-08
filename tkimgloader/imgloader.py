@@ -20,7 +20,7 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
         self.background_path = None
         self.widgets = {}
         self.images = {}
-        self.saved_img_config = None
+        self.saved_img_config = self.calc_config_dict()
 
     @property
     def unsaved_changes(self):
@@ -108,22 +108,21 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
             self.load_background(config['background'], redraw=redraw)
 
         # Load the Text Items
-        if 'text' in config:
-            for text_id, text_item in config['text'].items():
+        if 'Text' in config:
+            for text_id, text_item in config['Text'].items():
                 self.add_text(text_id=text_id, text=text_item['text'],
                               pos_x=text_item['x'], pos_y=text_item['y'], redraw=redraw)
 
         # Load the image button items
-        if 'image_buttons' in config:
-            for button_id, button_dic in config['image_buttons'].items():
+        if 'Button' in config:
+            for button_id, button_dic in config['Button'].items():
                 self.add_image_button(button_id=button_id, pos_x=button_dic['x'], pos_y=button_dic['y'],
                                       orig_on_release=button_dic['orig_image_on_release'],
                                       current_image=button_dic['current_image'],
                                       images=list(button_dic['images'].values()), redraw=redraw)
 
-        self.saved_img_config = copy.deepcopy(self.config)
+        self.saved_img_config = self.calc_config_dict()
 
-    # TODO _ REVAMP
     def load_config_file(self, config_path, *, redraw=True):
         config = load_json(config_path)
         logger.debug(F'Load Config: {config}')
