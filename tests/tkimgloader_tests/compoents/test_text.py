@@ -5,6 +5,12 @@ from imgloader import ConfigDrawer
 from tkimgloader.widgets import WidgetType
 
 
+'''
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!! DEFINE NEW TESTS BASED ON CODE
+
+
 def test_add_text():
     drawer = ConfigDrawer('fake_canvas')
     assert not drawer.widgets
@@ -51,3 +57,4 @@ def test_equal_text():
     drawer2.add_text(text_id='id', text='sample_text', pos_x=100, pos_y=200, redraw=False)
 
     assert drawer1 == drawer2
+'''

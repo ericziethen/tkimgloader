@@ -4,6 +4,12 @@ import pytest
 from tkimgloader.imgloader import ConfigDrawer
 from tkimgloader.widgets import ButtonType, WidgetType
 
+'''
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!! DEFINE NEW TESTS BASED ON CODE
+
+
 
 def test_add_button_type_switch():
     drawer = ConfigDrawer('fake_canvas')
@@ -262,3 +268,4 @@ def test_set_image_button_callback():
 
     drawer.add_image_button_callback(button_id='butt1', func=callback_func)
     assert drawer.canvas_image_button_details['butt1']['on_release_callback'] == callback_func
+'''

@@ -1,50 +1,46 @@
 
 import pytest
 
-from tkimgloader.widgets import (
-    CanvasText, WidgetCategory, WidgetType
-)
+from tkimgloader.widgets import CanvasText, WidgetType
 
 
+def test_create_widget():
+    widget = CanvasText(text_id='myId', text='myText', pos_x=200, pos_y=300)
+
+    assert widget.id == 'myId'
+    assert widget.widget_type == WidgetType.TEXT
+    assert widget.pos_x == 200
+    assert widget.pos_y == 300
+    assert widget.text == 'myText'
 
 
+def test_widget_str():
+    widget = CanvasText(text_id='myId', text='myText', pos_x=200, pos_y=300)
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!! DEFINE NEW TESTS BASED ON CODE
-
-
-
+    assert str(widget) == 'myText [200,300]'
 
 
+def test_widget_to_dict():
+    widget = CanvasText(text_id='myId', text='myText', pos_x=200, pos_y=300)
 
-def test_init():
-    text = CanvasText(text_id='id', text='my text', pos_x=100, pos_y=200)
-
-    assert text.id == 'id'
-    assert text.text == 'my text'
-    assert text.widget_category == WidgetCategory.CANVAS
-    assert text.widget_type == WidgetType.TEXT
-    assert text.pos_x == 100
-    assert text.pos_y == 200
+    assert widget.to_dict() == {
+        'x': 200,
+        'y': 300,
+        'text': 'myText'
+    }
 
 
 def test_move_to():
-    text = CanvasText(text_id='id', text='my text', pos_x=100, pos_y=200)
+    widget = CanvasText(text_id='myId', text='myText', pos_x=200, pos_y=300)
 
-    assert text.pos_x == 100
-    assert text.pos_y == 200
-
-    text.move_to(pos_x=300, pos_y=250)
-    assert text.pos_x == 300
-    assert text.pos_y == 250
+    widget.move_to(pos_x=800, pos_y=600)
+    assert widget.pos_x == 800
+    assert widget.pos_y == 600
 
 
 def test_move_by():
-    text = CanvasText(text_id='id', text='my text', pos_x=100, pos_y=200)
+    widget = CanvasText(text_id='myId', text='myText', pos_x=200, pos_y=300)
 
-    assert text.pos_x == 100
-    assert text.pos_y == 200
-
-    text.move_by(move_x=25, move_y=-50)
-    assert text.pos_x == 125
-    assert text.pos_y == 150
+    widget.move_by(move_x=-50, move_y=150)
+    assert widget.pos_x == 150
+    assert widget.pos_y == 450

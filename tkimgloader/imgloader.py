@@ -98,7 +98,6 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
 
         return config
 
-    # TODO _ REVAMP
     def _load_config(self, config, *, config_path, redraw=True):
         # Set config vars
         self.config_path = config_path

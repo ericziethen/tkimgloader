@@ -9,7 +9,7 @@ REL_FILE_PATH = R'SubDir\File.json'
 SAMPLE_FILE = os.path.join(SAMPLE_DIR, REL_FILE_PATH)
 
 
-
+'''
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -59,3 +59,4 @@ def test_rel_path(monkeypatch):
 
     edit = editor.ImgEditor('fake_root', SAMPLE_DIR)
     assert edit._get_rel_path(SAMPLE_FILE) == REL_FILE_PATH
+'''

@@ -6,13 +6,6 @@ from PIL import ImageTk
 
 
 @enum.unique
-class WidgetCategory(enum.Enum):
-    # pylint: disable=invalid-name
-    CANVAS = 'Canvas'
-    FLOATING = 'Floating'
-
-
-@enum.unique
 class WidgetType(enum.Enum):
     # pylint: disable=invalid-name
     BUTTON = 'Button'
@@ -27,25 +20,14 @@ class ButtonType(enum.Enum):
 
 
 class Widget():
-    def __init__(self, *, widget_id, widget_category, widget_type, pos_x, pos_y):
+    def __init__(self, *, widget_id, widget_type, pos_x, pos_y):
         # Set Attributes
         self.id = widget_id
         self.canvas = None
-        self.widget_category = widget_category
         self.widget_type = widget_type
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.canvas_widget = None
-
-    @property
-    def widget_category(self):
-        return self._widget_category
-
-    @widget_category.setter
-    def widget_category(self, widget_category):
-        if not isinstance(widget_category, WidgetCategory):
-            raise ValueError(F'Invalid category "{widget_category}" Passed, not of type WidgetCategory')
-        self._widget_category = widget_category
 
     @property
     def widget_type(self):
@@ -78,17 +60,17 @@ class Widget():
         self.move_to(pos_x=self.pos_x + move_x, pos_y=self.pos_y + move_y)
 
     def redraw_widget(self):
-        self.canvas.coords(self.canvas_widget, self.pos_x, self.pos_y)
+        if self.canvas:
+            self.canvas.coords(self.canvas_widget, self.pos_x, self.pos_y)
 
 
 class CanvasText(Widget):
     def __init__(self, *, text_id, text, pos_x, pos_y):
-        self.text = text  # DONT STOPRE RETRIEVE FROM WIDGET e.g. canvas.itemcget(widgetId, 'text'), canvas_eric.coords(text1))
-        super().__init__(widget_id=text_id, pos_x=pos_x, pos_y=pos_y,
-                         widget_category=WidgetCategory.CANVAS, widget_type=WidgetType.TEXT)
+        self.text = text
+        super().__init__(widget_id=text_id, pos_x=pos_x, pos_y=pos_y, widget_type=WidgetType.TEXT)
 
     def __str__(self):
-        return F'{self.canvas.itemcget(self.canvas_widget, "text")} [{self.pos_x},{self.pos_y}]'     # TODO NEEDS A UNIT TEST
+        return F'{self.text} [{self.pos_x},{self.pos_y}]'     # TODO NEEDS A UNIT TEST
 
     def to_dict(self):
         data_dict = super().to_dict()
@@ -101,14 +83,12 @@ class CanvasText(Widget):
                                                          font='Times 10 italic bold')
 
 
-
 class CanvasImageButton(Widget):
     def __init__(self, *, button_id, button_type, pos_x, pos_y, image_list, current_image=1):
         if not image_list:
             raise ValueError('Image list cannot be empty')
 
-        super().__init__(widget_id=button_id, pos_x=pos_x, pos_y=pos_y,
-                         widget_category=WidgetCategory.CANVAS, widget_type=WidgetType.BUTTON)
+        super().__init__(widget_id=button_id, pos_x=pos_x, pos_y=pos_y, widget_type=WidgetType.BUTTON)
         self.button_type = button_type
         self.image_path_dic = dict(enumerate(image_list, start=1))
         self.current_image = current_image

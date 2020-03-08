@@ -2,10 +2,13 @@
 import pytest
 
 from tkimgloader.widgets import (
-    ButtonType, CanvasImageButton, WidgetCategory, WidgetType
+    ButtonType, CanvasImageButton, WidgetType
 )
 
 
+'''
+
+!!!! CREATE WIDGET HERE
 
 
 
@@ -60,7 +63,7 @@ def test_move_by():
 
 
 
-
+'''
 
 
 

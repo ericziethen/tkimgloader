@@ -5,11 +5,11 @@ import pytest
 
 import tkimgloader.imgloader as imgloader
 from tkimgloader.imgloader import ConfigDrawer
-from tkimgloader.widgets import Widget, WidgetCategory, WidgetType
+from tkimgloader.widgets import Widget, WidgetType
 
 
 
-
+'''
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!! DEFINE NEW TESTS BASED ON CODE
@@ -127,3 +127,4 @@ def test_widget_exists():
     button_id = 'My Button'
 
     assert not drawer.contains_widget(button_id, widget_type)
+'''
