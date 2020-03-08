@@ -131,20 +131,32 @@ def test_add_new_images(monkeypatch):
     assert widget.image_path_dic[4] == 'path4'
 
 
-
-
-
-'''
-
-
-
-
-def test_add_new_images():
-    assert False
-
 def test_remove_current_image():
-    assert False
+    widget = CanvasImageButton(
+        button_id='myButton', button_type=ButtonType.RELEASE, pos_x=200, pos_y=300,
+        image_list=['path1', 'path2', 'path3'], current_image=2)
+    assert len(widget.image_path_dic) == 3
+    assert widget.current_image == 2
+    assert widget.image_path_dic[1] == 'path1'
+    assert widget.image_path_dic[2] == 'path2'
+    assert widget.image_path_dic[3] == 'path3'
+
+    widget.remove_current_image()
+    assert len(widget.image_path_dic) == 2
+    assert widget.current_image == 1
+    assert widget.image_path_dic[1] == 'path1'
+    assert widget.image_path_dic[2] == 'path3'
+
+    widget.remove_current_image()
+    assert len(widget.image_path_dic) == 1
+    assert widget.current_image == 1
+    assert widget.image_path_dic[1] == 'path3'
+
 
 def test_remove_current_image_last_image():
-    assert False
-'''
+    widget = CanvasImageButton(
+        button_id='myButton', button_type=ButtonType.RELEASE, pos_x=200, pos_y=300,
+        image_list=['path1'])
+
+    with pytest.raises(ValueError):
+        widget.remove_current_image()

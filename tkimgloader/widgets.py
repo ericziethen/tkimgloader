@@ -198,5 +198,11 @@ class CanvasImageButton(Widget):
         # Reindex the remaining images
         self.image_path_dic = dict(enumerate(self.image_path_dic.values(), start=1))
 
+        # Set the new Current Image, deleted after gone to previous so might be out of step
+        if image_to_delete > 1:
+            self.current_image = image_to_delete - 1
+        else:
+            self.current_image = len(self.image_path_dic)
+
     def add_image_callback(self, *, button_release_func):
         self.release_callback = button_release_func
