@@ -5,6 +5,17 @@ from tkimgloader.widgets import (
     ButtonType, CanvasImageButton, WidgetCategory, WidgetType
 )
 
+
+
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!! DEFINE NEW TESTS BASED ON CODE
+
+
+
+
+
 def test_init():
     button = CanvasImageButton(button_id='id', button_type=ButtonType.RELEASE, pos_x=100, pos_y=200,
                                image_list=['path1', 'path2', 'path3'])

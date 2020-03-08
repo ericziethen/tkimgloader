@@ -16,27 +16,15 @@ logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 class ConfigDrawer():  # pylint: disable=too-many-public-methods
     def __init__(self, canvas):
         self.canvas = canvas
-        self.background_path = ''
-        self.widgets = {}
-
-
-
-
-
-        # OLD - REMOVE WHEN REFACTORED
-        self.config = {'background': None, 'text': {}, 'image_buttons': {}} # TODO - To be replaced, generate config from Widgets
-        self.saved_img_config = copy.deepcopy(self.config)
-
-
-        self.images = {}
-        self.canvas_image_button_details = {}
-        self.canvas_text_details = {}
         self.config_path = None
+        self.background_path = None
+        self.widgets = {}
+        self.images = {}
+        self.saved_img_config = None
 
     @property
     def unsaved_changes(self):
-        # TODO - Call cal config function and compare that !!!
-        return self.config != self.saved_img_config
+        return self.calc_config_dict() != self.saved_img_config
 
     @property
     def dimensions(self):
@@ -46,18 +34,15 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
 
     def __eq__(self, other):
         # Compare config
-        if self.config != other.config:
-            print('##### Config Differs')
-            print(self.config)
-            print(other.config)
-            return False
 
-        # compare comfig path
-        if self.config_path != other.config_path:
-            print('##### Config Path Differs')
-            print(self.config_path)
-            print(other.config_path)
-            return False
+        # TODO REDO AFTER NEW IMPLEMENTATION
+        '''
+            probably don't compare config_path, 2 files can represent the same so can be different
+            compare background_path
+            compare widgets (compare with __eq__ on their own)
+            compare image keys ...
+
+        '''
 
         # compare image keys
         if self.images.keys() != other.images.keys():
@@ -66,12 +51,6 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
             print(other.images.keys())
             return False
 
-        # compare canvas_image_button_details keys
-        if self.canvas_image_button_details.keys() != other.canvas_image_button_details.keys():
-            print('##### Image Button Keys Differs')
-            print(self.canvas_image_button_details.keys())
-            print(other.canvas_image_button_details.keys())
-            return False
 
         return True
 
@@ -106,6 +85,20 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
             self.canvas.config(width=background.width(), height=background.height())
             self.canvas.create_image(0, 0, image=background, anchor=tk.NW)
 
+    def calc_config_dict(self):
+        config = {}
+
+        config['background'] = self.background_path
+
+        for widget in self.widgets.values():
+            widget_type = widget.widget_type
+            if widget_type.value not in config:
+                config[widget_type.value] = {}
+            config[widget_type.value][widget.id] = widget.to_dict()
+
+        return config
+
+    # TODO _ REVAMP
     def _load_config(self, config, *, config_path, redraw=True):
         # Set config vars
         self.config_path = config_path
@@ -130,15 +123,17 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
 
         self.saved_img_config = copy.deepcopy(self.config)
 
+    # TODO _ REVAMP
     def load_config_file(self, config_path, *, redraw=True):
         config = load_json(config_path)
         logger.debug(F'Load Config: {config}')
         self._load_config(config, config_path=config_path, redraw=redraw)
 
     def save_config_to_file(self, config_path):
-        dump_json(config_path, self.config)
+        config = self.calc_config_dict()
+        dump_json(config_path, config)
         self.config_path = config_path
-        self.saved_img_config = copy.deepcopy(self.config)
+        self.saved_img_config = copy.deepcopy(config)
 
     # Text Related Functionality
     def add_text(self, *, text_id, text, pos_x, pos_y, redraw=True):
@@ -161,19 +156,6 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
         self._add_widget(button_widget, redraw)
 
         return button_widget
-
-    def _update_image_position(self, *, button_id, pos_x, pos_y, redraw=True):
-        self.config['image_buttons'][button_id]['x'] = pos_x
-        self.config['image_buttons'][button_id]['y'] = pos_y
-        if redraw:
-            self.canvas.coords(self.canvas_image_button_details[button_id]['widget'], pos_x, pos_y)
-
-    def move_image_button(self, *, button_id, move_x, move_y, redraw=True):
-        self._update_image_position(
-            button_id=button_id,
-            pos_x=self.config['image_buttons'][button_id]['x'] + move_x,
-            pos_y=self.config['image_buttons'][button_id]['y'] + move_y,
-            redraw=redraw)
 
 
 def _form_full_widget_id(widget_id, widget_type):

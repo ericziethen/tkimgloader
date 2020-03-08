@@ -7,6 +7,17 @@ import tkimgloader.imgloader as imgloader
 from tkimgloader.imgloader import ConfigDrawer
 from tkimgloader.widgets import Widget, WidgetCategory, WidgetType
 
+
+
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!! DEFINE NEW TESTS BASED ON CODE
+
+
+
+
+
 def test_config_after_init():
     drawer = ConfigDrawer('fake_canvas')
 

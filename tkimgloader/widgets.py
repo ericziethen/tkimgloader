@@ -1,6 +1,5 @@
 
 import enum
-import functools
 import tkinter as tk
 
 from PIL import ImageTk
@@ -34,8 +33,8 @@ class Widget():
         self.canvas = None
         self.widget_category = widget_category
         self.widget_type = widget_type
-        self.pos_x = pos_x  # DONT STPRE RETRIEVE FROM WIDGET e.g. canvas.itemcget(widgetId, 'text'), canvas_eric.coords(text1))
-        self.pos_y = pos_y  # DONT STPRE RETRIEVE FROM WIDGET e.g. canvas.itemcget(widgetId, 'text'), canvas_eric.coords(text1))
+        self.pos_x = pos_x
+        self.pos_y = pos_y
         self.canvas_widget = None
 
     @property
@@ -61,6 +60,9 @@ class Widget():
     def __str__(self):
         return F'{self.id} [{self.pos_x},{self.pos_y}]'     # TODO NEEDS A UNIT TEST
 
+    def to_dict(self):
+        return {'x': self.pos_x, 'y': self.pos_y}
+
     def draw(self):
         raise NotImplemented
 
@@ -68,8 +70,8 @@ class Widget():
         self.canvas.delete(self.canvas_widget)
 
     def move_to(self, *, pos_x, pos_y):
-        self.pos_x = pos_x  # DIRECTLY UPDATE THE WIDGET
-        self.pos_y = pos_y  # DIRECTLY UPDATE THE WIDGET
+        self.pos_x = pos_x
+        self.pos_y = pos_y
         self.redraw_widget()
 
     def move_by(self, *, move_x, move_y):
@@ -88,10 +90,16 @@ class CanvasText(Widget):
     def __str__(self):
         return F'{self.canvas.itemcget(self.canvas_widget, "text")} [{self.pos_x},{self.pos_y}]'     # TODO NEEDS A UNIT TEST
 
+    def to_dict(self):
+        data_dict = super().to_dict()
+        data_dict['text'] = self.text
+        return data_dict
+
     def draw(self):
         if self.canvas:
             self.canvas_widget = self.canvas.create_text(self.pos_x, self.pos_y, text=self.text, anchor=tk.NW,
                                                          font='Times 10 italic bold')
+
 
 
 class CanvasImageButton(Widget):
@@ -116,6 +124,13 @@ class CanvasImageButton(Widget):
         if not isinstance(button_type, ButtonType):
             raise ValueError(F'Invalid type " {button_type}" Passed, not of type ButtonType')
         self._button_type = button_type
+
+    def to_dict(self):
+        data_dict = super().to_dict()
+        data_dict['orig_image_on_release'] = self.button_type == ButtonType.RELEASE
+        data_dict['current_image'] = self.current_image
+        data_dict['images'] = self.image_path_dic
+        return data_dict
 
     def draw(self):
         if self.canvas:

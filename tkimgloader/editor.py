@@ -82,8 +82,6 @@ class ImgEditor():
         self.root_window.after(1000, self._refresh_screen_data)
 
     def _draw_navigation_options(self):  # pylint: disable=too-many-locals
-        logger.debug(F'Drawing Text Options for: {self.img_loader.config["text"]}')
-
         # Remove existing frames to redraw
         for menu_widget in self.menu_widgets:
             menu_widget.destroy()
@@ -263,10 +261,6 @@ class ImgEditor():
                     messagebox.showerror('Error', F'At least 1 image needs to be selected')
             else:
                 messagebox.showerror('Error', F'Button id "{button_id}" already used')
-
-    def form_image_button_bar_label(self, button_id):
-        button_details = self.img_loader.config['image_buttons'][button_id]
-        return F'{button_id} [{button_details["x"]},{button_details["y"]}]'
 
     def add_image_to_button(self, widget):
         file_path_tuple = ask_multi_image_filepath('Select the Button Images', self.working_dir)

@@ -6,6 +6,17 @@ from tkimgloader.widgets import (
 )
 
 
+
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!! DEFINE NEW TESTS BASED ON CODE
+
+
+
+
+
+
 def test_init():
     text = CanvasText(text_id='id', text='my text', pos_x=100, pos_y=200)
 

@@ -9,6 +9,17 @@ REL_FILE_PATH = R'SubDir\File.json'
 SAMPLE_FILE = os.path.join(SAMPLE_DIR, REL_FILE_PATH)
 
 
+
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!! DEFINE NEW TESTS BASED ON CODE
+
+
+
+
+
+
 def editor_init_mock_returns(monkeypatch):
     def mockreturn(mockself):
         return None

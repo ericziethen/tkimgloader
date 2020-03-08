@@ -5,6 +5,17 @@ from tkimgloader.widgets import (
     Widget, WidgetCategory, WidgetType
 )
 
+
+
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!! DEFINE NEW TESTS BASED ON CODE
+
+
+
+
+
 def test_init_widget():
     widget = Widget(widget_id='id', widget_category=WidgetCategory.CANVAS, widget_type=WidgetType.TEXT, pos_x=100, pos_y=200)
 
