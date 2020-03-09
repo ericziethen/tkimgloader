@@ -16,18 +16,6 @@ def test_add_widget_duplicate_id():
         drawer.add_text(text_id='myId', text='myText', pos_x=200, pos_y=300, redraw=False)
 
 
-def test_test_equal_config():
-    assert False
-
-'''
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!! DEFINE NEW TESTS BASED ON CODE
-
-
-
-
-
 def test_config_after_init():
     drawer = ConfigDrawer('fake_canvas')
 
@@ -53,7 +41,7 @@ def test_init_no_unsaved_changes():
 def test_load_config_no_unsaved_changed():
     config = {
         "background": "path",
-        "text": {
+        "Text": {
             "key": {"text": "Test", "x": 100, "y": 100}
         }
     }
@@ -79,6 +67,22 @@ def test_save_config_no_unsaved_changes(monkeypatch):
     assert not drawer.unsaved_changes
 
 
+def test_form_full_widget_id():
+    widget_type = WidgetType.BUTTON
+    button_id = 'My Button'
+
+    assert imgloader._form_full_widget_id(button_id, widget_type) == WidgetType.BUTTON.value + '_' + button_id
+
+
+def test_widget_exists():
+    drawer = ConfigDrawer('fake_canvas')
+
+    widget_type = WidgetType.BUTTON
+    button_id = 'My Button'
+
+    assert not drawer.contains_widget(button_id, widget_type)
+
+
 def test_equal_init():
     drawer1 = ConfigDrawer('fake_canvas')
     drawer2 = ConfigDrawer('fake_canvas')
@@ -86,6 +90,108 @@ def test_equal_init():
     assert drawer1 == drawer2
 
 
+def test_equal_background():
+    drawer1 = ConfigDrawer('fake_canvas')
+    drawer2 = ConfigDrawer('fake_canvas')
+
+    drawer1.load_background('path', redraw=False)
+    drawer2.load_background('path', redraw=False)
+
+    assert drawer1 == drawer2
+
+
+def test_unequal_different_background():
+    drawer1 = ConfigDrawer('fake_canvas')
+    drawer2 = ConfigDrawer('fake_canvas')
+
+    drawer1.load_background('path', redraw=False)
+
+    assert drawer1 != drawer2
+
+
+def test_equal_same_text():
+    drawer1 = ConfigDrawer('fake_canvas')
+    drawer2 = ConfigDrawer('fake_canvas')
+
+    drawer1.add_text(text_id='id', text='sample_text', pos_x=100, pos_y=200, redraw=False)
+    drawer2.add_text(text_id='id', text='sample_text', pos_x=100, pos_y=200, redraw=False)
+
+    assert drawer1 == drawer2
+
+
+def test_unequal_different_text():
+    drawer1 = ConfigDrawer('fake_canvas')
+    drawer2 = ConfigDrawer('fake_canvas')
+    drawer3 = ConfigDrawer('fake_canvas')
+    drawer4 = ConfigDrawer('fake_canvas')
+    drawer5 = ConfigDrawer('fake_canvas')
+
+    drawer1.add_text(text_id='id', text='sample_text', pos_x=100, pos_y=200, redraw=False)
+    assert drawer1 != drawer2
+
+    drawer2.add_text(text_id='id2', text='sample_text', pos_x=100, pos_y=200, redraw=False)
+    assert drawer1 != drawer2
+
+    drawer3.add_text(text_id='id', text='sample_text2', pos_x=100, pos_y=200, redraw=False)
+    assert drawer1 != drawer3
+
+    drawer4.add_text(text_id='id', text='sample_text', pos_x=300, pos_y=200, redraw=False)
+    assert drawer1 != drawer4
+
+    drawer5.add_text(text_id='id', text='sample_text', pos_x=100, pos_y=400, redraw=False)
+    assert drawer1 != drawer5
+
+
+def test_equal_same_button():
+    drawer1 = ConfigDrawer('fake_canvas')
+    drawer2 = ConfigDrawer('fake_canvas')
+
+    drawer1.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1'], redraw=False)
+    drawer2.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1'], redraw=False)
+ 
+    assert drawer1 == drawer2
+
+
+def test_unequal_different_button():
+    drawer1 = ConfigDrawer('fake_canvas')
+    drawer2 = ConfigDrawer('fake_canvas')
+    drawer3 = ConfigDrawer('fake_canvas')
+    drawer4 = ConfigDrawer('fake_canvas')
+    drawer5 = ConfigDrawer('fake_canvas')
+    drawer6 = ConfigDrawer('fake_canvas')
+
+    drawer1.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1'], redraw=False)
+    assert drawer1 != drawer2
+
+    drawer2.add_image_button(button_id='butt1B', pos_x=100, pos_y=200, orig_on_release=True, images=['path1'], redraw=False)
+    assert drawer1 != drawer2
+
+    drawer3.add_image_button(button_id='butt1', pos_x=2100, pos_y=200, orig_on_release=True, images=['path1'], redraw=False)
+    assert drawer1 != drawer3
+
+    drawer4.add_image_button(button_id='butt1', pos_x=100, pos_y=300, orig_on_release=True, images=['path1'], redraw=False)
+    assert drawer1 != drawer4
+
+    drawer5.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=False, images=['path1'], redraw=False)
+    assert drawer1 != drawer5
+
+    drawer6.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path2'], redraw=False)
+    assert drawer1 != drawer6
+
+
+def test_equal_same_multiple_widgets():
+    drawer1 = ConfigDrawer('fake_canvas')
+    drawer2 = ConfigDrawer('fake_canvas')
+
+    drawer1.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1'], redraw=False)
+    drawer2.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1'], redraw=False)
+
+    drawer1.add_text(text_id='id', text='sample_text', pos_x=100, pos_y=200, redraw=False)
+    drawer2.add_text(text_id='id', text='sample_text', pos_x=100, pos_y=200, redraw=False)
+
+    assert drawer1 == drawer2
+
+'''
 def test_save_load_config_identical(monkeypatch):
     def mock_json_save(mock, mock2):
         None
@@ -95,9 +201,9 @@ def test_save_load_config_identical(monkeypatch):
     drawer1 = ConfigDrawer('fake_canvas')
     drawer1.load_background('path', redraw=False)
     drawer1.add_text(text_id='id', text='sample_text', pos_x=100, pos_y=200, redraw=False)
-    drawer1.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1'], redraw=False)
-    drawer1.add_image_button(button_id='butt2', pos_x=100, pos_y=200, orig_on_release=False, images=['path1', 'path2'], redraw=False)
-    drawer1.next_button_image(button_id='butt2', redraw=False)
+    button1 = drawer1.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1'], redraw=False)
+    button2 = drawer1.add_image_button(button_id='butt2', pos_x=100, pos_y=200, orig_on_release=False, images=['path1', 'path2'], redraw=False)
+    button2.next_image()
 
     # Save the Config
     drawer1.save_config_to_file('fake_path')
@@ -121,20 +227,4 @@ def test_save_load_config_identical(monkeypatch):
 
     # Check both configs the same
     assert drawer1 == drawer2
-
-
-def test_form_full_widget_id():
-    widget_type = WidgetType.BUTTON
-    button_id = 'My Button'
-
-    assert imgloader._form_full_widget_id(button_id, widget_type) == WidgetType.BUTTON.value + '_' + button_id
-
-
-def test_widget_exists():
-    drawer = ConfigDrawer('fake_canvas')
-
-    widget_type = WidgetType.BUTTON
-    button_id = 'My Button'
-
-    assert not drawer.contains_widget(button_id, widget_type)
 '''

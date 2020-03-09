@@ -33,24 +33,8 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
         return (0, 0)
 
     def __eq__(self, other):
-        # Compare config
-
-        # TODO REDO AFTER NEW IMPLEMENTATION
-        '''
-            probably don't compare config_path, 2 files can represent the same so can be different
-            compare background_path
-            compare widgets (compare with __eq__ on their own)
-            compare image keys ...
-
-        '''
-
-        # compare image keys
-        if self.images.keys() != other.images.keys():
-            print('##### Image Keys Differs')
-            print(self.images.keys())
-            print(other.images.keys())
+        if self.calc_config_dict() != other.calc_config_dict():
             return False
-
 
         return True
 
