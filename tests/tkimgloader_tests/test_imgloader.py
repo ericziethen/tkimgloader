@@ -191,7 +191,7 @@ def test_equal_same_multiple_widgets():
 
     assert drawer1 == drawer2
 
-'''
+
 def test_save_load_config_identical(monkeypatch):
     def mock_json_save(mock, mock2):
         None
@@ -201,7 +201,7 @@ def test_save_load_config_identical(monkeypatch):
     drawer1 = ConfigDrawer('fake_canvas')
     drawer1.load_background('path', redraw=False)
     drawer1.add_text(text_id='id', text='sample_text', pos_x=100, pos_y=200, redraw=False)
-    button1 = drawer1.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1'], redraw=False)
+    drawer1.add_image_button(button_id='butt1', pos_x=100, pos_y=200, orig_on_release=True, images=['path1'], redraw=False)
     button2 = drawer1.add_image_button(button_id='butt2', pos_x=100, pos_y=200, orig_on_release=False, images=['path1', 'path2'], redraw=False)
     button2.next_image()
 
@@ -210,21 +210,17 @@ def test_save_load_config_identical(monkeypatch):
 
     # Copy the saved config
     config_copy = copy.deepcopy(drawer1.saved_img_config)
-    assert 'id' in config_copy['text']
-    assert 'butt1' in config_copy['image_buttons']
+    assert 'id' in config_copy['Text']
+    assert 'butt1' in config_copy['Button']
 
     # Create Config 2 & Confirm Empty
     drawer2 = ConfigDrawer('fake_canvas')
-    assert 'id' not in drawer2.config['text']
-    assert 'butt1' not in drawer2.config['image_buttons']
+    d2_config = drawer2.calc_config_dict()
+    assert 'id' not in d2_config
+    assert 'butt1' not in d2_config
 
     # Load Config
     drawer2._load_config(config_copy, config_path='fake_path', redraw=False)
 
-    print(drawer1.__dict__)
-    print(drawer2.__dict__)
-    print(config_copy)
-
     # Check both configs the same
     assert drawer1 == drawer2
-'''
