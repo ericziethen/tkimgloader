@@ -12,6 +12,7 @@ import tkinter.simpledialog as simpledialog
 
 import project_logger
 from imgloader import ConfigDrawer
+from widgets import WidgetType
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -30,7 +31,7 @@ class ImgEditor():
         self.canvas = None
         self.columnspan = 20
 
-        self.text_frames = {}
+        self.menu_widgets = []
 
         # Init the Canvas
         self._init_canvas()
@@ -71,7 +72,7 @@ class ImgEditor():
         menubar.add_command(label='Add Text', command=self.add_text)
         menubar.add_command(label='Add Image Button', command=self.add_image_button)
 
-        if not self.img_loader.background:
+        if not self.img_loader.background_path:
             menubar.entryconfig('Add Text', state="disabled")
             menubar.entryconfig('Add Image Button', state="disabled")
 
@@ -81,91 +82,82 @@ class ImgEditor():
         self.root_window.after(1000, self._refresh_screen_data)
 
     def _draw_navigation_options(self):  # pylint: disable=too-many-locals
-        logger.debug(F'Drawing Text Options for: {self.img_loader.config["text"]}')
-
         # Remove existing frames to redraw
-        for frame in self.text_frames.values():
-            frame.destroy()
-
-        # Build up the list of items
-        items_to_draw = {
-            'text': {
-                'move_func': self.move_text,
-                'remove_func': self.remove_text,
-                'label_func': self.form_text_bar_label,
-                'id_list': self.img_loader.config['text'].keys(),
-            },
-            'image_buttons': {
-                'move_func': self.move_image_button,
-                'remove_func': self.remove_image_button,
-                'label_func': self.form_image_button_bar_label,
-                'id_list': self.img_loader.config['image_buttons'].keys(),
-            }
-        }
+        for menu_widget in self.menu_widgets:
+            menu_widget.destroy()
 
         row = 0
-        for group_id, group_detail in items_to_draw.items():
-            for item_id in group_detail['id_list']:
-                row += 1
-                col = 0
+        for widget in self.img_loader.widgets.values():
+            row += 1
+            col = 0
 
-                frame = tk.Frame(self.root_window, width=self.root_window.winfo_width(),
-                                 bg="SystemButtonFace", colormap="new")
-                frame.grid(row=row, columnspan=self.columnspan, sticky=tk.NSEW)
+            frame = tk.Frame(self.root_window, width=self.root_window.winfo_width(),
+                             bg="SystemButtonFace", colormap="new")
+            frame.grid(row=row, columnspan=self.columnspan, sticky=tk.NSEW)
 
-                # Actual Text
-                text_col_span = 4
-                main_text = tk.Label(frame, text=group_detail['label_func'](item_id), anchor="w")
-                main_text.grid(row=row, column=col, columnspan=text_col_span, sticky=tk.W)
-                frame.grid_columnconfigure(col, weight=1)
-                col += text_col_span
+            # Widget Description
+            text_col_span = 4
+            main_text = tk.Label(frame, text=str(widget), anchor=tk.W)
+            main_text.grid(row=row, column=col, columnspan=text_col_span, sticky=tk.W)
+            frame.grid_columnconfigure(col, weight=2)
+            col += text_col_span
 
-                # Image Button Specific Menus
-                if group_id == 'image_buttons':
+            # Widget Type
+            text_col_span = 2
+            widget_type_label = tk.Label(frame, text=widget.widget_type.value, anchor=tk.W)
+            widget_type_label.grid(row=row, column=col, columnspan=text_col_span, sticky=tk.W)
+            frame.grid_columnconfigure(col, weight=1)
+            col += text_col_span
+
+            # Image Button Specific Menus
+            if widget.widget_type == WidgetType.BUTTON:
+                button = tk.Button(
+                    frame, borderwidth=1, text='+ Img',
+                    command=partial(self.add_image_to_button, widget))
+                button.grid(row=row, column=col, sticky=tk.NSEW)
+                col += 1
+
+                button = tk.Button(
+                    frame, borderwidth=1, text='- Img',
+                    command=partial(self.remove_current_image, widget))
+                button.grid(row=row, column=col, sticky=tk.NSEW)
+                col += 1
+
+            # Text Moving Navigation
+            nav_intervals = [50, 10, 1]
+            for interval in nav_intervals:
+                # Large Nav Text
+                label = tk.Label(frame, text=F'Move {interval}')
+                label.grid(row=row, column=col, sticky=tk.NSEW)
+                col += 1
+
+                # Large Nav Buttons
+                for direction in NAV_DIRECTIONS:
                     button = tk.Button(
-                        frame, borderwidth=1, text='+ Image',
-                        command=partial(self.add_image_to_button, item_id))
+                        frame, borderwidth=1, text=direction[0],
+                        command=partial(
+                            self.move_widget_by,
+                            direction[1] * interval,
+                            direction[2] * interval,
+                            widget=widget,
+                            main_text_label=main_text))
                     button.grid(row=row, column=col, sticky=tk.NSEW)
                     col += 1
 
-                    button = tk.Button(
-                        frame, borderwidth=1, text='- Image',
-                        command=partial(self.remove_current_image, item_id))
-                    button.grid(row=row, column=col, sticky=tk.NSEW)
-                    col += 1
+            # Remove Button
+            remove_button = tk.Button(
+                frame, borderwidth=1, text='Del',
+                command=partial(self.remove_widget, widget))
+            remove_button.grid(row=row, column=col, sticky=tk.NSEW)
+            row += 1
 
-                # Text Moving Navigation
-                nav_intervals = [50, 10, 1]
-                for interval in nav_intervals:
-                    # Large Nav Text
-                    label = tk.Label(frame, text=F'Move {interval}')
-                    label.grid(row=row, column=col, sticky=tk.NSEW)
-                    col += 1
+            self.menu_widgets.append(frame)
 
-                    # Large Nav Buttons
-                    for direction in NAV_DIRECTIONS:
-                        button = tk.Button(
-                            frame, borderwidth=1, text=direction[0],
-                            command=partial(
-                                group_detail['move_func'], item_id,
-                                direction[1] * interval,
-                                direction[2] * interval,
-                                main_text_label=main_text))
-                        button.grid(row=row, column=col, sticky=tk.NSEW)
-                        col += 1
+            # Draw the separatpr
+            sep = ttk.Separator(self.root_window, orient=tk.HORIZONTAL)
+            sep.grid(column=0, row=row, columnspan=self.columnspan, sticky='ew')
 
-                # Remove Button
-                remove_button = tk.Button(
-                    frame, borderwidth=1, text='Remove',
-                    command=partial(group_detail['remove_func'], item_id))
-                remove_button.grid(row=row, column=col, sticky=tk.NSEW)
-                row += 1
-
-                # Draw the separatpr
-                sep = ttk.Separator(self.root_window, orient=tk.HORIZONTAL)
-                sep.grid(column=0, row=row, columnspan=self.columnspan, sticky='ew')
-
-                self.text_frames[item_id] = frame
+            self.menu_widgets.append(sep)
 
     def _open_background_image(self):
         file_path = ask_image_filepath('Select the Background Image', self.working_dir)
@@ -219,6 +211,14 @@ class ImgEditor():
             logger.debug('Exit Application')
             self.root_window.quit()
 
+    def move_widget_by(self, move_x, move_y, *, widget, main_text_label):  # pylint: disable=no-self-use
+        widget.move_by(move_x=move_x, move_y=move_y)
+        main_text_label.config(text=str(widget))
+
+    def remove_widget(self, widget):
+        self.img_loader.remove_widget(widget)
+        self._draw_navigation_options()
+
     # Text Related Options
     def add_text(self):
         answer = simpledialog.askstring("Input", "Enter the text to add",
@@ -229,20 +229,6 @@ class ImgEditor():
 
             # Draw Editor Parts
             self._draw_navigation_options()
-
-    def move_text(self, idx, move_x, move_y, *, main_text_label):
-        self.img_loader.move_text(text_id=idx, move_x=move_x, move_y=move_y)
-        main_text_label.config(text=self.form_text_bar_label(idx))
-
-    def remove_text(self, idx):
-        logger.debug(F'Config Before Removal: {self.img_loader.config}')
-        self.img_loader.remove_text(text_id=idx)
-        logger.debug(F'Config After Removal: {self.img_loader.config}')
-        self._draw_navigation_options()
-
-    def form_text_bar_label(self, text_id):
-        text_details = self.img_loader.config['text'][text_id]
-        return F'{text_details["text"]} [{text_details["x"]},{text_details["y"]}]'
 
     # Button Related Data
     def add_image_button(self):
@@ -259,8 +245,13 @@ class ImgEditor():
                 file_path_tuple = ask_multi_image_filepath('Select the Button Images', self.working_dir)
                 if file_path_tuple:
                     img_list = [self._get_rel_path(file_path) for file_path in file_path_tuple]
-                    self.img_loader.add_image_button(
+                    button = self.img_loader.add_image_button(
                         button_id=button_id, pos_x=100, pos_y=200, orig_on_release=button_or_switch, images=img_list)
+
+                    def test_release_callback(*, widget):
+                        logger.info(F'Callback called for Button "{widget}"')
+
+                    button.add_image_callback(button_release_func=test_release_callback)
 
                     # Draw Editor Parts
                     self._draw_navigation_options()
@@ -270,28 +261,19 @@ class ImgEditor():
             else:
                 messagebox.showerror('Error', F'Button id "{button_id}" already used')
 
-    def move_image_button(self, idx, move_x, move_y, *, main_text_label):
-        self.img_loader.move_image_button(button_id=idx, move_x=move_x, move_y=move_y)
-        main_text_label.config(text=self.form_image_button_bar_label(idx))
-
-    def remove_image_button(self, idx):
-        self.img_loader.remove_image_button(button_id=idx)
-        self._draw_navigation_options()
-
-    def form_image_button_bar_label(self, button_id):
-        button_details = self.img_loader.config['image_buttons'][button_id]
-        return F'{button_id} [{button_details["x"]},{button_details["y"]}]'
-
-    def add_image_to_button(self, button_id):
+    def add_image_to_button(self, widget):
         file_path_tuple = ask_multi_image_filepath('Select the Button Images', self.working_dir)
         if file_path_tuple:
             img_list = [self._get_rel_path(file_path) for file_path in file_path_tuple]
-            self.img_loader.add_new_button_image(button_id=button_id, path_list=img_list)
+            widget.add_new_images(img_list)
 
-    def remove_current_image(self, idx):
-        deleted = self.img_loader.remove_current_button_image(button_id=idx)
-        if deleted:
-            self._draw_navigation_options()
+    def remove_current_image(self, widget):
+        try:
+            deleted = widget.remove_current_image()
+            if deleted:
+                self._draw_navigation_options()
+        except ValueError as error:
+            messagebox.showerror('Warning', error)
 
     def _refresh_screen_data(self):
         # https://riptutorial.com/tkinter/example/22870/-after--
