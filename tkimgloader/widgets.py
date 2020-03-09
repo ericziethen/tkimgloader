@@ -40,13 +40,13 @@ class Widget():
         self._widget_type = widget_type
 
     def __str__(self):
-        return F'{self.id} [{self.pos_x},{self.pos_y}]'     # TODO NEEDS A UNIT TEST
+        return F'{self.id} [{self.pos_x},{self.pos_y}]'
 
     def to_dict(self):
         return {'x': self.pos_x, 'y': self.pos_y}
 
     def draw(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def destroy(self):
         self.canvas.delete(self.canvas_widget)
@@ -70,7 +70,7 @@ class CanvasText(Widget):
         super().__init__(widget_id=text_id, pos_x=pos_x, pos_y=pos_y, widget_type=WidgetType.TEXT)
 
     def __str__(self):
-        return F'{self.text} [{self.pos_x},{self.pos_y}]'     # TODO NEEDS A UNIT TEST
+        return F'{self.text} [{self.pos_x},{self.pos_y}]'
 
     def to_dict(self):
         data_dict = super().to_dict()

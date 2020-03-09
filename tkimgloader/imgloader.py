@@ -1,6 +1,5 @@
 
 import copy
-import functools
 import json
 import logging
 

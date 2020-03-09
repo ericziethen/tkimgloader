@@ -109,17 +109,16 @@ class ImgEditor():
             frame.grid_columnconfigure(col, weight=1)
             col += text_col_span
 
-            ''' TODO - Fix add + Remove Image'''
             # Image Button Specific Menus
             if widget.widget_type == WidgetType.BUTTON:
                 button = tk.Button(
-                    frame, borderwidth=1, text='+ Image',
+                    frame, borderwidth=1, text='+ Img',
                     command=partial(self.add_image_to_button, widget))
                 button.grid(row=row, column=col, sticky=tk.NSEW)
                 col += 1
 
                 button = tk.Button(
-                    frame, borderwidth=1, text='- Image',
+                    frame, borderwidth=1, text='- Img',
                     command=partial(self.remove_current_image, widget))
                 button.grid(row=row, column=col, sticky=tk.NSEW)
                 col += 1
@@ -147,7 +146,7 @@ class ImgEditor():
 
             # Remove Button
             remove_button = tk.Button(
-                frame, borderwidth=1, text='Remove',
+                frame, borderwidth=1, text='Del',
                 command=partial(self.remove_widget, widget))
             remove_button.grid(row=row, column=col, sticky=tk.NSEW)
             row += 1
@@ -212,7 +211,7 @@ class ImgEditor():
             logger.debug('Exit Application')
             self.root_window.quit()
 
-    def move_widget_by(self, move_x, move_y, *, widget, main_text_label):
+    def move_widget_by(self, move_x, move_y, *, widget, main_text_label):  # pylint: disable=no-self-use
         widget.move_by(move_x=move_x, move_y=move_y)
         main_text_label.config(text=str(widget))
 
