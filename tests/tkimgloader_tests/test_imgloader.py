@@ -1,11 +1,8 @@
 
 import copy
 
-import pytest
-
 import tkimgloader.imgloader as imgloader
 from tkimgloader.imgloader import ConfigDrawer
-from tkimgloader.widgets import WidgetType
 
 
 def test_add_widget():

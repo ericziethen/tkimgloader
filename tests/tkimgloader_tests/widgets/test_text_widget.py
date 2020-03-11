@@ -1,6 +1,4 @@
 
-import pytest
-
 from tkimgloader.widgets import CanvasText, WidgetType
 
 
