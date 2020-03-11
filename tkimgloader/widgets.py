@@ -20,9 +20,8 @@ class ButtonType(enum.Enum):
 
 
 class Widget():
-    def __init__(self, *, widget_id, widget_type, pos_x, pos_y):
+    def __init__(self, *, widget_type, pos_x, pos_y):
         # Set Attributes
-        self.id = widget_id
         self.canvas = None
         self.widget_type = widget_type
         self.pos_x = pos_x
@@ -40,7 +39,7 @@ class Widget():
         self._widget_type = widget_type
 
     def __str__(self):
-        return F'{self.id} [{self.pos_x},{self.pos_y}]'
+        return F'({self.widget_type.value}) [{self.pos_x},{self.pos_y}]'
 
     def to_dict(self):
         return {'x': self.pos_x, 'y': self.pos_y}
@@ -65,12 +64,12 @@ class Widget():
 
 
 class CanvasText(Widget):
-    def __init__(self, *, text_id, text, pos_x, pos_y):
+    def __init__(self, *, text, pos_x, pos_y):
         self.text = text
-        super().__init__(widget_id=text_id, pos_x=pos_x, pos_y=pos_y, widget_type=WidgetType.TEXT)
+        super().__init__(pos_x=pos_x, pos_y=pos_y, widget_type=WidgetType.TEXT)
 
     def __str__(self):
-        return F'{self.text} [{self.pos_x},{self.pos_y}]'
+        return F'{self.text} {super().__str__()}'
 
     def to_dict(self):
         data_dict = super().to_dict()
@@ -84,11 +83,11 @@ class CanvasText(Widget):
 
 
 class CanvasImageButton(Widget):
-    def __init__(self, *, button_id, button_type, pos_x, pos_y, image_list, current_image=1):
+    def __init__(self, *, button_type, pos_x, pos_y, image_list, current_image=1):
         if not image_list:
             raise ValueError('Image list cannot be empty')
 
-        super().__init__(widget_id=button_id, pos_x=pos_x, pos_y=pos_y, widget_type=WidgetType.BUTTON)
+        super().__init__(pos_x=pos_x, pos_y=pos_y, widget_type=WidgetType.BUTTON)
         self.button_type = button_type
         self.image_path_dic = dict(enumerate(image_list, start=1))
         self.current_image = current_image
@@ -104,6 +103,9 @@ class CanvasImageButton(Widget):
         if not isinstance(button_type, ButtonType):
             raise ValueError(F'Invalid type " {button_type}" Passed, not of type ButtonType')
         self._button_type = button_type
+
+    def __str__(self):
+        return F'{self.button_type.value} {super().__str__()}'
 
     def to_dict(self):
         data_dict = super().to_dict()
