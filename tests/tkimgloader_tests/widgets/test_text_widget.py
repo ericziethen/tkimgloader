@@ -1,13 +1,10 @@
 
-import pytest
-
 from tkimgloader.widgets import CanvasText, WidgetType
 
 
 def test_create_widget():
-    widget = CanvasText(text_id='myId', text='myText', pos_x=200, pos_y=300)
+    widget = CanvasText(text='myText', pos_x=200, pos_y=300)
 
-    assert widget.id == 'myId'
     assert widget.widget_type == WidgetType.TEXT
     assert widget.pos_x == 200
     assert widget.pos_y == 300
@@ -15,13 +12,13 @@ def test_create_widget():
 
 
 def test_widget_str():
-    widget = CanvasText(text_id='myId', text='myText', pos_x=200, pos_y=300)
+    widget = CanvasText(text='myText', pos_x=200, pos_y=300)
 
-    assert str(widget) == 'myText [200,300]'
+    assert str(widget) == 'myText (Text) [200,300]'
 
 
 def test_widget_to_dict():
-    widget = CanvasText(text_id='myId', text='myText', pos_x=200, pos_y=300)
+    widget = CanvasText(text='myText', pos_x=200, pos_y=300)
 
     assert widget.to_dict() == {
         'x': 200,
@@ -31,7 +28,7 @@ def test_widget_to_dict():
 
 
 def test_move_to():
-    widget = CanvasText(text_id='myId', text='myText', pos_x=200, pos_y=300)
+    widget = CanvasText(text='myText', pos_x=200, pos_y=300)
     assert widget.pos_x == 200
     assert widget.pos_y == 300
 
@@ -41,7 +38,7 @@ def test_move_to():
 
 
 def test_move_by():
-    widget = CanvasText(text_id='myId', text='myText', pos_x=200, pos_y=300)
+    widget = CanvasText(text='myText', pos_x=200, pos_y=300)
     assert widget.pos_x == 200
     assert widget.pos_y == 300
 

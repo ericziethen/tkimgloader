@@ -1,5 +1,4 @@
 
-import datetime
 import logging
 import os
 
@@ -100,13 +99,6 @@ class ImgEditor():
             main_text = tk.Label(frame, text=str(widget), anchor=tk.W)
             main_text.grid(row=row, column=col, columnspan=text_col_span, sticky=tk.W)
             frame.grid_columnconfigure(col, weight=2)
-            col += text_col_span
-
-            # Widget Type
-            text_col_span = 2
-            widget_type_label = tk.Label(frame, text=widget.widget_type.value, anchor=tk.W)
-            widget_type_label.grid(row=row, column=col, columnspan=text_col_span, sticky=tk.W)
-            frame.grid_columnconfigure(col, weight=1)
             col += text_col_span
 
             # Image Button Specific Menus
@@ -224,42 +216,34 @@ class ImgEditor():
         answer = simpledialog.askstring("Input", "Enter the text to add",
                                         parent=self.root_window)
         if answer:
-            key = str(datetime.datetime.now())
-            self.img_loader.add_text(text_id=key, text=answer, pos_x=100, pos_y=100)
+            self.img_loader.add_text(text=answer, pos_x=100, pos_y=100)
 
             # Draw Editor Parts
             self._draw_navigation_options()
 
     # Button Related Data
     def add_image_button(self):
-        # Ask for the Button ID
-        button_id = simpledialog.askstring("Input", "Enter the unique Button Identifier",
-                                           parent=self.root_window)
 
-        if button_id:
-            if self.img_loader.image_button_id_available(button_id):
-                # Ask if a BUtton or Switch
-                button_or_switch = messagebox.askyesno("Question", "Is this a Button (Otherwise Switch)?")
+        # Ask if a Button or Switch
+        button_or_switch = messagebox.askyesno("Question", "Is this a Button (Otherwise Switch)?")
 
-                # Ask for the Button Image
-                file_path_tuple = ask_multi_image_filepath('Select the Button Images', self.working_dir)
-                if file_path_tuple:
-                    img_list = [self._get_rel_path(file_path) for file_path in file_path_tuple]
-                    button = self.img_loader.add_image_button(
-                        button_id=button_id, pos_x=100, pos_y=200, orig_on_release=button_or_switch, images=img_list)
+        # Ask for the Button Image
+        file_path_tuple = ask_multi_image_filepath('Select the Button Images', self.working_dir)
+        if file_path_tuple:
+            img_list = [self._get_rel_path(file_path) for file_path in file_path_tuple]
+            button = self.img_loader.add_image_button(
+                pos_x=100, pos_y=200, orig_on_release=button_or_switch, images=img_list)
 
-                    def test_release_callback(*, widget):
-                        logger.info(F'Callback called for Button "{widget}"')
+            def test_release_callback(*, widget):
+                logger.info(F'Callback called for Button "{widget}"')
 
-                    button.add_image_callback(button_release_func=test_release_callback)
+            button.add_image_callback(button_release_func=test_release_callback)
 
-                    # Draw Editor Parts
-                    self._draw_navigation_options()
+            # Draw Editor Parts
+            self._draw_navigation_options()
 
-                else:
-                    messagebox.showerror('Error', F'At least 1 image needs to be selected')
-            else:
-                messagebox.showerror('Error', F'Button id "{button_id}" already used')
+        else:
+            messagebox.showerror('Error', F'At least 1 image needs to be selected')
 
     def add_image_to_button(self, widget):
         file_path_tuple = ask_multi_image_filepath('Select the Button Images', self.working_dir)

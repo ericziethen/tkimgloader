@@ -10,10 +10,9 @@ from tkimgloader.widgets import (
 
 def test_create_widget():
     widget = CanvasImageButton(
-        button_id='myButton', button_type=ButtonType.RELEASE, pos_x=100, pos_y=200,
+        button_type=ButtonType.RELEASE, pos_x=100, pos_y=200,
         image_list=['path1', 'path2', 'path3'], current_image=3)
 
-    assert widget.id == 'myButton'
     assert widget.widget_type == WidgetType.BUTTON
     assert widget.pos_x == 100
     assert widget.pos_y == 200
@@ -25,15 +24,21 @@ def test_create_widget():
 
 def test_widget_str():
     widget = CanvasImageButton(
-        button_id='myButton', button_type=ButtonType.RELEASE, pos_x=100, pos_y=200,
+        button_type=ButtonType.RELEASE, pos_x=100, pos_y=200,
         image_list=['path1', 'path2', 'path3'], current_image=3)
 
-    assert str(widget) == 'myButton [100,200]'
+    assert str(widget) == 'Release (Button) [100,200]'
+
+    widget = CanvasImageButton(
+        button_type=ButtonType.SWITCH, pos_x=100, pos_y=200,
+        image_list=['path1', 'path2', 'path3'], current_image=3)
+
+    assert str(widget) == 'Switch (Button) [100,200]'
 
 
 def test_widget_to_dict():
     widget = CanvasImageButton(
-        button_id='myButton', button_type=ButtonType.RELEASE, pos_x=100, pos_y=200,
+        button_type=ButtonType.RELEASE, pos_x=100, pos_y=200,
         image_list=['path1', 'path2', 'path3'], current_image=3)
 
     assert widget.to_dict() == {
@@ -50,7 +55,7 @@ def test_widget_to_dict():
 
 def test_move_to():
     widget = CanvasImageButton(
-        button_id='myButton', button_type=ButtonType.RELEASE, pos_x=100, pos_y=200,
+        button_type=ButtonType.RELEASE, pos_x=100, pos_y=200,
         image_list=['path1', 'path2', 'path3'], current_image=3)
     assert widget.pos_x == 100
     assert widget.pos_y == 200
@@ -62,7 +67,7 @@ def test_move_to():
 
 def test_move_by():
     widget = CanvasImageButton(
-        button_id='myButton', button_type=ButtonType.RELEASE, pos_x=200, pos_y=300,
+        button_type=ButtonType.RELEASE, pos_x=200, pos_y=300,
         image_list=['path1', 'path2', 'path3'], current_image=3)
     assert widget.pos_x == 200
     assert widget.pos_y == 300
@@ -74,7 +79,7 @@ def test_move_by():
 
 def test_next_image():
     widget = CanvasImageButton(
-        button_id='myButton', button_type=ButtonType.RELEASE, pos_x=200, pos_y=300,
+        button_type=ButtonType.RELEASE, pos_x=200, pos_y=300,
         image_list=['path1', 'path2', 'path3'], current_image=3)
     assert widget.current_image == 3
 
@@ -90,7 +95,7 @@ def test_next_image():
 
 def test_previous_image():
     widget = CanvasImageButton(
-        button_id='myButton', button_type=ButtonType.RELEASE, pos_x=200, pos_y=300,
+        button_type=ButtonType.RELEASE, pos_x=200, pos_y=300,
         image_list=['path1', 'path2', 'path3'], current_image=3)
     assert widget.current_image == 3
 
@@ -110,7 +115,7 @@ def test_add_new_images(monkeypatch):
     monkeypatch.setattr(ImageTk, 'PhotoImage', mock_photo_image)
 
     widget = CanvasImageButton(
-        button_id='myButton', button_type=ButtonType.RELEASE, pos_x=200, pos_y=300,
+        button_type=ButtonType.RELEASE, pos_x=200, pos_y=300,
         image_list=['path1'])
     assert len(widget.image_path_dic) == 1
     assert widget.current_image == 1
@@ -133,7 +138,7 @@ def test_add_new_images(monkeypatch):
 
 def test_remove_current_image():
     widget = CanvasImageButton(
-        button_id='myButton', button_type=ButtonType.RELEASE, pos_x=200, pos_y=300,
+        button_type=ButtonType.RELEASE, pos_x=200, pos_y=300,
         image_list=['path1', 'path2', 'path3'], current_image=2)
     assert len(widget.image_path_dic) == 3
     assert widget.current_image == 2
@@ -155,7 +160,7 @@ def test_remove_current_image():
 
 def test_remove_current_image_last_image():
     widget = CanvasImageButton(
-        button_id='myButton', button_type=ButtonType.RELEASE, pos_x=200, pos_y=300,
+        button_type=ButtonType.RELEASE, pos_x=200, pos_y=300,
         image_list=['path1'])
 
     with pytest.raises(ValueError):
@@ -167,7 +172,7 @@ def test_set_callback():
         pass
 
     widget = CanvasImageButton(
-        button_id='myButton', button_type=ButtonType.RELEASE, pos_x=200, pos_y=300,
+        button_type=ButtonType.RELEASE, pos_x=200, pos_y=300,
         image_list=['path1'])
     widget.add_image_callback(button_release_func=callback_func)
     assert widget.release_callback == callback_func
