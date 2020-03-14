@@ -122,6 +122,12 @@ class ImgEditor():
                     logger.info(F'Callback called for Input Box "{widget}" with value "{text}"')
                 widget.add_callback(input_confirm_callback=test_inputbox_callback)
 
+                button = tk.Button(
+                    frame, borderwidth=1, text='Width',
+                    command=partial(self.set_input_box_width, widget))
+                button.grid(row=row, column=col, sticky=tk.NSEW)
+                col += 1
+
             # Adding/Removing Labels
             if not widget.label:
                 button = tk.Button(
@@ -303,6 +309,13 @@ class ImgEditor():
 
             # Draw Editor Parts
             self._draw_navigation_options()
+
+    def set_input_box_width(self, widget):
+        width = simpledialog.askinteger(
+            'Input', 'New Input Box Width?', parent=self.root_window, minvalue=0)
+
+        if width:
+            widget.width = width
 
     def _refresh_screen_data(self):
         # https://riptutorial.com/tkinter/example/22870/-after--
