@@ -116,6 +116,19 @@ class ImgEditor():
                 button.grid(row=row, column=col, sticky=tk.NSEW)
                 col += 1
 
+            # Adding/Removing Labels
+            if not widget.label:
+                button = tk.Button(
+                    frame, borderwidth=1, text='+ Label',
+                    command=partial(self.add_widget_label, widget))
+            else:
+                button = tk.Button(
+                    frame, borderwidth=1, text=F'- Label ({widget.label})',
+                    command=partial(self.remove_widget_label, widget))
+
+            button.grid(row=row, column=col, sticky=tk.NSEW)
+            col += 1
+
             # Text Moving Navigation
             nav_intervals = [50, 10, 1]
             for interval in nav_intervals:
@@ -210,6 +223,20 @@ class ImgEditor():
 
     def remove_widget(self, widget):
         self.img_loader.remove_widget(widget)
+        self._draw_navigation_options()
+
+    def add_widget_label(self, widget):
+        answer = simpledialog.askstring("Input", "Enter Widget Label",
+                                        parent=self.root_window)
+
+        if answer:
+            widget.label = answer
+
+            # Draw Editor Parts
+            self._draw_navigation_options()
+
+    def remove_widget_label(self, widget):
+        widget.label = None
         self._draw_navigation_options()
 
     # Text Related Options
