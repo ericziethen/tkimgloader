@@ -10,6 +10,7 @@ class WidgetType(enum.Enum):
     # pylint: disable=invalid-name
     BUTTON = 'Button'
     TEXT = 'Text'
+    INPUT_BOX = 'Input Box'
 
 
 @enum.unique
@@ -20,9 +21,10 @@ class ButtonType(enum.Enum):
 
 
 class Widget():
-    def __init__(self, *, widget_type, pos_x, pos_y):
+    def __init__(self, *, label=None, widget_type, pos_x, pos_y):
         # Set Attributes
         self.canvas = None
+        self.label = label
         self.widget_type = widget_type
         self.pos_x = pos_x
         self.pos_y = pos_y
@@ -39,16 +41,20 @@ class Widget():
         self._widget_type = widget_type
 
     def __str__(self):
-        return F'({self.widget_type.value}) [{self.pos_x},{self.pos_y}]'
+        label_str = ''
+        if self.label:
+            label_str = F'[{self.label}]'
+
+        return F'({self.widget_type.value}) {label_str}[{self.pos_x},{self.pos_y}]'
 
     def to_dict(self):
-        return {'x': self.pos_x, 'y': self.pos_y}
+        return {'label': self.label, 'x': self.pos_x, 'y': self.pos_y}
 
     def draw(self):
         raise NotImplementedError
 
     def destroy(self):
-        self.canvas.delete(self.canvas_widget)
+        raise NotImplementedError
 
     def move_to(self, *, pos_x, pos_y):
         self.pos_x = pos_x
@@ -59,14 +65,31 @@ class Widget():
         self.move_to(pos_x=self.pos_x + move_x, pos_y=self.pos_y + move_y)
 
     def redraw_widget(self):
+        raise NotImplementedError
+
+
+class CanvasWidget(Widget):  # pylint: disable=abstract-method
+    def destroy(self):
+        self.canvas.delete(self.canvas_widget)
+
+    def redraw_widget(self):
         if self.canvas:
             self.canvas.coords(self.canvas_widget, self.pos_x, self.pos_y)
 
 
-class CanvasText(Widget):
-    def __init__(self, *, text, pos_x, pos_y):
+class FloatingWidget(Widget):  # pylint: disable=abstract-method
+    def destroy(self):
+        self.canvas_widget.destroy()
+
+    def redraw_widget(self):
+        if self.canvas:
+            self.canvas_widget.place(x=self.pos_x, y=self.pos_y)
+
+
+class CanvasText(CanvasWidget):
+    def __init__(self, *, label=None, text, pos_x, pos_y):
         self.text = text
-        super().__init__(pos_x=pos_x, pos_y=pos_y, widget_type=WidgetType.TEXT)
+        super().__init__(label=label, pos_x=pos_x, pos_y=pos_y, widget_type=WidgetType.TEXT)
 
     def __str__(self):
         return F'{self.text} {super().__str__()}'
@@ -82,12 +105,12 @@ class CanvasText(Widget):
                                                          font='Times 10 italic bold')
 
 
-class CanvasImageButton(Widget):
-    def __init__(self, *, button_type, pos_x, pos_y, image_list, current_image=1):
+class CanvasImageButton(CanvasWidget):
+    def __init__(self, *, label=None, button_type, pos_x, pos_y, image_list, current_image=1):
         if not image_list:
             raise ValueError('Image list cannot be empty')
 
-        super().__init__(pos_x=pos_x, pos_y=pos_y, widget_type=WidgetType.BUTTON)
+        super().__init__(label=label, pos_x=pos_x, pos_y=pos_y, widget_type=WidgetType.BUTTON)
         self.button_type = button_type
         self.image_path_dic = dict(enumerate(image_list, start=1))
         self.current_image = current_image
@@ -208,3 +231,25 @@ class CanvasImageButton(Widget):
 
     def add_image_callback(self, *, button_release_func):
         self.release_callback = button_release_func
+
+
+class InputBox(FloatingWidget):
+    def __init__(self, *, label=None, pos_x, pos_y, width=15):
+        super().__init__(label=label, pos_x=pos_x, pos_y=pos_y, widget_type=WidgetType.INPUT_BOX)
+        self.input_confirm_callback = None
+        self.width = width
+
+    def add_callback(self, *, input_confirm_callback):
+        self.input_confirm_callback = input_confirm_callback
+
+    def handle_text_input(self, event):  # pylint: disable=unused-argument
+        text = self.canvas_widget.get()
+        self.input_confirm_callback(widget=self, text=text)
+
+    def draw(self):
+        if self.canvas:
+            self.canvas_widget = tk.Entry(self.canvas, width=self.width, validate='all')
+
+            self.canvas_widget.bind('<Return>', self.handle_text_input)
+
+            self.redraw_widget()

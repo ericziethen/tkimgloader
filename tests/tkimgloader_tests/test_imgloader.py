@@ -1,6 +1,8 @@
 
 import copy
 
+import pytest
+
 import tkimgloader.imgloader as imgloader
 from tkimgloader.imgloader import ConfigDrawer
 
@@ -24,11 +26,44 @@ def test_remove_widget():
     assert widget_id not in drawer.widgets
 
 
-def test_add_widget_duplicate_text():
+def test_add_text_widget_duplicate_text():
     drawer = ConfigDrawer('fake_canvas')
 
     drawer.add_text(text='myText', pos_x=200, pos_y=300, draw=False)
     drawer.add_text(text='myText', pos_x=200, pos_y=300, draw=False)
+
+
+def test_add_text_widget_with_label():
+    drawer = ConfigDrawer('fake_canvas')
+
+    widget = drawer.add_text(label='unique_label', text='myText', pos_x=200, pos_y=300, draw=False)
+    assert widget.label == 'unique_label'
+
+
+
+def test_add_input_box_widgetwith_label():
+    drawer = ConfigDrawer('fake_canvas')
+
+    widget = drawer.add_input_box(label='unique_label', pos_x=200, pos_y=300, draw=False)
+    assert widget.label == 'unique_label'
+
+
+def test_get_widget_with_label():
+    drawer = ConfigDrawer('fake_canvas')
+
+    assert not drawer.get_widget_with_label('myLabel')
+
+    widget = drawer.add_input_box(label='myLabel', pos_x=200, pos_y=300, draw=False)
+    assert drawer.get_widget_with_label('myLabel') == widget
+
+
+def test_add_widgets_reject_duplicate_labels():
+    drawer = ConfigDrawer('fake_canvas')
+
+    widget = drawer.add_text(label='unique_label', text='myText', pos_x=200, pos_y=300, draw=False)
+    with pytest.raises(ValueError):
+        drawer.add_text(label='unique_label', text='myText', pos_x=200, pos_y=300, draw=False)
+
 
 
 def test_config_after_init():
@@ -57,7 +92,7 @@ def test_load_config_no_unsaved_changed():
     config = {
         "background": "path",
         "Text": [
-            {"text": "Test", "x": 100, "y": 100}
+            {'label': None, "text": "Test", "x": 100, "y": 100}
         ]
     }
 
@@ -191,8 +226,12 @@ def test_save_load_config_identical(monkeypatch):
     # Create 1 Config from Blank $ Confirm empty, Add Text, Add Buttons
     drawer1 = ConfigDrawer('fake_canvas')
     drawer1.load_background('path', draw=False)
-    drawer1.add_text(text='sample_text', pos_x=100, pos_y=200, draw=False)
-    drawer1.add_image_button(pos_x=100, pos_y=200, orig_on_release=True, images=['path1'], draw=False)
+
+    # Add all widgets
+    drawer1.add_text(label='myText', text='sample_text', pos_x=100, pos_y=200, draw=False)
+    drawer1.add_image_button(label='button', pos_x=100, pos_y=200, orig_on_release=True, images=['path1'], draw=False)
+    drawer1.add_input_box(label='box', pos_x=100, pos_y=200, draw=False)
+
     button2 = drawer1.add_image_button(pos_x=100, pos_y=200, orig_on_release=False, images=['path1', 'path2'], draw=False)
     button2.next_image()
 
@@ -208,6 +247,13 @@ def test_save_load_config_identical(monkeypatch):
 
     # Load Config
     drawer2._load_config(config_copy, config_path='fake_path', draw=False)
+
+    # Check can find our Label
+    widget = drawer2.get_widget_with_label('myText')
+    assert widget is not None
+
+    print(drawer1.calc_config_dict())
+    print(drawer2.calc_config_dict())
 
     # Check both configs the same
     assert drawer1 == drawer2

@@ -21,6 +21,7 @@ def test_widget_to_dict():
     widget = CanvasText(text='myText', pos_x=200, pos_y=300)
 
     assert widget.to_dict() == {
+        'label': None,
         'x': 200,
         'y': 300,
         'text': 'myText'

@@ -42,6 +42,7 @@ def test_widget_to_dict():
         image_list=['path1', 'path2', 'path3'], current_image=3)
 
     assert widget.to_dict() == {
+        'label': None,
         'x': 100,
         'y': 200,
         'orig_image_on_release': True,
@@ -174,5 +175,7 @@ def test_set_callback():
     widget = CanvasImageButton(
         button_type=ButtonType.RELEASE, pos_x=200, pos_y=300,
         image_list=['path1'])
+
+    assert not widget.release_callback
     widget.add_image_callback(button_release_func=callback_func)
     assert widget.release_callback == callback_func

@@ -66,14 +66,15 @@ class ImgEditor():
 
         # Exit
         file_menu.add_command(label='Exit', command=self.exit)
-
         menubar.add_cascade(label='File', menu=file_menu)
-        menubar.add_command(label='Add Text', command=self.add_text)
-        menubar.add_command(label='Add Image Button', command=self.add_image_button)
+        menubar.add_command(label='+ Text', command=self.add_text)
+        menubar.add_command(label='+ Image Button', command=self.add_image_button)
+        menubar.add_command(label='+ Input Box', command=self.add_input_box)
 
         if not self.img_loader.background_path:
-            menubar.entryconfig('Add Text', state="disabled")
-            menubar.entryconfig('Add Image Button', state="disabled")
+            menubar.entryconfig('+ Text', state="disabled")
+            menubar.entryconfig('+ Image Button', state="disabled")
+            menubar.entryconfig('+ Input Box', state="disabled")
 
         self.root_window.config(menu=menubar)
 
@@ -114,6 +115,25 @@ class ImgEditor():
                     command=partial(self.remove_current_image, widget))
                 button.grid(row=row, column=col, sticky=tk.NSEW)
                 col += 1
+
+            # Input box Specific
+            if widget.widget_type == WidgetType.INPUT_BOX:
+                def test_inputbox_callback(*, widget, text):
+                    logger.info(F'Callback called for Input Box "{widget}" with value "{text}"')
+                widget.add_callback(input_confirm_callback=test_inputbox_callback)
+
+            # Adding/Removing Labels
+            if not widget.label:
+                button = tk.Button(
+                    frame, borderwidth=1, text='+ Label',
+                    command=partial(self.add_widget_label, widget))
+            else:
+                button = tk.Button(
+                    frame, borderwidth=1, text=F'- Label',
+                    command=partial(self.remove_widget_label, widget))
+
+            button.grid(row=row, column=col, sticky=tk.NSEW)
+            col += 1
 
             # Text Moving Navigation
             nav_intervals = [50, 10, 1]
@@ -211,6 +231,20 @@ class ImgEditor():
         self.img_loader.remove_widget(widget)
         self._draw_navigation_options()
 
+    def add_widget_label(self, widget):
+        answer = simpledialog.askstring("Input", "Enter Widget Label",
+                                        parent=self.root_window)
+
+        if answer:
+            widget.label = answer
+
+            # Draw Editor Parts
+            self._draw_navigation_options()
+
+    def remove_widget_label(self, widget):
+        widget.label = None
+        self._draw_navigation_options()
+
     # Text Related Options
     def add_text(self):
         answer = simpledialog.askstring("Input", "Enter the text to add",
@@ -258,6 +292,17 @@ class ImgEditor():
                 self._draw_navigation_options()
         except ValueError as error:
             messagebox.showerror('Warning', error)
+
+    # Input Box Related Options
+    def add_input_box(self):
+        width = simpledialog.askinteger(
+            'Input', 'Input Box Width?', parent=self.root_window, minvalue=0)
+
+        if width:
+            self.img_loader.add_input_box(pos_x=100, pos_y=100, width=width)
+
+            # Draw Editor Parts
+            self._draw_navigation_options()
 
     def _refresh_screen_data(self):
         # https://riptutorial.com/tkinter/example/22870/-after--
