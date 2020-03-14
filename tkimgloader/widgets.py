@@ -258,7 +258,14 @@ class InputBox(FloatingWidget):
 
     def draw(self):
         if self.canvas:
-            self.canvas_widget = tk.Entry(self.canvas, width=self.width, validate='all')
+            def validate_length(text):
+                if text and len(text) > self.width:
+                    return False
+                return True
+            validation = self.canvas.register(validate_length)
+
+            self.canvas_widget = tk.Entry(self.canvas, width=self.width,
+                                          validate='all', validatecommand=(validation, '%P'))
 
             self.canvas_widget.bind('<Return>', self.handle_text_input)
 
