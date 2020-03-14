@@ -56,6 +56,9 @@ class Widget():
     def destroy(self):
         raise NotImplementedError
 
+    def lift(self):
+        raise NotImplementedError
+
     def move_to(self, *, pos_x, pos_y):
         self.pos_x = pos_x
         self.pos_y = pos_y
@@ -76,6 +79,9 @@ class CanvasWidget(Widget):  # pylint: disable=abstract-method
         if self.canvas:
             self.canvas.coords(self.canvas_widget, self.pos_x, self.pos_y)
 
+    def lift(self):
+        self.canvas.tag_raise(self.canvas_widget)
+
 
 class FloatingWidget(Widget):  # pylint: disable=abstract-method
     def destroy(self):
@@ -84,6 +90,9 @@ class FloatingWidget(Widget):  # pylint: disable=abstract-method
     def redraw_widget(self):
         if self.canvas:
             self.canvas_widget.place(x=self.pos_x, y=self.pos_y)
+
+    def lift(self):
+        self.canvas_widget.lift()
 
 
 class CanvasText(CanvasWidget):

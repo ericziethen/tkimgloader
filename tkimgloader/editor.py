@@ -128,6 +128,11 @@ class ImgEditor():
                 button.grid(row=row, column=col, sticky=tk.NSEW)
                 col += 1
 
+            # Raise the Widget
+            button = tk.Button(frame, borderwidth=1, text='Raise', command=widget.lift)
+            button.grid(row=row, column=col, sticky=tk.NSEW)
+            col += 1
+
             # Adding/Removing Labels
             if not widget.label:
                 button = tk.Button(
