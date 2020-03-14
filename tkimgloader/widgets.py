@@ -10,6 +10,7 @@ class WidgetType(enum.Enum):
     # pylint: disable=invalid-name
     BUTTON = 'Button'
     TEXT = 'Text'
+    INPUT_BOX = 'Input Box'
 
 
 @enum.unique
@@ -208,3 +209,19 @@ class CanvasImageButton(Widget):
 
     def add_image_callback(self, *, button_release_func):
         self.release_callback = button_release_func
+
+
+class InputBox(Widget):
+    def __init__(self, *, pos_x, pos_y):
+        super().__init__(pos_x=pos_x, pos_y=pos_y, widget_type=WidgetType.INPUT_BOX)
+        self.input_confirm_callback = None
+
+    def add_callback(self, *, input_confirm_callback):
+        self.input_confirm_callback = input_confirm_callback
+
+    '''
+    def draw(self):
+        if self.canvas:
+            self.canvas_widget = self.canvas.create_text(self.pos_x, self.pos_y, text=self.text, anchor=tk.NW,
+                                                         font='Times 10 italic bold')
+    '''

@@ -174,5 +174,7 @@ def test_set_callback():
     widget = CanvasImageButton(
         button_type=ButtonType.RELEASE, pos_x=200, pos_y=300,
         image_list=['path1'])
+
+    assert not widget.release_callback
     widget.add_image_callback(button_release_func=callback_func)
     assert widget.release_callback == callback_func
