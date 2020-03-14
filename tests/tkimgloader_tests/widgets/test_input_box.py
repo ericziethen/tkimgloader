@@ -4,12 +4,16 @@ from tkimgloader.widgets import InputBox, WidgetType
 
 
 def test_create_widget():
-    widget = InputBox(pos_x=100, pos_y=200)
+    widget = InputBox(pos_x=100, pos_y=200, width=12)
 
     assert widget.widget_type == WidgetType.INPUT_BOX
     assert widget.pos_x == 100
     assert widget.pos_y == 200
+    assert widget.width == 12
 
+def test_create_widget_default_width():
+    widget = InputBox(pos_x=100, pos_y=200)
+    assert widget.width == 15
 
 def test_widget_str():
     widget = InputBox(pos_x=100, pos_y=200)

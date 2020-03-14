@@ -128,8 +128,8 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
 
         return button_widget
 
-    def add_input_box(self, *, pos_x, pos_y, draw=True):
-        text_widget = InputBox(pos_x=pos_x, pos_y=pos_y)
+    def add_input_box(self, *, pos_x, pos_y, width=None, draw=True):
+        text_widget = InputBox(pos_x=pos_x, pos_y=pos_y, width=width)
         self._add_widget(text_widget, draw)
 
         return text_widget

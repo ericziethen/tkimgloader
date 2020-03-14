@@ -49,7 +49,7 @@ class Widget():
         raise NotImplementedError
 
     def destroy(self):
-        self.canvas.delete(self.canvas_widget)
+        raise NotImplementedError
 
     def move_to(self, *, pos_x, pos_y):
         self.pos_x = pos_x
@@ -60,11 +60,28 @@ class Widget():
         self.move_to(pos_x=self.pos_x + move_x, pos_y=self.pos_y + move_y)
 
     def redraw_widget(self):
+        raise NotImplementedError
+
+
+class CanvasWidget(Widget):
+    def destroy(self):
+        self.canvas.delete(self.canvas_widget)
+
+    def redraw_widget(self):
         if self.canvas:
             self.canvas.coords(self.canvas_widget, self.pos_x, self.pos_y)
 
 
-class CanvasText(Widget):
+class FloatingWidget(Widget):
+    def destroy(self):
+        self.canvas_widget.destroy()
+
+    def redraw_widget(self):
+        if self.canvas:
+            self.canvas_widget.place(x=self.pos_x, y=self.pos_y)
+
+
+class CanvasText(CanvasWidget):
     def __init__(self, *, text, pos_x, pos_y):
         self.text = text
         super().__init__(pos_x=pos_x, pos_y=pos_y, widget_type=WidgetType.TEXT)
@@ -83,7 +100,7 @@ class CanvasText(Widget):
                                                          font='Times 10 italic bold')
 
 
-class CanvasImageButton(Widget):
+class CanvasImageButton(CanvasWidget):
     def __init__(self, *, button_type, pos_x, pos_y, image_list, current_image=1):
         if not image_list:
             raise ValueError('Image list cannot be empty')
@@ -211,17 +228,16 @@ class CanvasImageButton(Widget):
         self.release_callback = button_release_func
 
 
-class InputBox(Widget):
-    def __init__(self, *, pos_x, pos_y):
+class InputBox(FloatingWidget):
+    def __init__(self, *, pos_x, pos_y, width=15):
         super().__init__(pos_x=pos_x, pos_y=pos_y, widget_type=WidgetType.INPUT_BOX)
         self.input_confirm_callback = None
+        self.width = width
 
     def add_callback(self, *, input_confirm_callback):
         self.input_confirm_callback = input_confirm_callback
 
-    '''
     def draw(self):
         if self.canvas:
-            self.canvas_widget = self.canvas.create_text(self.pos_x, self.pos_y, text=self.text, anchor=tk.NW,
-                                                         font='Times 10 italic bold')
-    '''
+            self.canvas_widget = tk.Entry(self.canvas, width=self.width, validate='all')
+            self.redraw_widget()

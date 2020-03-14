@@ -262,10 +262,14 @@ class ImgEditor():
 
     # Input Box Related Options
     def add_input_box(self):
-        self.img_loader.add_input_box(pos_x=100, pos_y=100)
+        width = simpledialog.askinteger(
+            'Input', 'Input Box Width?', parent=self.root_window, minvalue=0)
 
-        # Draw Editor Parts
-        self._draw_navigation_options()
+        if width:
+            self.img_loader.add_input_box(pos_x=100, pos_y=100, width=width)
+
+            # Draw Editor Parts
+            self._draw_navigation_options()
 
     def _refresh_screen_data(self):
         # https://riptutorial.com/tkinter/example/22870/-after--
