@@ -299,7 +299,7 @@ class ImgEditor():
             'Input', 'Input Box Width?', parent=self.root_window, minvalue=0)
 
         if width:
-            widget = self.img_loader.add_input_box(pos_x=100, pos_y=100, width=width)
+            self.img_loader.add_input_box(pos_x=100, pos_y=100, width=width)
 
             # Draw Editor Parts
             self._draw_navigation_options()

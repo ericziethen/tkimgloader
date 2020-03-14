@@ -68,7 +68,7 @@ class Widget():
         raise NotImplementedError
 
 
-class CanvasWidget(Widget):
+class CanvasWidget(Widget):  # pylint: disable=abstract-method
     def destroy(self):
         self.canvas.delete(self.canvas_widget)
 
@@ -77,7 +77,7 @@ class CanvasWidget(Widget):
             self.canvas.coords(self.canvas_widget, self.pos_x, self.pos_y)
 
 
-class FloatingWidget(Widget):
+class FloatingWidget(Widget):  # pylint: disable=abstract-method
     def destroy(self):
         self.canvas_widget.destroy()
 
@@ -242,7 +242,7 @@ class InputBox(FloatingWidget):
     def add_callback(self, *, input_confirm_callback):
         self.input_confirm_callback = input_confirm_callback
 
-    def handle_text_input(self, event):
+    def handle_text_input(self, event):  # pylint: disable=unused-argument
         text = self.canvas_widget.get()
         self.input_confirm_callback(widget=self, text=text)
 

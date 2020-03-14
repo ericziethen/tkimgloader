@@ -97,7 +97,8 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
         # Load the Text Items
         if 'Text' in config:
             for text_item in config['Text']:
-                self.add_text(label=text_item['label'], text=text_item['text'], pos_x=text_item['x'], pos_y=text_item['y'], draw=draw)
+                self.add_text(label=text_item['label'], text=text_item['text'],
+                              pos_x=text_item['x'], pos_y=text_item['y'], draw=draw)
 
         # Load the image button items
         if 'Button' in config:
