@@ -116,6 +116,12 @@ class ImgEditor():
                 button.grid(row=row, column=col, sticky=tk.NSEW)
                 col += 1
 
+            # Input box Specific
+            if widget.widget_type == WidgetType.INPUT_BOX:
+                def test_inputbox_callback(*, widget, text):
+                    logger.info(F'Callback called for Input Box "{widget}" with value "{text}"')
+                widget.add_callback(input_confirm_callback=test_inputbox_callback)
+
             # Adding/Removing Labels
             if not widget.label:
                 button = tk.Button(
@@ -123,7 +129,7 @@ class ImgEditor():
                     command=partial(self.add_widget_label, widget))
             else:
                 button = tk.Button(
-                    frame, borderwidth=1, text=F'- Label ({widget.label})',
+                    frame, borderwidth=1, text=F'- Label',
                     command=partial(self.remove_widget_label, widget))
 
             button.grid(row=row, column=col, sticky=tk.NSEW)
@@ -293,7 +299,7 @@ class ImgEditor():
             'Input', 'Input Box Width?', parent=self.root_window, minvalue=0)
 
         if width:
-            self.img_loader.add_input_box(pos_x=100, pos_y=100, width=width)
+            widget = self.img_loader.add_input_box(pos_x=100, pos_y=100, width=width)
 
             # Draw Editor Parts
             self._draw_navigation_options()

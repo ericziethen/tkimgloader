@@ -41,7 +41,11 @@ class Widget():
         self._widget_type = widget_type
 
     def __str__(self):
-        return F'({self.widget_type.value}) [{self.pos_x},{self.pos_y}]'
+        label_str = ''
+        if self.label:
+            label_str = F'[{self.label}]'
+
+        return F'({self.widget_type.value}) {label_str}[{self.pos_x},{self.pos_y}]'
 
     def to_dict(self):
         return {'label': self.label, 'x': self.pos_x, 'y': self.pos_y}
@@ -238,7 +242,14 @@ class InputBox(FloatingWidget):
     def add_callback(self, *, input_confirm_callback):
         self.input_confirm_callback = input_confirm_callback
 
+    def handle_text_input(self, event):
+        text = self.canvas_widget.get()
+        self.input_confirm_callback(widget=self, text=text)
+
     def draw(self):
         if self.canvas:
             self.canvas_widget = tk.Entry(self.canvas, width=self.width, validate='all')
+
+            self.canvas_widget.bind('<Return>', self.handle_text_input)
+
             self.redraw_widget()
