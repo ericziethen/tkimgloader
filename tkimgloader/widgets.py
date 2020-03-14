@@ -21,9 +21,10 @@ class ButtonType(enum.Enum):
 
 
 class Widget():
-    def __init__(self, *, widget_type, pos_x, pos_y):
+    def __init__(self, *, label=None, widget_type, pos_x, pos_y):
         # Set Attributes
         self.canvas = None
+        self.label = label
         self.widget_type = widget_type
         self.pos_x = pos_x
         self.pos_y = pos_y
@@ -43,7 +44,7 @@ class Widget():
         return F'({self.widget_type.value}) [{self.pos_x},{self.pos_y}]'
 
     def to_dict(self):
-        return {'x': self.pos_x, 'y': self.pos_y}
+        return {'label': self.label, 'x': self.pos_x, 'y': self.pos_y}
 
     def draw(self):
         raise NotImplementedError
@@ -82,9 +83,9 @@ class FloatingWidget(Widget):
 
 
 class CanvasText(CanvasWidget):
-    def __init__(self, *, text, pos_x, pos_y):
+    def __init__(self, *, label=None, text, pos_x, pos_y):
         self.text = text
-        super().__init__(pos_x=pos_x, pos_y=pos_y, widget_type=WidgetType.TEXT)
+        super().__init__(label=label, pos_x=pos_x, pos_y=pos_y, widget_type=WidgetType.TEXT)
 
     def __str__(self):
         return F'{self.text} {super().__str__()}'
@@ -101,11 +102,11 @@ class CanvasText(CanvasWidget):
 
 
 class CanvasImageButton(CanvasWidget):
-    def __init__(self, *, button_type, pos_x, pos_y, image_list, current_image=1):
+    def __init__(self, *, label=None, button_type, pos_x, pos_y, image_list, current_image=1):
         if not image_list:
             raise ValueError('Image list cannot be empty')
 
-        super().__init__(pos_x=pos_x, pos_y=pos_y, widget_type=WidgetType.BUTTON)
+        super().__init__(label=label, pos_x=pos_x, pos_y=pos_y, widget_type=WidgetType.BUTTON)
         self.button_type = button_type
         self.image_path_dic = dict(enumerate(image_list, start=1))
         self.current_image = current_image
@@ -229,8 +230,8 @@ class CanvasImageButton(CanvasWidget):
 
 
 class InputBox(FloatingWidget):
-    def __init__(self, *, pos_x, pos_y, width=15):
-        super().__init__(pos_x=pos_x, pos_y=pos_y, widget_type=WidgetType.INPUT_BOX)
+    def __init__(self, *, label=None, pos_x, pos_y, width=15):
+        super().__init__(label=label, pos_x=pos_x, pos_y=pos_y, widget_type=WidgetType.INPUT_BOX)
         self.input_confirm_callback = None
         self.width = width
 

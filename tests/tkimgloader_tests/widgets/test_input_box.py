@@ -15,18 +15,22 @@ def test_create_widget_default_width():
     widget = InputBox(pos_x=100, pos_y=200)
     assert widget.width == 15
 
+
 def test_widget_str():
     widget = InputBox(pos_x=100, pos_y=200)
 
     assert str(widget) == '(Input Box) [100,200]'
 
+
 def test_widget_to_dict():
-    widget = InputBox(pos_x=100, pos_y=200)
+    widget = InputBox(label='myLabel', pos_x=100, pos_y=200)
 
     assert widget.to_dict() == {
+        'label': 'myLabel',
         'x': 100,
         'y': 200
     }
+
 
 def test_move_to():
     widget = InputBox(pos_x=100, pos_y=200)

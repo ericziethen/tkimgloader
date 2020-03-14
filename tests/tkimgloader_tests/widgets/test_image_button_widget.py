@@ -42,6 +42,7 @@ def test_widget_to_dict():
         image_list=['path1', 'path2', 'path3'], current_image=3)
 
     assert widget.to_dict() == {
+        'label': None,
         'x': 100,
         'y': 200,
         'orig_image_on_release': True,
