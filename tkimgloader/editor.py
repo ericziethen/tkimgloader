@@ -66,14 +66,15 @@ class ImgEditor():
 
         # Exit
         file_menu.add_command(label='Exit', command=self.exit)
-
         menubar.add_cascade(label='File', menu=file_menu)
-        menubar.add_command(label='Add Text', command=self.add_text)
-        menubar.add_command(label='Add Image Button', command=self.add_image_button)
+        menubar.add_command(label='+ Text', command=self.add_text)
+        menubar.add_command(label='+ Image Button', command=self.add_image_button)
+        menubar.add_command(label='+ Input Box', command=self.add_input_box)
 
         if not self.img_loader.background_path:
-            menubar.entryconfig('Add Text', state="disabled")
-            menubar.entryconfig('Add Image Button', state="disabled")
+            menubar.entryconfig('+ Text', state="disabled")
+            menubar.entryconfig('+ Image Button', state="disabled")
+            menubar.entryconfig('+ Input Box', state="disabled")
 
         self.root_window.config(menu=menubar)
 
@@ -258,6 +259,13 @@ class ImgEditor():
                 self._draw_navigation_options()
         except ValueError as error:
             messagebox.showerror('Warning', error)
+
+    # Input Box Related Options
+    def add_input_box(self):
+        self.img_loader.add_input_box(pos_x=100, pos_y=100)
+
+        # Draw Editor Parts
+        self._draw_navigation_options()
 
     def _refresh_screen_data(self):
         # https://riptutorial.com/tkinter/example/22870/-after--

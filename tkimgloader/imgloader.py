@@ -7,7 +7,7 @@ import tkinter as tk
 
 from PIL import ImageTk
 
-from widgets import ButtonType, CanvasImageButton, CanvasText
+from widgets import ButtonType, CanvasImageButton, CanvasText, InputBox
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -127,6 +127,12 @@ class ConfigDrawer():  # pylint: disable=too-many-public-methods
         self._add_widget(button_widget, draw)
 
         return button_widget
+
+    def add_input_box(self, *, pos_x, pos_y, draw=True):
+        text_widget = InputBox(pos_x=pos_x, pos_y=pos_y)
+        self._add_widget(text_widget, draw)
+
+        return text_widget
 
 
 def load_json(file_path):
