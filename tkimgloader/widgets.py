@@ -237,7 +237,17 @@ class InputBox(FloatingWidget):
     def __init__(self, *, label=None, pos_x, pos_y, width=15):
         super().__init__(label=label, pos_x=pos_x, pos_y=pos_y, widget_type=WidgetType.INPUT_BOX)
         self.input_confirm_callback = None
-        self.width = width
+        self._width = width
+
+    @property
+    def width(self):
+        return self._width
+
+    @width.setter
+    def width(self, width):
+        self._width = width
+        if self.canvas:
+            self.canvas_widget.configure(width=self.width)
 
     def add_callback(self, *, input_confirm_callback):
         self.input_confirm_callback = input_confirm_callback
