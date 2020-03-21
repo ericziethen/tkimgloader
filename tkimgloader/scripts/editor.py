@@ -9,9 +9,9 @@ import tkinter.ttk as ttk
 from tkinter import filedialog, messagebox
 import tkinter.simpledialog as simpledialog
 
-import project_logger
-from imgloader import ConfigDrawer
-from widgets import WidgetType
+from tkimgloader import project_logger
+from tkimgloader.imgloader import ConfigDrawer
+from tkimgloader.widgets import WidgetType
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
