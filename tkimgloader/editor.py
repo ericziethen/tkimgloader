@@ -22,6 +22,20 @@ NAV_DIRECTIONS = [
     ('▶', 1, 0)]
 
 
+class ChangeDir():
+    """Context manager for changing the current working directory"""
+    def __init__(self, new_path):
+        self.new_path = os.path.expanduser(new_path)
+        self.saved_path = None
+
+    def __enter__(self):
+        self.saved_path = os.getcwd()
+        os.chdir(self.new_path)
+
+    def __exit__(self, etype, value, traceback):
+        os.chdir(self.saved_path)
+
+
 class ImgEditor():
     def __init__(self, root, working_dir):
         logger.debug(F'Working Dir: {working_dir}')
@@ -363,9 +377,11 @@ def main():
     working_dir = ask_directory('Select the working directory')
     logger.debug('Working Dir Selected: "{working_dir}"')
     if working_dir:
-        root.deiconify()
-        ImgEditor(root, working_dir)
-        root.mainloop()
+
+        with ChangeDir(working_dir):
+            root.deiconify()
+            ImgEditor(root, working_dir)
+            root.mainloop()
     else:
         root.quit()
 
