@@ -2,7 +2,7 @@ import os
 
 from tkinter import filedialog
 
-import tkimgloader.editor as editor
+import tkimgloader.scripts.editor as editor
 
 SAMPLE_DIR = R'C:\Projects\This Project'
 REL_FILE_PATH = R'SubDir\File.json'
