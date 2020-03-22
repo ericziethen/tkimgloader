@@ -7,7 +7,7 @@ import tkinter as tk
 
 from PIL import ImageTk
 
-from widgets import ButtonType, CanvasImageButton, CanvasText, InputBox
+from tkimgloader.widgets import ButtonType, CanvasImageButton, CanvasText, InputBox
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
