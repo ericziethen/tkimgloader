@@ -97,8 +97,16 @@ class FloatingWidget(Widget):  # pylint: disable=abstract-method
 
 class CanvasText(CanvasWidget):
     def __init__(self, *, label=None, text, pos_x, pos_y):
-        self.text = text
         super().__init__(label=label, pos_x=pos_x, pos_y=pos_y, widget_type=WidgetType.TEXT)
+        self.text = text
+
+    def __setattr__(self, name, value):
+        if name == 'text':
+            super().__setattr__(name, value)
+            if self.canvas_widget:
+                self.redraw_widget()
+        else:
+            super().__setattr__(name, value)
 
     def __str__(self):
         return F'{self.text} {super().__str__()}'
@@ -112,6 +120,11 @@ class CanvasText(CanvasWidget):
         if self.canvas:
             self.canvas_widget = self.canvas.create_text(self.pos_x, self.pos_y, text=self.text, anchor=tk.NW,
                                                          font='Times 10 italic bold')
+
+    def redraw_widget(self):
+        super().redraw_widget()
+        if self.canvas:
+            self.canvas.itemconfig(self.canvas_widget, text=self.text)
 
 
 class CanvasImageButton(CanvasWidget):
