@@ -45,6 +45,7 @@ class ImgEditor():
         self.columnspan = 20
 
         self.menu_widgets = []
+        self.dynamic_text_widgets = []
 
         # Init the Canvas
         self._init_canvas()
@@ -95,10 +96,11 @@ class ImgEditor():
         # Set our job to refresh screen data
         self.root_window.after(1000, self._refresh_screen_data)
 
-    def _draw_navigation_options(self):  # pylint: disable=too-many-locals
+    def _draw_navigation_options(self):  # pylint: disable=too-many-locals,too-many-statements
         # Remove existing frames to redraw
         for menu_widget in self.menu_widgets:
             menu_widget.destroy()
+        self.dynamic_text_widgets.clear()
 
         row = 0
         for widget in self.img_loader.widgets.values():
@@ -115,6 +117,12 @@ class ImgEditor():
             main_text.grid(row=row, column=col, columnspan=text_col_span, sticky=tk.W)
             frame.grid_columnconfigure(col, weight=2)
             col += text_col_span
+
+            # Dynamic Text Specific
+            if widget.widget_type == WidgetType.TEXT:
+                if not widget.text:  # Dynamic Text without actual text
+                    widget.text = widget.label
+                    self.dynamic_text_widgets.append(widget)
 
             # Image Button Specific Menus
             if widget.widget_type == WidgetType.BUTTON:
@@ -232,7 +240,14 @@ class ImgEditor():
         if config_path:
             if not config_path.lower().endswith('.json'):
                 config_path += '.json'
+
+            # Remove Dynamic Text Text before Saving
+            for widget in self.dynamic_text_widgets:
+                widget.text = ''
+
             self.img_loader.save_config_to_file(config_path)
+
+            self._draw_navigation_options()
 
     def _get_rel_path(self, path):
         return os.path.relpath(path, self.working_dir)
@@ -272,13 +287,22 @@ class ImgEditor():
 
     # Text Related Options
     def add_text(self):
-        answer = simpledialog.askstring("Input", "Enter the text to add",
-                                        parent=self.root_window)
-        if answer:
-            self.img_loader.add_text(text=answer, pos_x=100, pos_y=100)
+        text = simpledialog.askstring("Input", "Enter the text to add (Blank for Dynamic Text)",
+                                      parent=self.root_window)
+        if text:
+            self.img_loader.add_text(text=text, pos_x=100, pos_y=100)
 
             # Draw Editor Parts
             self._draw_navigation_options()
+
+        else:
+            label = simpledialog.askstring("Input", "Enter the Label for the Blank Text",
+                                           parent=self.root_window)
+            if label:
+                self.img_loader.add_text(label=label, text='', pos_x=100, pos_y=100)
+
+                # Draw Editor Parts
+                self._draw_navigation_options()
 
     # Button Related Data
     def add_image_button(self):
