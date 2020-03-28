@@ -96,7 +96,7 @@ class ImgEditor():
         # Set our job to refresh screen data
         self.root_window.after(1000, self._refresh_screen_data)
 
-    def _draw_navigation_options(self):  # pylint: disable=too-many-locals
+    def _draw_navigation_options(self):  # pylint: disable=too-many-locals,too-many-statements
         # Remove existing frames to redraw
         for menu_widget in self.menu_widgets:
             menu_widget.destroy()
