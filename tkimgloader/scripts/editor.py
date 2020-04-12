@@ -393,6 +393,7 @@ def ask_image_filepath(title, initial_dir):
 
     return path
 
+
 def ask_multi_image_filepath(title, initial_dir):
     file_path_tuple = filedialog.askopenfilenames(
         title=title, initialdir=initial_dir,
