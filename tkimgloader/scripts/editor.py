@@ -21,6 +21,9 @@ NAV_DIRECTIONS = [
     ('◀', -1, 0),
     ('▶', 1, 0)]
 
+# A workaround so that we use image buttons for images but identify them so we don't show button options
+SINGLE_IMAGE_LABEL = 'single-image'
+
 
 class ChangeDir():
     """Context manager for changing the current working directory"""
@@ -83,12 +86,14 @@ class ImgEditor():
         file_menu.add_command(label='Exit', command=self.exit)
         menubar.add_cascade(label='File', menu=file_menu)
         menubar.add_command(label='+ Text', command=self.add_text)
-        menubar.add_command(label='+ Image Button', command=self.add_image_button)
+        menubar.add_command(label='+ Image', command=self.add_image)
+        menubar.add_command(label='+ Image-Button', command=self.add_image_button)
         menubar.add_command(label='+ Input Box', command=self.add_input_box)
 
         if not self.img_loader.background_path:
             menubar.entryconfig('+ Text', state="disabled")
-            menubar.entryconfig('+ Image Button', state="disabled")
+            menubar.entryconfig('+ Image', state="disabled")
+            menubar.entryconfig('+ Image-Button', state="disabled")
             menubar.entryconfig('+ Input Box', state="disabled")
 
         self.root_window.config(menu=menubar)
@@ -125,7 +130,7 @@ class ImgEditor():
                     self.dynamic_text_widgets.append(widget)
 
             # Image Button Specific Menus
-            if widget.widget_type == WidgetType.BUTTON:
+            if (widget.widget_type == WidgetType.BUTTON) and (widget.label != SINGLE_IMAGE_LABEL):
                 button = tk.Button(
                     frame, borderwidth=1, text='+ Img',
                     command=partial(self.add_image_to_button, widget))
@@ -160,7 +165,7 @@ class ImgEditor():
                 button = tk.Button(
                     frame, borderwidth=1, text='+ Label',
                     command=partial(self.add_widget_label, widget))
-            else:
+            elif widget.label != SINGLE_IMAGE_LABEL:
                 button = tk.Button(
                     frame, borderwidth=1, text=F'- Label',
                     command=partial(self.remove_widget_label, widget))
@@ -303,6 +308,16 @@ class ImgEditor():
 
                 # Draw Editor Parts
                 self._draw_navigation_options()
+
+    # Image Related Data
+    def add_image(self):
+        file_path = ask_image_filepath('Select the Background Image', self.working_dir)
+        if file_path:
+            self.img_loader.add_image_button(
+                label=SINGLE_IMAGE_LABEL, pos_x=100, pos_y=200, orig_on_release=True, images=[file_path])
+
+            # Draw Editor Parts
+            self._draw_navigation_options()
 
     # Button Related Data
     def add_image_button(self):
