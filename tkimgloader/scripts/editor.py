@@ -212,10 +212,8 @@ class ImgEditor():
     def _open_background_image(self):
         file_path = ask_image_filepath('Select the Background Image', self.working_dir)
         if file_path:
-            logger.debug(F'Filepath Selected: "{file_path}""')
-            rel_path = self._get_rel_path(file_path)
-            logger.debug(F'Rel Filepath Selected: "{rel_path}"')
-            self.img_loader.load_background(rel_path)
+            logger.debug(F'Rel Filepath Selected: "{file_path}"')
+            self.img_loader.load_background(file_path)
             self._draw_menu()  # To enable Insert Box
 
     def _load_config(self):
@@ -253,9 +251,6 @@ class ImgEditor():
             self.img_loader.save_config_to_file(config_path)
 
             self._draw_navigation_options()
-
-    def _get_rel_path(self, path):
-        return os.path.relpath(path, self.working_dir)
 
     def exit(self):
         can_exit = True
@@ -326,9 +321,8 @@ class ImgEditor():
         button_or_switch = messagebox.askyesno("Question", "Is this a Button (Otherwise Switch)?")
 
         # Ask for the Button Image
-        file_path_tuple = ask_multi_image_filepath('Select the Button Images', self.working_dir)
-        if file_path_tuple:
-            img_list = [self._get_rel_path(file_path) for file_path in file_path_tuple]
+        img_list = ask_multi_image_filepath('Select the Button Images', self.working_dir)
+        if img_list:
             button = self.img_loader.add_image_button(
                 pos_x=100, pos_y=200, orig_on_release=button_or_switch, images=img_list)
 
@@ -344,9 +338,8 @@ class ImgEditor():
             messagebox.showerror('Error', F'At least 1 image needs to be selected')
 
     def add_image_to_button(self, widget):
-        file_path_tuple = ask_multi_image_filepath('Select the Button Images', self.working_dir)
-        if file_path_tuple:
-            img_list = [self._get_rel_path(file_path) for file_path in file_path_tuple]
+        img_list = ask_multi_image_filepath('Select the Button Images', self.working_dir)
+        if img_list:
             widget.add_new_images(img_list)
 
     def remove_current_image(self, widget):
@@ -391,15 +384,21 @@ def ask_directory(title):
 
 
 def ask_image_filepath(title, initial_dir):
-    return filedialog.askopenfilename(
+    path = filedialog.askopenfilename(
         title=title, initialdir=initial_dir,
         filetypes=(('Image files', '.bmp .gif .jpg .jpeg .png'),))
 
+    if path:
+        path = os.path.relpath(path, initial_dir)
+
+    return path
 
 def ask_multi_image_filepath(title, initial_dir):
-    return filedialog.askopenfilenames(
+    file_path_tuple = filedialog.askopenfilenames(
         title=title, initialdir=initial_dir,
         filetypes=(('Image files', '.bmp .gif .jpg .jpeg .png'),))
+
+    return [os.path.relpath(path, initial_dir) for path in file_path_tuple]
 
 
 def main():
