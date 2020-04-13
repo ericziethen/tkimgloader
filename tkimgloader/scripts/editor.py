@@ -21,6 +21,9 @@ NAV_DIRECTIONS = [
     ('◀', -1, 0),
     ('▶', 1, 0)]
 
+# A workaround so that we use image buttons for images but identify them so we don't show button options
+SINGLE_IMAGE_LABEL = 'single-image'
+
 
 class ChangeDir():
     """Context manager for changing the current working directory"""
@@ -83,12 +86,14 @@ class ImgEditor():
         file_menu.add_command(label='Exit', command=self.exit)
         menubar.add_cascade(label='File', menu=file_menu)
         menubar.add_command(label='+ Text', command=self.add_text)
-        menubar.add_command(label='+ Image Button', command=self.add_image_button)
+        menubar.add_command(label='+ Image', command=self.add_image)
+        menubar.add_command(label='+ Image-Button', command=self.add_image_button)
         menubar.add_command(label='+ Input Box', command=self.add_input_box)
 
         if not self.img_loader.background_path:
             menubar.entryconfig('+ Text', state="disabled")
-            menubar.entryconfig('+ Image Button', state="disabled")
+            menubar.entryconfig('+ Image', state="disabled")
+            menubar.entryconfig('+ Image-Button', state="disabled")
             menubar.entryconfig('+ Input Box', state="disabled")
 
         self.root_window.config(menu=menubar)
@@ -125,7 +130,7 @@ class ImgEditor():
                     self.dynamic_text_widgets.append(widget)
 
             # Image Button Specific Menus
-            if widget.widget_type == WidgetType.BUTTON:
+            if (widget.widget_type == WidgetType.BUTTON) and (widget.label != SINGLE_IMAGE_LABEL):
                 button = tk.Button(
                     frame, borderwidth=1, text='+ Img',
                     command=partial(self.add_image_to_button, widget))
@@ -160,7 +165,7 @@ class ImgEditor():
                 button = tk.Button(
                     frame, borderwidth=1, text='+ Label',
                     command=partial(self.add_widget_label, widget))
-            else:
+            elif widget.label != SINGLE_IMAGE_LABEL:
                 button = tk.Button(
                     frame, borderwidth=1, text=F'- Label',
                     command=partial(self.remove_widget_label, widget))
@@ -207,10 +212,8 @@ class ImgEditor():
     def _open_background_image(self):
         file_path = ask_image_filepath('Select the Background Image', self.working_dir)
         if file_path:
-            logger.debug(F'Filepath Selected: "{file_path}""')
-            rel_path = self._get_rel_path(file_path)
-            logger.debug(F'Rel Filepath Selected: "{rel_path}"')
-            self.img_loader.load_background(rel_path)
+            logger.debug(F'Rel Filepath Selected: "{file_path}"')
+            self.img_loader.load_background(file_path)
             self._draw_menu()  # To enable Insert Box
 
     def _load_config(self):
@@ -248,9 +251,6 @@ class ImgEditor():
             self.img_loader.save_config_to_file(config_path)
 
             self._draw_navigation_options()
-
-    def _get_rel_path(self, path):
-        return os.path.relpath(path, self.working_dir)
 
     def exit(self):
         can_exit = True
@@ -304,6 +304,16 @@ class ImgEditor():
                 # Draw Editor Parts
                 self._draw_navigation_options()
 
+    # Image Related Data
+    def add_image(self):
+        file_path = ask_image_filepath('Select the Background Image', self.working_dir)
+        if file_path:
+            self.img_loader.add_image_button(
+                label=SINGLE_IMAGE_LABEL, pos_x=100, pos_y=200, orig_on_release=True, images=[file_path])
+
+            # Draw Editor Parts
+            self._draw_navigation_options()
+
     # Button Related Data
     def add_image_button(self):
 
@@ -311,9 +321,8 @@ class ImgEditor():
         button_or_switch = messagebox.askyesno("Question", "Is this a Button (Otherwise Switch)?")
 
         # Ask for the Button Image
-        file_path_tuple = ask_multi_image_filepath('Select the Button Images', self.working_dir)
-        if file_path_tuple:
-            img_list = [self._get_rel_path(file_path) for file_path in file_path_tuple]
+        img_list = ask_multi_image_filepath('Select the Button Images', self.working_dir)
+        if img_list:
             button = self.img_loader.add_image_button(
                 pos_x=100, pos_y=200, orig_on_release=button_or_switch, images=img_list)
 
@@ -329,9 +338,8 @@ class ImgEditor():
             messagebox.showerror('Error', F'At least 1 image needs to be selected')
 
     def add_image_to_button(self, widget):
-        file_path_tuple = ask_multi_image_filepath('Select the Button Images', self.working_dir)
-        if file_path_tuple:
-            img_list = [self._get_rel_path(file_path) for file_path in file_path_tuple]
+        img_list = ask_multi_image_filepath('Select the Button Images', self.working_dir)
+        if img_list:
             widget.add_new_images(img_list)
 
     def remove_current_image(self, widget):
@@ -376,15 +384,22 @@ def ask_directory(title):
 
 
 def ask_image_filepath(title, initial_dir):
-    return filedialog.askopenfilename(
+    path = filedialog.askopenfilename(
         title=title, initialdir=initial_dir,
         filetypes=(('Image files', '.bmp .gif .jpg .jpeg .png'),))
+
+    if path:
+        path = os.path.relpath(path, initial_dir)
+
+    return path
 
 
 def ask_multi_image_filepath(title, initial_dir):
-    return filedialog.askopenfilenames(
+    file_path_tuple = filedialog.askopenfilenames(
         title=title, initialdir=initial_dir,
         filetypes=(('Image files', '.bmp .gif .jpg .jpeg .png'),))
+
+    return [os.path.relpath(path, initial_dir) for path in file_path_tuple]
 
 
 def main():

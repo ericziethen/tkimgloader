@@ -37,14 +37,4 @@ def test_ask_file(monkeypatch):
         return SAMPLE_FILE
     monkeypatch.setattr(filedialog, 'askopenfilename', mockreturn)
 
-    assert editor.ask_image_filepath('Title', 'Initial Dir') == SAMPLE_FILE
-
-
-def test_rel_path(monkeypatch):
-    editor_init_mock_returns(monkeypatch)
-    def mockreturn_openfile(**kwargs):
-        return SAMPLE_FILE
-    monkeypatch.setattr(filedialog, 'askopenfilename', mockreturn_openfile)
-
-    edit = editor.ImgEditor('fake_root', SAMPLE_DIR)
-    assert edit._get_rel_path(SAMPLE_FILE) == REL_FILE_PATH
+    assert editor.ask_image_filepath('Title', SAMPLE_DIR) == REL_FILE_PATH
