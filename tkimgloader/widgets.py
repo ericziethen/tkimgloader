@@ -272,6 +272,9 @@ class CanvasTable(CanvasWidget):
                 col.append(None)
 
     def add_widget(self, widget, *, col, row):
+        if widget.widget_type not in [WidgetType.TEXT, WidgetType.BUTTON]:
+            raise ValueError(F'Widget Type "{widget.widget_type}" not supported to add to a Table')
+
         self._widgets[col - 1][row - 1] = widget
 
     def get_widget(self, *, col, row):

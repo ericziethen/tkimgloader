@@ -1,3 +1,6 @@
+
+import pytest
+
 from tkimgloader.widgets import (
     CanvasTable, CanvasText, CanvasImageButton, ButtonType, WidgetType
 )
@@ -69,9 +72,14 @@ def test_add_widget():
     assert table.get_widget(col=2, row=1) == img_widget
 
 
-'''
 def test_add_widget_unsupported_widget():
-    assert False
+    table = CanvasTable(label='table1', pos_x=50, pos_y=300, column_widths=[10], row_heights=[10])
+
+    table2 = CanvasTable(label='table2', pos_x=50, pos_y=300, column_widths=[10], row_heights=[10])
+    with pytest.raises(ValueError):
+        table.add_widget(table2, col=1, row=1)
+
+'''
 
 def test_add_widget_invalid_row():
     assert False
