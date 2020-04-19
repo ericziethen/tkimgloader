@@ -1,5 +1,5 @@
 from tkimgloader.widgets import (
-    CanvasTable, CanvasText, CanvasImageButton, WidgetType
+    CanvasTable, CanvasText, CanvasImageButton, ButtonType, WidgetType
 )
 
 
@@ -15,12 +15,12 @@ def test_create_widget():
     assert table.pos_x == 100
     assert table.pos_y == 200
 
-    assert table.widget(col=1, row=1) is None
-    assert table.widget(col=1, row=2) is None
-    assert table.widget(col=2, row=1) is None
-    assert table.widget(col=2, row=2) is None
-    assert table.widget(col=3, row=1) is None
-    assert table.widget(col=3, row=2) is None
+    assert table.get_widget(col=1, row=1) is None
+    assert table.get_widget(col=1, row=2) is None
+    assert table.get_widget(col=2, row=1) is None
+    assert table.get_widget(col=2, row=2) is None
+    assert table.get_widget(col=3, row=1) is None
+    assert table.get_widget(col=3, row=2) is None
 
 
 def test_widget_str():
@@ -51,25 +51,33 @@ def test_move_by():
     assert widget.pos_y == 180
 
 
-'''
 def test_add_widget():
-    table_widget = CanvasTable(label='table1', pos_x=50, pos_y=300, column_widths=[10], row_heights=[10])
+    table = CanvasTable(label='table1', pos_x=50, pos_y=300, column_widths=[10, 20], row_heights=[10])
 
-    assert not widget.widgets
+    assert table.get_widget(col=1, row=1) is None
+    assert table.get_widget(col=2, row=1) is None
+
     text_widget = CanvasText(text='myText', pos_x=200, pos_y=300)
-    table_widget.add_widget(text_widget, row=1, column=1)
+    table.add_widget(text_widget, row=1, col=1)
 
-    #assert widget.widgets[0][0] ==
+    img_widget = CanvasImageButton(
+        button_type=ButtonType.RELEASE, pos_x=200, pos_y=300,
+        image_list=['path1'])
+    table.add_widget(img_widget, row=1, col=2)
+
+    assert table.get_widget(col=1, row=1) == text_widget
+    assert table.get_widget(col=2, row=1) == img_widget
 
 
-    image_widget = None
 '''
-
-
-'''
-def test_add_widget_unsupported():
+def test_add_widget_unsupported_widget():
     assert False
 
+def test_add_widget_invalid_row():
+    assert False
+
+def test_add_widget_invalid_column():
+    assert False
 
 def test_add_widget_calc_position():
     assert False

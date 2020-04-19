@@ -271,7 +271,10 @@ class CanvasTable(CanvasWidget):
             for _ in range(len(row_heights)):
                 col.append(None)
 
-    def widget(self, *, col, row):
+    def add_widget(self, widget, *, col, row):
+        self._widgets[col - 1][row - 1] = widget
+
+    def get_widget(self, *, col, row):
         return self._widgets[col - 1][row - 1]
 
 
