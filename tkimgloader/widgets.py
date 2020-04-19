@@ -259,17 +259,20 @@ class CanvasImageButton(CanvasWidget):
 class CanvasTable(CanvasWidget):
     def __init__(self, *, label=None, pos_x, pos_y, column_widths, row_heights):
         super().__init__(label=label, pos_x=pos_x, pos_y=pos_y, widget_type=WidgetType.TABLE)
-        self.column_widths = dict(enumerate(column_widths, start=1))
-        self.row_heights = dict(enumerate(row_heights, start=1))
+        self._column_widths = dict(enumerate(column_widths, start=1))
+        self._row_heights = dict(enumerate(row_heights, start=1))
 
         # Setup the Grid
-        self.widgets = []
+        self._widgets = []
         for _ in column_widths:
-            self.widgets.append([])
+            self._widgets.append([])
 
-        for _, col in enumerate(self.widgets):
-            for row in range(len(row_heights)):
+        for _, col in enumerate(self._widgets):
+            for _ in range(len(row_heights)):
                 col.append(None)
+
+    def widget(self, *, col, row):
+        return self._widgets[col - 1][row - 1]
 
 
 class InputBox(FloatingWidget):

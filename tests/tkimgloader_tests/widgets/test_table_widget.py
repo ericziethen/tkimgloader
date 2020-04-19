@@ -4,35 +4,23 @@ from tkimgloader.widgets import (
 
 
 def test_create_widget():
-    widget = CanvasTable(
+    table = CanvasTable(
         label='table1', pos_x=100, pos_y=200,
         column_widths=(50, 100, 100),
         row_heights=(100, 200)
     )
 
-    assert widget.label == 'table1'
-    assert widget.widget_type == WidgetType.TABLE
-    assert widget.pos_x == 100
-    assert widget.pos_y == 200
+    assert table.label == 'table1'
+    assert table.widget_type == WidgetType.TABLE
+    assert table.pos_x == 100
+    assert table.pos_y == 200
 
-    assert len(widget.column_widths) == 3
-    assert len(widget.row_heights) == 2
-
-    assert widget.column_widths[1] == 50
-    assert widget.column_widths[2] == 100
-    assert widget.column_widths[3] == 100
-
-    assert widget.row_heights[1] == 100
-    assert widget.row_heights[2] == 200
-
-    assert len(widget.widgets) == 3
-    assert len(widget.widgets[0]) == 2
-    assert len(widget.widgets[1]) == 2
-    assert len(widget.widgets[2]) == 2
-
-    for col in widget.widgets:
-        for row in col:
-            assert row is None
+    assert table.widget(col=1, row=1) is None
+    assert table.widget(col=1, row=2) is None
+    assert table.widget(col=2, row=1) is None
+    assert table.widget(col=2, row=2) is None
+    assert table.widget(col=3, row=1) is None
+    assert table.widget(col=3, row=2) is None
 
 
 def test_widget_str():
