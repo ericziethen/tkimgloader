@@ -262,6 +262,15 @@ class CanvasTable(CanvasWidget):
         self.column_widths = dict(enumerate(column_widths, start=1))
         self.row_heights = dict(enumerate(row_heights, start=1))
 
+        # Setup the Grid
+        self.widgets = []
+        for _ in column_widths:
+            self.widgets.append([])
+
+        for _, col in enumerate(self.widgets):
+            for row in range(len(row_heights)):
+                col.append(None)
+
 
 class InputBox(FloatingWidget):
     def __init__(self, *, label=None, pos_x, pos_y, width=15):

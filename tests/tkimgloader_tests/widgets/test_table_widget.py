@@ -1,5 +1,5 @@
 from tkimgloader.widgets import (
-    CanvasTable, WidgetType
+    CanvasTable, CanvasText, CanvasImageButton, WidgetType
 )
 
 
@@ -24,6 +24,15 @@ def test_create_widget():
 
     assert widget.row_heights[1] == 100
     assert widget.row_heights[2] == 200
+
+    assert len(widget.widgets) == 3
+    assert len(widget.widgets[0]) == 2
+    assert len(widget.widgets[1]) == 2
+    assert len(widget.widgets[2]) == 2
+
+    for col in widget.widgets:
+        for row in col:
+            assert row is None
 
 
 def test_widget_str():
@@ -54,15 +63,32 @@ def test_move_by():
     assert widget.pos_y == 180
 
 
+'''
+def test_add_widget():
+    table_widget = CanvasTable(label='table1', pos_x=50, pos_y=300, column_widths=[10], row_heights=[10])
+
+    assert not widget.widgets
+    text_widget = CanvasText(text='myText', pos_x=200, pos_y=300)
+    table_widget.add_widget(text_widget, row=1, column=1)
+
+    #assert widget.widgets[0][0] ==
 
 
-
+    image_widget = None
+'''
 
 
 '''
-
-def test_add_widget():
+def test_add_widget_unsupported():
     assert False
+
+
+def test_add_widget_calc_position():
+    assert False
+
+
+
+
 
 def test_remove_widget():
     assert False
