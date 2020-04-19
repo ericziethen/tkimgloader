@@ -11,6 +11,7 @@ class WidgetType(enum.Enum):
     BUTTON = 'Button'
     TEXT = 'Text'
     INPUT_BOX = 'Input Box'
+    TABLE = 'Table'
 
 
 @enum.unique
@@ -253,6 +254,13 @@ class CanvasImageButton(CanvasWidget):
 
     def add_image_callback(self, *, button_release_func):
         self.release_callback = button_release_func
+
+
+class CanvasTable(CanvasWidget):
+    def __init__(self, *, label=None, pos_x, pos_y, column_widths, row_heights):
+        super().__init__(label=label, pos_x=pos_x, pos_y=pos_y, widget_type=WidgetType.TABLE)
+        self.column_widths = dict(enumerate(column_widths, start=1))
+        self.row_heights = dict(enumerate(row_heights, start=1))
 
 
 class InputBox(FloatingWidget):
