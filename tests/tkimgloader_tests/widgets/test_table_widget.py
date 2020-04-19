@@ -79,10 +79,29 @@ def test_add_widget_unsupported_widget():
     with pytest.raises(ValueError):
         table.add_widget(table2, col=1, row=1)
 
-'''
 
 def test_add_widget_invalid_row():
-    assert False
+    table = CanvasTable(label='table1', pos_x=50, pos_y=300, column_widths=[10], row_heights=[10])
+
+    text_widget = CanvasText(text='myText', pos_x=200, pos_y=300)
+    with pytest.raises(IndexError):
+        table.add_widget(text_widget, col=0, row=1)
+
+    with pytest.raises(IndexError):
+        table.add_widget(text_widget, col=1, row=0)
+
+    with pytest.raises(IndexError):
+        table.add_widget(text_widget, col=2, row=1)
+
+    with pytest.raises(IndexError):
+        table.add_widget(text_widget, col=1, row=2)
+
+    table.add_widget(text_widget, col=1, row=1)
+
+
+'''
+
+
 
 def test_add_widget_invalid_column():
     assert False

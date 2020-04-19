@@ -275,6 +275,10 @@ class CanvasTable(CanvasWidget):
         if widget.widget_type not in [WidgetType.TEXT, WidgetType.BUTTON]:
             raise ValueError(F'Widget Type "{widget.widget_type}" not supported to add to a Table')
 
+        # Catch Negativ index errors as python will treat them from back of the list and might not be raised by access
+        if col < 1 or row < 1:
+            raise IndexError(F'Cannot have less than 1 as Table Index, have Column={col}, Row={row}')
+
         self._widgets[col - 1][row - 1] = widget
 
     def get_widget(self, *, col, row):
