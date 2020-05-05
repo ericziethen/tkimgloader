@@ -99,6 +99,16 @@ def test_add_widget_invalid_row():
     table.add_widget(text_widget, col=1, row=1)
 
 
+def test_get_widget_invalid_index():
+    table = CanvasTable(label='table1', pos_x=50, pos_y=300, column_widths=[5, 4, 3], row_heights=[5, 1, 2])
+
+    with pytest.raises(IndexError):
+        table.get_widget(col=4, row=3)
+
+    with pytest.raises(IndexError):
+        table.get_widget(col=3, row=4)
+
+
 '''
 
 
