@@ -141,7 +141,7 @@ def test_add_row():
     assert table._row_heights[2] == 2
     assert table._row_heights[3] == 3
 
-    table.add_row(pos=2, height=10)
+    table.add_row(row=2, height=10)
 
     assert table._row_heights[1] == 1
     assert table._row_heights[2] == 10
@@ -153,6 +153,37 @@ def test_add_row():
     assert table.get_widget(col=1, row=3) == text_2
     assert table.get_widget(col=1, row=4) == text_3
 
+def test_remove_row():
+    table = CanvasTable(label='table1', pos_x=50, pos_y=300, column_widths=[10], row_heights=[1, 2, 3, 10])
+
+    text_1 = CanvasText(text='text1', pos_x=200, pos_y=300)
+    text_2 = CanvasText(text='text1', pos_x=200, pos_y=300)
+    text_3 = CanvasText(text='text1', pos_x=200, pos_y=300)
+
+    table.add_widget(text_1, col=1, row=1)
+    table.add_widget(text_2, col=1, row=2)
+    table.add_widget(text_3, col=1, row=4)
+
+    assert table._row_heights[1] == 1
+    assert table._row_heights[2] == 2
+    assert table._row_heights[3] == 3
+    assert table._row_heights[4] == 10
+
+    assert table.get_widget(col=1, row=1) == text_1
+    assert table.get_widget(col=1, row=2) == text_2
+    assert table.get_widget(col=1, row=3) is None
+    assert table.get_widget(col=1, row=4) == text_3
+
+    table.remove_row(row=2)
+
+    assert table._row_heights[1] == 1
+    assert table._row_heights[2] == 3
+    assert table._row_heights[3] == 10
+
+    assert table.get_widget(col=1, row=1) == text_1
+    assert table.get_widget(col=1, row=2) is None
+    assert table.get_widget(col=1, row=3) == text_3
+
 
 
 '''
@@ -160,8 +191,6 @@ def test_add_row():
 
 
 
-def test_remove_row():
-    assert False
 
 def test_set_row_width():
     assert False

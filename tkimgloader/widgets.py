@@ -293,16 +293,25 @@ class CanvasTable(CanvasWidget):
 
         self._widgets[col - 1][row - 1] = None
 
-    def add_row(self, *, pos, height):
+    def add_row(self, *, row, height):
         # Update the heights
         heights = list(self._row_heights.values())
-        heights.insert(pos - 1, height)
+        heights.insert(row - 1, height)
         self._row_heights = dict(enumerate(heights, start=1))
 
-        # shift the columns
+        # shift the rows
         for col in self._widgets:
-            col.insert(pos - 1, None)
+            col.insert(row - 1, None)
 
+    def remove_row(self, *, row):
+        # Update the heights
+        heights = list(self._row_heights.values())
+        del heights[row - 1]
+        self._row_heights = dict(enumerate(heights, start=1))
+
+        # shift the rows
+        for col in self._widgets:
+            del col[row - 1]
 
 
 class InputBox(FloatingWidget):
