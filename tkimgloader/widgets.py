@@ -313,6 +313,9 @@ class CanvasTable(CanvasWidget):
         for col in self._widgets:
             del col[row - 1]
 
+    def set_row_height(self, height, *, row):
+        self._row_heights[row] = height
+
 
 class InputBox(FloatingWidget):
     def __init__(self, *, label=None, pos_x, pos_y, width=15):

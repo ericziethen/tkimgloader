@@ -185,15 +185,21 @@ def test_remove_row():
     assert table.get_widget(col=1, row=3) == text_3
 
 
+def test_set_row_height():
+    table = CanvasTable(label='table1', pos_x=50, pos_y=300, column_widths=[10], row_heights=[1, 2, 3, 10])
+
+    assert table._row_heights[2] == 2
+
+    table.set_row_height(25, row=2)
+
+    assert table._row_heights[2] == 25
+
+
+
+
+
 
 '''
-
-
-
-
-
-def test_set_row_width():
-    assert False
 
 def test_add_column():
     assert False
