@@ -80,7 +80,7 @@ def test_add_widget_unsupported_widget():
         table.add_widget(table2, col=1, row=1)
 
 
-def test_add_widget_invalid_row():
+def test_add_widget_invalid_index():
     table = CanvasTable(label='table1', pos_x=50, pos_y=300, column_widths=[10], row_heights=[10])
 
     text_widget = CanvasText(text='myText', pos_x=200, pos_y=300)
@@ -103,31 +103,62 @@ def test_get_widget_invalid_index():
     table = CanvasTable(label='table1', pos_x=50, pos_y=300, column_widths=[5, 4, 3], row_heights=[5, 1, 2])
 
     with pytest.raises(IndexError):
+        table.get_widget(col=0, row=1)
+
+    with pytest.raises(IndexError):
+        table.get_widget(col=1, row=0)
+
+    with pytest.raises(IndexError):
         table.get_widget(col=4, row=3)
 
     with pytest.raises(IndexError):
         table.get_widget(col=3, row=4)
 
 
+def test_remove_widget():
+    table = CanvasTable(label='table1', pos_x=50, pos_y=300, column_widths=[5, 4, 3], row_heights=[5, 1, 2])
+    text_widget = CanvasText(text='myText', pos_x=200, pos_y=300)
+
+    assert table.get_widget(col=1, row=2) is None
+    table.add_widget(text_widget, col=1, row=2)
+    assert table.get_widget(col=1, row=2) == text_widget
+    table.remove_widget(col=1, row=2)
+    assert table.get_widget(col=1, row=2) is None
+
+
+def test_add_row():
+    table = CanvasTable(label='table1', pos_x=50, pos_y=300, column_widths=[10], row_heights=[1, 2, 3])
+
+    text_1 = CanvasText(text='text1', pos_x=200, pos_y=300)
+    text_2 = CanvasText(text='text1', pos_x=200, pos_y=300)
+    text_3 = CanvasText(text='text1', pos_x=200, pos_y=300)
+
+    table.add_widget(text_1, col=1, row=1)
+    table.add_widget(text_2, col=1, row=2)
+    table.add_widget(text_3, col=1, row=3)
+
+    assert table._row_heights[1] == 1
+    assert table._row_heights[2] == 2
+    assert table._row_heights[3] == 3
+
+    table.add_row(pos=2, height=10)
+
+    assert table._row_heights[1] == 1
+    assert table._row_heights[2] == 10
+    assert table._row_heights[3] == 2
+    assert table._row_heights[4] == 3
+
+    assert table.get_widget(col=1, row=1) == text_1
+    assert table.get_widget(col=1, row=2) is None
+    assert table.get_widget(col=1, row=3) == text_2
+    assert table.get_widget(col=1, row=4) == text_3
+
+
+
 '''
 
 
 
-def test_add_widget_invalid_column():
-    assert False
-
-def test_add_widget_calc_position():
-    assert False
-
-
-
-
-
-def test_remove_widget():
-    assert False
-
-def test_add_row():
-    assert False
 
 def test_remove_row():
     assert False
@@ -147,6 +178,8 @@ def test_widget_to_dict():
 def test_set_column_width():
     assert False
 
+def test_add_widget_calc_position():
+    assert False
 
 def test_me_good():
     assert False

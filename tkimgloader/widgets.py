@@ -271,18 +271,38 @@ class CanvasTable(CanvasWidget):
             for _ in range(len(row_heights)):
                 col.append(None)
 
+    def _check_index(self, *, col, row):
+        # Catch Negativ index errors as python will treat them from back of the list and will not be raised by access
+        if col < 1 or row < 1:
+            raise IndexError(F'Cannot have less than 1 as Table Index, have Column={col}, Row={row}')
+
     def add_widget(self, widget, *, col, row):
         if widget.widget_type not in [WidgetType.TEXT, WidgetType.BUTTON]:
             raise ValueError(F'Widget Type "{widget.widget_type}" not supported to add to a Table')
-
-        # Catch Negativ index errors as python will treat them from back of the list and might not be raised by access
-        if col < 1 or row < 1:
-            raise IndexError(F'Cannot have less than 1 as Table Index, have Column={col}, Row={row}')
+        self._check_index(col=col, row=row)
 
         self._widgets[col - 1][row - 1] = widget
 
     def get_widget(self, *, col, row):
+        self._check_index(col=col, row=row)
+
         return self._widgets[col - 1][row - 1]
+
+    def remove_widget(self, *, col, row):
+        self._check_index(col=col, row=row)
+
+        self._widgets[col - 1][row - 1] = None
+
+    def add_row(self, *, pos, height):
+        # Update the heights
+        heights = list(self._row_heights.values())
+        heights.insert(pos - 1, height)
+        self._row_heights = dict(enumerate(heights, start=1))
+
+        # shift the columns
+        for col in self._widgets:
+            col.insert(pos - 1, None)
+
 
 
 class InputBox(FloatingWidget):
