@@ -265,11 +265,10 @@ class CanvasTable(CanvasWidget):
         # Setup the Grid
         self._widgets = []
         for _ in column_widths:
-            self._widgets.append([])
+            self._widgets.append(self.get_empty_column())
 
-        for _, col in enumerate(self._widgets):
-            for _ in range(len(row_heights)):
-                col.append(None)
+    def get_empty_column(self):
+        return [None for x in range(len(self._row_heights))]
 
     def _check_index(self, *, col, row):
         # Catch Negativ index errors as python will treat them from back of the list and will not be raised by access
@@ -315,6 +314,16 @@ class CanvasTable(CanvasWidget):
 
     def set_row_height(self, height, *, row):
         self._row_heights[row] = height
+
+    def add_column(self, *, col, width):
+        # Update the Widths
+        widths = list(self._column_widths.values())
+        widths.insert(col - 1, width)
+        self._column_widths = dict(enumerate(widths, start=1))
+
+        # Shift the Columns
+        self._widgets.insert(col - 1, self.get_empty_column())
+
 
 
 class InputBox(FloatingWidget):

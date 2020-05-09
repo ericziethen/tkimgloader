@@ -195,14 +195,38 @@ def test_set_row_height():
     assert table._row_heights[2] == 25
 
 
+def test_add_column():
+    table = CanvasTable(label='table1', pos_x=50, pos_y=300, column_widths=[5, 20, 10], row_heights=[1])
+
+    text_1 = CanvasText(text='text1', pos_x=200, pos_y=300)
+    text_2 = CanvasText(text='text1', pos_x=200, pos_y=300)
+    text_3 = CanvasText(text='text1', pos_x=200, pos_y=300)
+
+    table.add_widget(text_1, col=1, row=1)
+    table.add_widget(text_2, col=2, row=1)
+    table.add_widget(text_3, col=3, row=1)
+
+    assert table._column_widths[1] == 5
+    assert table._column_widths[2] == 20
+    assert table._column_widths[3] == 10
+
+    table.add_column(col=3, width=350)
+
+    assert table._column_widths[1] == 5
+    assert table._column_widths[2] == 20
+    assert table._column_widths[3] == 350
+    assert table._column_widths[4] == 10
+
+    assert table.get_widget(col=1, row=1) == text_1
+    assert table.get_widget(col=2, row=1) == text_2
+    assert table.get_widget(col=3, row=1) is None
+    assert table.get_widget(col=4, row=1) == text_3
 
 
 
 
 '''
 
-def test_add_column():
-    assert False
 
 def test_remove_column():
     assert False
