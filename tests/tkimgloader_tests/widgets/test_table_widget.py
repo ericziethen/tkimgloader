@@ -255,16 +255,65 @@ def test_remove_column():
     assert table.get_widget(col=3, row=2) == text_3
 
 
+def test_set_column_width():
+    table = CanvasTable(label='table1', pos_x=50, pos_y=300, column_widths=[10, 20, 5], row_heights=[1, 2, 3, 10])
+
+    assert table._column_widths[2] == 20
+
+    table.set_column_width(50, col=2)
+
+    assert table._column_widths[2] == 50
+
+
+def test_widget_to_dict():
+    table = CanvasTable(label='table1', pos_x=50, pos_y=300, column_widths=[5, 20, 7, 10], row_heights=[1, 5])
+
+    img_widget = CanvasImageButton(
+        button_type=ButtonType.RELEASE, pos_x=200, pos_y=300,
+        image_list=['path1'])
+    text_1 = CanvasText(text='text1', pos_x=200, pos_y=300)
+    text_2 = CanvasText(text='text2', pos_x=200, pos_y=300)
+    text_3 = CanvasText(text='text3', pos_x=200, pos_y=300)
+
+    table.add_widget(text_3, col=1, row=1)
+    table.add_widget(img_widget, col=1, row=2)
+    table.add_widget(text_2, col=4, row=1)
+    table.add_widget(text_3, col=3, row=1)
+
+    table_dict = {
+        'label': 'table1',
+        'x': 50,
+        'y': 300,
+        'column_withs': [5, 20, 7, 10],
+        'row_heights': [1, 5],
+        'widgets': {
+            '1': {
+                '1': {'type': WidgetType.TEXT, 'dict': text_1.to_dict()},
+                '2': {'type': WidgetType.BUTTON, 'dict': img_widget.to_dict()}
+            },
+            '3': {
+                '1': {'type': WidgetType.TEXT, 'dict': text_3.to_dict()}
+            },
+            '4': {
+                '1': {'type': WidgetType.TEXT, 'dict': text_2.to_dict()}
+            }
+        }
+    }
+
+    assert table_dict == table.to_dict()
+
+
+
+
+
+
+
 
 '''
 
 
 
-def test_widget_to_dict():
-    assert False
 
-def test_set_column_width():
-    assert False
 
 def test_add_widget_calc_position():
     assert False

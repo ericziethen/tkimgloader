@@ -333,6 +333,9 @@ class CanvasTable(CanvasWidget):
         # Shift the Columns
         del self._widgets[col - 1]
 
+    def set_column_width(self, width, *, col):
+        self._column_widths[col] = width
+
 
 class InputBox(FloatingWidget):
     def __init__(self, *, label=None, pos_x, pos_y, width=15):
