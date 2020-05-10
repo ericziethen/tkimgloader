@@ -324,6 +324,14 @@ class CanvasTable(CanvasWidget):
         # Shift the Columns
         self._widgets.insert(col - 1, self.get_empty_column())
 
+    def remove_column(self, *, col):
+        # Update the Widths
+        widths = list(self._column_widths.values())
+        del widths[col - 1]
+        self._column_widths = dict(enumerate(widths, start=1))
+
+        # Shift the Columns
+        del self._widgets[col - 1]
 
 
 class InputBox(FloatingWidget):
